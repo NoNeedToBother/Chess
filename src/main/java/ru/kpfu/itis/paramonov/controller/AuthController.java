@@ -1,17 +1,19 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.kpfu.itis.paramonov.dto.auth.RegisterUserResponse;
 import ru.kpfu.itis.paramonov.dto.jwt.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.jwt.JwtResponse;
 import ru.kpfu.itis.paramonov.dto.jwt.RefreshJwtRequest;
 import ru.kpfu.itis.paramonov.dto.request.RegisterUserRequestDto;
+import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
 import ru.kpfu.itis.paramonov.service.AuthService;
-import ru.kpfu.itis.paramonov.service.UserService;
 
 import javax.security.auth.message.AuthException;
 
@@ -21,8 +23,6 @@ import javax.security.auth.message.AuthException;
 public class AuthController {
 
     private final AuthService authService;
-
-    private final UserService userService;
 
     @PostMapping("/login")
     public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
@@ -39,19 +39,32 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(jwtRequest.getToken()));
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(
+    private static final String REGISTER_ERROR_INTERNAL = "Failed to register, try again later";
+
+    @PostMapping(value = "/register", produces = "application/json")
+    public ResponseEntity<RegisterUserResponse> register(
             @RequestBody RegisterUserRequestDto registerUserRequestDto
     ) {
         String username = registerUserRequestDto.getUsername();
         String password = registerUserRequestDto.getPassword();
 
-        userService.registerUser(
-                registerUserRequestDto.getUsername(),
-                registerUserRequestDto.getPassword()
-        );
+        try {
+            authService.registerUser(username, password);
+        } catch (InvalidCredentialsException e) {
+            return new ResponseEntity<>(
+                    new RegisterUserResponse(e.getMessage()),
+                    HttpStatus.BAD_REQUEST
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new RegisterUserResponse(REGISTER_ERROR_INTERNAL),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
 
         JwtRequest jwtRequest = new JwtRequest(username, password);
-        return login(jwtRequest);
+        return new ResponseEntity<>(
+                new RegisterUserResponse(authService.login(jwtRequest)),
+                HttpStatus.CREATED);
     }
 }

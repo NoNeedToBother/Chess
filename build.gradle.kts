@@ -29,8 +29,9 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:${properties["slf4jVersion"]}")
 
     implementation("io.jsonwebtoken:jjwt-api:${properties["jwtVersion"]}")
-    implementation("io.jsonwebtoken:jjwt-impl:${properties["jwtVersion"]}")
-    implementation("io.jsonwebtoken:jjwt-jackson:${properties["jwtVersion"]}")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:${properties["jwtVersion"]}")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:${properties["jwtVersion"]}")
+    runtimeOnly("org.bouncycastle:bcprov-jdk18on:1.76")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

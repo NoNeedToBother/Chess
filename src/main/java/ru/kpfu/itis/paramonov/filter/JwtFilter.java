@@ -1,7 +1,6 @@
 package ru.kpfu.itis.paramonov.filter;
 
 import io.jsonwebtoken.Claims;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.metrics.data.DefaultRepositoryTagsProvider;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -20,7 +19,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-@Slf4j
 public class JwtFilter extends GenericFilterBean {
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
@@ -66,7 +64,7 @@ public class JwtFilter extends GenericFilterBean {
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearer = request.getHeader(AUTHORIZATION_HEADER);
         if (bearer != null && bearer.startsWith(BEARER)) {
-            return bearer.substring(BEARER.length());
+            return bearer.substring(BEARER.length()).trim();
         }
         return null;
     }

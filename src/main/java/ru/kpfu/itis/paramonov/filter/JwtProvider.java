@@ -16,7 +16,6 @@ import ru.kpfu.itis.paramonov.properties.YamlPropertySourceFactory;
 
 import javax.crypto.SecretKey;
 
-import java.security.Key;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -48,8 +47,9 @@ public class JwtProvider {
                 .atZone(ZoneId.systemDefault()).toInstant();
         Date accessExpiration = Date.from(accessExpirationTime);
         return Jwts.builder()
-                .setSubject(user.getUsername())
-                .setExpiration(accessExpiration)
+                .id(user.getId().toString())
+                .subject(user.getUsername())
+                .expiration(accessExpiration)
                 .signWith(jwtAccessSecret)
                 .claim("roles", user.getRoles())
                 .compact();
@@ -61,9 +61,11 @@ public class JwtProvider {
                 .atZone(ZoneId.systemDefault()).toInstant();
         Date accessExpiration = Date.from(accessExpirationTime);
         return Jwts.builder()
-                .setSubject(user.getUsername())
-                .setExpiration(accessExpiration)
+                .id(user.getId().toString())
+                .subject(user.getUsername())
+                .expiration(accessExpiration)
                 .signWith(jwtRefreshSecret)
+                .claim("roles", user.getRoles())
                 .compact();
     }
 
@@ -83,20 +85,20 @@ public class JwtProvider {
         return getClaims(token, jwtRefreshSecret);
     }
 
-    private Claims getClaims(String token, Key secret) {
-        return Jwts.parserBuilder()
-                .setSigningKey(secret)
+    private Claims getClaims(String token, SecretKey secret) {
+        return Jwts.parser()
+                .verifyWith(secret)
                 .build()
-                .parseClaimsJws(token)
-                .getBody();
+                .parseSignedClaims(token)
+                .getPayload();
     }
 
-    private boolean validateToken(String token, Key secret) {
+    private boolean validateToken(String token, SecretKey secret) {
         try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secret)
+            Jwts.parser()
+                    .verifyWith(secret)
                     .build()
-                    .parseClaimsJws(token);
+                    .parseSignedClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
         } catch (UnsupportedJwtException e) {
