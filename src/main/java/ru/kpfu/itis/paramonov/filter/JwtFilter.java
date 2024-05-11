@@ -36,6 +36,7 @@ public class JwtFilter extends GenericFilterBean {
         JwtAuthentication jwtAuthentication = new JwtAuthentication();
         jwtAuthentication.setRoles(getRoles(claims));
         jwtAuthentication.setUsername(claims.getSubject());
+        jwtAuthentication.setId(claims.get("id", Long.class));
         return jwtAuthentication;
     }
 

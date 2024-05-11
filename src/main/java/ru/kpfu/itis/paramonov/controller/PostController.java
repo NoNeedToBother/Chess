@@ -6,11 +6,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
+import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentsResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
+import ru.kpfu.itis.paramonov.filter.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
@@ -19,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/post")
+@RequestMapping("/api/posts")
 @RequiredArgsConstructor
 public class PostController {
 
@@ -27,14 +29,18 @@ public class PostController {
 
     private final UserService userService;
 
+    private final static String UPLOAD_POST_FAIL = "Failed to upload post";
+
     @PostMapping("/upload")
-    public ResponseEntity<PostDto> upload(
-            @RequestBody UploadPostRequestDto uploadPostRequestDto) {
+    public ResponseEntity<PostResponseDto> upload(
+            @RequestBody UploadPostRequestDto uploadPostRequestDto,
+            JwtAuthentication jwtAuthentication) {
         try {
-            postService.save(uploadPostRequestDto);
-            return null;
+            Long authorId = jwtAuthentication.getId();
+            PostDto postDto = postService.save(uploadPostRequestDto, authorId);
+            return get(postDto.getId());
         } catch (InvalidParameterException e) {
-            return null;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PostResponseDto(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }
@@ -66,10 +72,10 @@ public class PostController {
     public ResponseEntity<CommentsResponseDto> getComments(@RequestParam Long id) {
         try {
             List<CommentDto> comments = postService.getComments(id);
-            List<CommentsResponseDto.CommentResponseDto> commentResponseDtoList = comments.stream()
+            List<CommentResponseDto> commentResponseDtoList = comments.stream()
                     .map(comment -> {
                         UserDto author = userService.getById(comment.getAuthorId()).get();
-                        return new CommentsResponseDto.CommentResponseDto(comment, author);
+                        return new CommentResponseDto(comment, author);
                     })
                     .collect(Collectors.toList());
             return new ResponseEntity<>(new CommentsResponseDto(commentResponseDtoList), HttpStatus.OK);

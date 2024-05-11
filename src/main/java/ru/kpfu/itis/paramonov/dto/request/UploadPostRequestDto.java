@@ -12,7 +12,5 @@ public class UploadPostRequestDto {
 
     private String description;
 
-    private Long authorId;
-
     private String content;
 }

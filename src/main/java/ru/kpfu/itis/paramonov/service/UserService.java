@@ -7,4 +7,8 @@ import java.util.Optional;
 public interface UserService {
 
     Optional<UserDto> getById(Long userId);
+
+    boolean isModerator(Long userId);
+
+    boolean isAdmin(Long userId);
 }

@@ -15,7 +15,7 @@ public interface PostService {
 
     Optional<PostDto> getByTitle(String title);
 
-    PostDto save(UploadPostRequestDto uploadPostRequestDto);
+    PostDto save(UploadPostRequestDto uploadPostRequestDto, Long authorId);
 
     boolean checkTitle(String title);
 

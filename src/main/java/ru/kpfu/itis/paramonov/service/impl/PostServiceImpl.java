@@ -70,10 +70,8 @@ public class PostServiceImpl implements PostService {
     private final static String POST_EXISTS_ERROR = "Post with this title already exists";
 
     @Override
-    public PostDto save(UploadPostRequestDto uploadPostRequestDto) {
-        User poster = userRepository.findById(
-                uploadPostRequestDto.getAuthorId()
-        ).orElseThrow(RuntimeException::new);
+    public PostDto save(UploadPostRequestDto uploadPostRequestDto, Long authorId) {
+        User poster = userRepository.findById(authorId).orElseThrow(RuntimeException::new);
         if (!checkTitle(uploadPostRequestDto.getTitle()))
             throw new InvalidParameterException(POST_EXISTS_ERROR);
         try {
