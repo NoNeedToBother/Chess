@@ -6,12 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
+import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentsResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
+import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.filter.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
@@ -31,6 +33,8 @@ public class PostController {
 
     private final static String UPLOAD_POST_FAIL = "Failed to upload post";
 
+    private final static String DELETE_POST_FAIL = "Failed to delete comment";
+
     @PostMapping("/upload")
     public ResponseEntity<PostResponseDto> upload(
             @RequestBody UploadPostRequestDto uploadPostRequestDto,
@@ -42,7 +46,7 @@ public class PostController {
         } catch (InvalidParameterException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PostResponseDto(e.getMessage()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return new ResponseEntity<>(new PostResponseDto(UPLOAD_POST_FAIL), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -83,6 +87,19 @@ public class PostController {
             return new ResponseEntity<>(new CommentsResponseDto(GET_COMMENTS_FAIL_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
+    @GetMapping("/delete")
+    public ResponseEntity<BaseResponseDto> delete(
+            @RequestParam Long id, JwtAuthentication authentication) {
+        try {
+            Long from = authentication.getId();
+            postService.deleteById(id, from);
+            return ResponseEntity.ok().build();
+        } catch (NoSufficientAuthorityException e) {
+            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
+        } catch (InvalidParameterException e) {
+            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new BaseResponseDto(DELETE_POST_FAIL), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

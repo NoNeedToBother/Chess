@@ -21,4 +21,6 @@ public interface PostService {
 
     List<CommentDto> getComments(long postId);
 
+    void deleteById(Long id, Long from);
+
 }

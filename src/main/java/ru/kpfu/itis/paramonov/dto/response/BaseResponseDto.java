@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
 @NoArgsConstructor
-abstract public class BaseResponseDto {
+public class BaseResponseDto {
 
     @JsonProperty("error")
     protected String error;

@@ -9,10 +9,12 @@ import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
+import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.model.Post;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
+import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
 import ru.kpfu.itis.paramonov.service.PostService;
 
 import java.io.File;
@@ -34,6 +36,8 @@ public class PostServiceImpl implements PostService {
     private PostRepository postRepository;
 
     private UserRepository userRepository;
+
+    private UserRoleRepository userRoleRepository;
 
     private PostConverter postConverter;
 
@@ -129,6 +133,28 @@ public class PostServiceImpl implements PostService {
                 })
                 .map(comment -> commentConverter.convert(comment))
                 .collect(Collectors.toList());
+    }
+
+    private static final String NO_SUFFICIENT_AUTHORITY_ERROR = "No sufficient authority to delete this post";
+
+    private static final String NO_POST_FOUND_ERROR = "No post was found";
+
+    @Override
+    public void deleteById(Long id, Long from) {
+        Optional<Post> post = postRepository.findById(id);
+        if (!post.isPresent()) throw new InvalidParameterException(NO_POST_FOUND_ERROR);
+        if (userRoleRepository.isModerator(from)) {
+            postRepository.deleteById(id);
+            return;
+        }
+        List<Long> postIds = userRepository.findById(from).get()
+                .getPosts()
+                .stream()
+                .map(Post::getId)
+                .collect(Collectors.toList());
+        if (postIds.contains(id)) {
+            postRepository.deleteById(id);
+        } else throw new NoSufficientAuthorityException(NO_SUFFICIENT_AUTHORITY_ERROR);
     }
 
 }

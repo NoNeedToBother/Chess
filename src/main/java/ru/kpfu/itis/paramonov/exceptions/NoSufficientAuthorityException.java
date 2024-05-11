@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class InvalidParameterException extends RuntimeException {
+public class NoSufficientAuthorityException extends RuntimeException{
 
     private String message;
 }
