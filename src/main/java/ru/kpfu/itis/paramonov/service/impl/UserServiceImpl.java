@@ -19,7 +19,7 @@ public class UserServiceImpl implements UserService {
     private UserConverter userConverter;
 
     @Override
-    public Optional<UserDto> getUser(Long userId) {
+    public Optional<UserDto> getById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         return user.map(value -> userConverter.convert(value));
     }

@@ -32,6 +32,8 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:${properties["jwtVersion"]}")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:${properties["jwtVersion"]}")
     runtimeOnly("org.bouncycastle:bcprov-jdk18on:1.76")
+    implementation("com.cloudinary:cloudinary-core:${properties["cloudinaryVersion"]}")
+    implementation("com.cloudinary:cloudinary-http44:${properties["cloudinaryVersion"]}")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

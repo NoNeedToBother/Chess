@@ -40,3 +40,4 @@ bin/
 
 ### properties ###
 jwt.yaml
+cloudinary.yaml

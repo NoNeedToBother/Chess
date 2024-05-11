@@ -2,12 +2,10 @@ package ru.kpfu.itis.paramonov.dto.auth;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.kpfu.itis.paramonov.dto.jwt.JwtResponse;
+import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class RegisterUserResponse {
-    @JsonProperty("error")
-    private String error;
+public class RegisterUserResponse extends BaseResponseDto {
 
     @JsonProperty("jwtInfo")
     private JwtResponse jwtInfo;

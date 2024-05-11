@@ -25,13 +25,16 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @ColumnDefault(NOT_SPECIFIED)
     private String name;
 
+    @ColumnDefault(NOT_SPECIFIED)
     private String lastname;
 
     @Column(name = "profile_picture")
     private String profilePicture;
 
+    @ColumnDefault(NOT_SPECIFIED)
     private String bio;
 
     @Column(name = "date_registered")
@@ -76,4 +79,6 @@ public class User {
             cascade = CascadeType.ALL,
             fetch = FetchType.EAGER)
     private Set<User> likesSentTo;
+
+    private static final String NOT_SPECIFIED = "Not specified";
 }

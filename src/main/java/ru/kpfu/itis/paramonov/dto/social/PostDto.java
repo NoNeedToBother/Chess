@@ -1,10 +1,8 @@
 package ru.kpfu.itis.paramonov.dto.social;
 
 import lombok.*;
-import ru.kpfu.itis.paramonov.dto.UserDto;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -15,7 +13,7 @@ public class PostDto {
 
     private Long id;
 
-    private UserDto poster;
+    private Long authorId;
 
     private String imageUrl;
 
@@ -26,6 +24,4 @@ public class PostDto {
     private String description;
 
     private Timestamp datePosted;
-
-    private List<CommentDto> comments;
 }

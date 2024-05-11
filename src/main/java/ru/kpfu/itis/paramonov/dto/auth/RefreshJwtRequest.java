@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.dto.jwt;
+package ru.kpfu.itis.paramonov.dto.auth;
 
 import lombok.Getter;
 

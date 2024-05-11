@@ -2,8 +2,8 @@ package ru.kpfu.itis.paramonov.service;
 
 
 
-import ru.kpfu.itis.paramonov.dto.jwt.JwtRequest;
-import ru.kpfu.itis.paramonov.dto.jwt.JwtResponse;
+import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
+import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 
 import javax.security.auth.message.AuthException;
 

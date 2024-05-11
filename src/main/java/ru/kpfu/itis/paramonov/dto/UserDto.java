@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
-import java.util.Set;
 
 @AllArgsConstructor
 @Getter
@@ -31,10 +30,4 @@ public class UserDto {
     private boolean enabled;
 
     private boolean deactivated;
-
-    private Set<RoleDto> roles;
-
-    /*private Set<UserDto> likesReceivedFrom;
-
-    private Set<UserDto> likesSentTo;*/
 }
