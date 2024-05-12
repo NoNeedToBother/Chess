@@ -2,10 +2,10 @@ package ru.kpfu.itis.paramonov.repository.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.kpfu.itis.paramonov.model.Role;
-import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
+import ru.kpfu.itis.paramonov.model.Role;
+import ru.kpfu.itis.paramonov.model.User;
 
 import java.util.ArrayList;
 import java.util.List;

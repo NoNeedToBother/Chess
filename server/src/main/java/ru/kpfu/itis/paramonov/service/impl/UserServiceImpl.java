@@ -2,12 +2,12 @@ package ru.kpfu.itis.paramonov.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.kpfu.itis.paramonov.service.UserService;
 import ru.kpfu.itis.paramonov.converters.users.UserConverter;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
-import ru.kpfu.itis.paramonov.service.UserService;
 
 import java.util.Optional;
 

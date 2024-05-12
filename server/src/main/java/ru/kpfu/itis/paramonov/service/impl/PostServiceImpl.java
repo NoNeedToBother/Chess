@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.converters.posts.CommentConverter;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
@@ -15,7 +16,6 @@ import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
-import ru.kpfu.itis.paramonov.service.PostService;
 
 import java.io.File;
 import java.io.FileOutputStream;
