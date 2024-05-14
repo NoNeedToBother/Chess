@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
@@ -12,6 +13,7 @@ import ru.kpfu.itis.paramonov.dto.response.CommentsResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
+import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
@@ -80,7 +82,7 @@ public class PostController {
             return new ResponseEntity<>(new CommentsResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    @GetMapping("/delete")
+    @PostMapping("/delete")
     public ResponseEntity<BaseResponseDto> delete(
             @RequestParam Long id, JwtAuthentication authentication) {
         try {
@@ -93,6 +95,23 @@ public class PostController {
             return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(new BaseResponseDto(DELETE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("/update/rating")
+    public ResponseEntity<BaseResponseDto> updateRating(
+            @RequestBody UpdatePostRatingRequestDto updatePostRatingRequestDto, JwtAuthentication authentication
+    ) {
+        try {
+            Long from = authentication.getId();
+            postService.updateRating(updatePostRatingRequestDto, from);
+            return ResponseEntity.ok().build();
+        } catch (DeniedRequestException e) {
+            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new BaseResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -26,16 +26,16 @@ public class User {
     private String username;
 
     @ColumnDefault("\'Not specified\'")
-    private String name;
+    private String name = "Not specified";
 
     @ColumnDefault("\'Not specified\'")
-    private String lastname;
+    private String lastname = "Not specified";
 
     @Column(name = "profile_picture")
     private String profilePicture;
 
     @ColumnDefault("\'Not specified\'")
-    private String bio;
+    private String bio = "Not specified";
 
     @Column(name = "date_registered")
     @CreationTimestamp

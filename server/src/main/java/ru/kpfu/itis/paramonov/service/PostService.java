@@ -1,5 +1,6 @@
 package ru.kpfu.itis.paramonov.service;
 
+import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
@@ -22,5 +23,9 @@ public interface PostService {
     List<CommentDto> getComments(long postId);
 
     void deleteById(Long postId, Long fromId);
+
+    void updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId);
+
+    Double getAverageRating(Long postId);
 
 }

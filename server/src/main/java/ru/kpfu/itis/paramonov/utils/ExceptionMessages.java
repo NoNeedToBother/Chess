@@ -18,9 +18,12 @@ public class ExceptionMessages {
 
     public final static String GET_ERROR = "Failed to get";
 
+    public final static String UPDATE_ERROR = "Failed to update";
+
 
     public final static String INCORRECT_ROLE_ERROR = "Incorrect role";
 
+    public final static String UPDATE_OWN_POST_DENIED_ERROR = "Cannot perform for your own post";
 
     public final static String EMPTY_CREDENTIALS_ERROR = "Credentials must be not empty";
 

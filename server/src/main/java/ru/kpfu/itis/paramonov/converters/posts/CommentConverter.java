@@ -17,6 +17,7 @@ public class CommentConverter implements Converter<Comment, CommentDto> {
                 .content(source.getContent())
                 .datePublished(source.getDatePublished())
                 .authorId(source.getAuthor().getId())
+                .rating(source.getRating())
                 .build();
     }
 }

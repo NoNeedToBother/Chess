@@ -24,4 +24,6 @@ public class PostDto {
     private String description;
 
     private Timestamp datePosted;
+
+    private Double rating;
 }

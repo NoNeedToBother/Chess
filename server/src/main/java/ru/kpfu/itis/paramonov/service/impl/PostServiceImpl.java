@@ -4,7 +4,10 @@ import com.cloudinary.Cloudinary;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
+import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
+import ru.kpfu.itis.paramonov.repository.PostRatingRepository;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.converters.posts.CommentConverter;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
@@ -18,6 +21,7 @@ import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -46,14 +50,19 @@ public class PostServiceImpl implements PostService {
 
     private CommentConverter commentConverter;
 
+    private PostRatingRepository postRatingRepository;
+
     private Cloudinary cloudinary;
 
     @Override
     public List<PostDto> getAll() {
         return postRepository
                 .findAll()
-                .stream().map( post ->
-                        postConverter.convert(post)
+                .stream().map( post -> {
+                    PostDto dto = postConverter.convert(post);
+                    dto.setRating(postRatingRepository.getAverageRating(post.getId()));
+                    return dto;
+                }
                 )
                 .collect(Collectors.toList());
     }
@@ -64,7 +73,9 @@ public class PostServiceImpl implements PostService {
         if (post == null) {
             return Optional.empty();
         } else {
-            return Optional.ofNullable(postConverter.convert(post));
+            PostDto dto = postConverter.convert(post);
+            dto.setRating(postRatingRepository.getAverageRating(post.getId()));
+            return Optional.ofNullable(dto);
         }
     }
 
@@ -146,6 +157,32 @@ public class PostServiceImpl implements PostService {
         else if (postRepository.doesBelongToUser(fromId, postId)) {
             deletePost(fromId, post.get());
         } else throw new NoSufficientAuthorityException(NO_SUFFICIENT_AUTHORITY_ERROR);
+    }
+
+    @Override
+    @Transactional
+    public void updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId) {
+        Optional<Post> post = postRepository.findById(updatePostRatingRequestDto.getPostId());
+        User user = userRepository.findById(fromId).get();
+        Integer rating = updatePostRatingRequestDto.getRating();
+        if (post.isPresent()) {
+            if (post.get().getAuthor().getId().equals(fromId)) {
+                throw new DeniedRequestException(UPDATE_OWN_POST_DENIED_ERROR);
+            }
+            if (postRatingRepository.existsByPostAndUser(post.get(), user)) {
+                postRatingRepository.updateRating(post.get().getId(), user.getId(), rating);
+            } else {
+                postRatingRepository.addRating(post.get().getId(), user.getId(), rating);
+            }
+        } else throw new NotFoundException(NO_POST_FOUND_ERROR);
+    }
+
+    @Override
+    public Double getAverageRating(Long postId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if (post.isPresent()) {
+            return postRatingRepository.getAverageRating(postId);
+        } else throw new NotFoundException(NO_POST_FOUND_ERROR);
     }
 
     private void deletePost(Long authorId, Post post) {

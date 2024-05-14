@@ -38,9 +38,9 @@ public class SecurityConfig {
                 .authorizeRequests(auth ->
                         auth
                                 .antMatchers("/api/auth/**").permitAll()
-                                .antMatchers("/api/moderator/**").hasAnyAuthority(
+                                .antMatchers("/api/**/moderator/**").hasAnyAuthority(
                                         Role.ADMIN.getAuthority(), Role.MODERATOR.getAuthority(), Role.CHIEF_ADMIN.getAuthority())
-                                .antMatchers("/api/admin/**").hasAnyAuthority(
+                                .antMatchers("/api/**/admin/**").hasAnyAuthority(
                                         Role.ADMIN.getAuthority(), Role.CHIEF_ADMIN.getAuthority())
                                 .antMatchers("/api/**").hasAuthority(Role.USER.getAuthority())
                                 .and().addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
