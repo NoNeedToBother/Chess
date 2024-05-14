@@ -31,4 +31,9 @@ public class Comment {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @PreRemove
+    private void preRemove() {
+        author.getComments().removeIf(comment -> comment.getId().equals(this.id));
+    }
 }

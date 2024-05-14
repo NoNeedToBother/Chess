@@ -3,7 +3,6 @@ package ru.kpfu.itis.paramonov.service.impl;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.paramonov.service.AuthService;
@@ -19,6 +18,8 @@ import javax.security.auth.message.AuthException;
 
 import java.util.*;
 
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
+
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -32,15 +33,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public JwtResponse login(JwtRequest request) {
+        checkUsernameAndPassword(request.getUsername(), request.getPassword());
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException(request.getUsername()));
+                .orElseThrow(() -> new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR));
         if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             String accessToken = jwtProvider.generateAccessToken(user);
             String refreshToken = jwtProvider.generateRefreshToken(user);
             refreshStorage.put(user.getUsername(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
+        } else {
+            throw new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR);
         }
-        return null;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }
-        throw new AuthException("Invalid refresh token");
+        throw new AuthException(INVALID_REFRESH_TOKEN_ERROR);
     }
 
     @Override
@@ -75,19 +78,14 @@ public class AuthServiceImpl implements AuthService {
                 return new JwtResponse(accessToken, null);
             }
         }
-        throw new AuthException("Invalid refresh token");
+        throw new AuthException(INVALID_REFRESH_TOKEN_ERROR);
     }
-
-    private final static String EMPTY_CREDENTIALS_ERROR = "Credentials must be not empty";
-
-    private final static String NON_UNIQUE_USERNAME_ERROR = "This username already belongs to other user";
 
     @Override
     public void registerUser(String username, String password) {
         Set<Role> roles = new HashSet<>();
         roles.add(Role.USER);
-        if (username == null || password == null || username.isEmpty() || password.isEmpty())
-            throw new InvalidCredentialsException(EMPTY_CREDENTIALS_ERROR);
+        checkUsernameAndPassword(username, password);
 
         ValidationResult usernameValidation = validateUsername(username);
         if (!usernameValidation.result)
@@ -135,12 +133,10 @@ public class AuthServiceImpl implements AuthService {
         } else return new ValidationResult(false, INVALID_PASSWORD_ERROR);
     }
 
-    private final static String SHORT_USERNAME_ERROR = "Username length should be at least 6 characters";
-
-    private final static String SHORT_PASSWORD_ERROR = "Password length should be at least 8 characters";
-
-    private final static String INVALID_PASSWORD_ERROR = "Password should have at least one of each:" +
-            " uppercase, lowercase and digit character";
+    private void checkUsernameAndPassword(String username, String password) {
+        if (username == null || password == null || username.isEmpty() || password.isEmpty())
+            throw new InvalidCredentialsException(EMPTY_CREDENTIALS_ERROR);
+    }
 
     @AllArgsConstructor
     @RequiredArgsConstructor

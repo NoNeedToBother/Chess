@@ -14,6 +14,7 @@ import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
+import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
@@ -21,6 +22,8 @@ import ru.kpfu.itis.paramonov.service.UserService;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -31,10 +34,6 @@ public class PostController {
 
     private final UserService userService;
 
-    private final static String UPLOAD_POST_FAIL = "Failed to upload post";
-
-    private final static String DELETE_POST_FAIL = "Failed to delete comment";
-
     @PostMapping("/upload")
     public ResponseEntity<PostResponseDto> upload(
             @RequestBody UploadPostRequestDto uploadPostRequestDto,
@@ -44,17 +43,11 @@ public class PostController {
             PostDto postDto = postService.save(uploadPostRequestDto, authorId);
             return get(postDto.getId());
         } catch (InvalidParameterException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new PostResponseDto(e.getMessage()));
+            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(new PostResponseDto(UPLOAD_POST_FAIL), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new PostResponseDto(UPLOAD_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    private final static String GET_POST_FAIL_ERROR = "Could not get post";
-
-    private final static String GET_COMMENTS_FAIL_ERROR = "Could not get comments";
-
-    private final static String POST_NOT_EXIST_ERROR = "No post was found";
 
     @GetMapping("/get")
     public ResponseEntity<PostResponseDto> get(@RequestParam Long id) {
@@ -65,10 +58,10 @@ public class PostController {
                 PostResponseDto postResponseDto = new PostResponseDto(author, post.get());
                 return ResponseEntity.ok(postResponseDto);
             } else {
-                return new ResponseEntity<>(new PostResponseDto(POST_NOT_EXIST_ERROR), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(new PostResponseDto(NO_POST_FOUND_ERROR), HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            return new ResponseEntity<>(new PostResponseDto(GET_POST_FAIL_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new PostResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,7 +77,7 @@ public class PostController {
                     .collect(Collectors.toList());
             return new ResponseEntity<>(new CommentsResponseDto(commentResponseDtoList), HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(new CommentsResponseDto(GET_COMMENTS_FAIL_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new CommentsResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     @GetMapping("/delete")
@@ -96,10 +89,10 @@ public class PostController {
             return ResponseEntity.ok().build();
         } catch (NoSufficientAuthorityException e) {
             return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (InvalidParameterException e) {
+        } catch (NotFoundException e) {
             return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponseDto(DELETE_POST_FAIL), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new BaseResponseDto(DELETE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

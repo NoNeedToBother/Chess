@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.converters.posts.CommentConverter;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
@@ -28,6 +29,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
 @Service
 @AllArgsConstructor
@@ -70,8 +73,6 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findByTitle(title);
         return Optional.ofNullable(postConverter.convert(post));
     }
-
-    private final static String POST_EXISTS_ERROR = "Post with this title already exists";
 
     @Override
     public PostDto save(UploadPostRequestDto uploadPostRequestDto, Long authorId) {
@@ -135,26 +136,24 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
-    private static final String NO_SUFFICIENT_AUTHORITY_ERROR = "No sufficient authority to delete this post";
-
-    private static final String NO_POST_FOUND_ERROR = "No post was found";
-
     @Override
-    public void deleteById(Long id, Long from) {
-        Optional<Post> post = postRepository.findById(id);
-        if (!post.isPresent()) throw new InvalidParameterException(NO_POST_FOUND_ERROR);
-        if (userRoleRepository.isModerator(from)) {
-            postRepository.deleteById(id);
-            return;
+    public void deleteById(Long postId, Long fromId) {
+        Optional<Post> post = postRepository.findById(postId);
+        if (!post.isPresent()) throw new NotFoundException(NO_POST_FOUND_ERROR);
+        if (userRoleRepository.hasModeratorAuthority(fromId)) {
+            deletePost(fromId, post.get());
         }
-        List<Long> postIds = userRepository.findById(from).get()
-                .getPosts()
-                .stream()
-                .map(Post::getId)
-                .collect(Collectors.toList());
-        if (postIds.contains(id)) {
-            postRepository.deleteById(id);
+        else if (postRepository.doesBelongToUser(fromId, postId)) {
+            deletePost(fromId, post.get());
         } else throw new NoSufficientAuthorityException(NO_SUFFICIENT_AUTHORITY_ERROR);
+    }
+
+    private void deletePost(Long authorId, Post post) {
+        User author = userRepository.findById(authorId).get();
+        author.getPosts().removeIf(p -> p.getId().equals(post.getId()));
+        userRepository.save(author);
+        //postRepository.removeAuthor(postId);
+        //postRepository.deleteById(postId);
     }
 
 }

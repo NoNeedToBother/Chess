@@ -7,6 +7,6 @@ public interface CommentService {
 
     CommentDto save(UploadCommentRequestDto uploadCommentRequestDto, Long authorId);
 
-    void deleteById(Long id, Long from);
+    void deleteById(Long commentId, Long fromId);
 
 }

@@ -25,16 +25,16 @@ public class User {
     @Column(unique = true, nullable = false)
     private String username;
 
-    @ColumnDefault(NOT_SPECIFIED)
+    @ColumnDefault("\'Not specified\'")
     private String name;
 
-    @ColumnDefault(NOT_SPECIFIED)
+    @ColumnDefault("\'Not specified\'")
     private String lastname;
 
     @Column(name = "profile_picture")
     private String profilePicture;
 
-    @ColumnDefault(NOT_SPECIFIED)
+    @ColumnDefault("\'Not specified\'")
     private String bio;
 
     @Column(name = "date_registered")
@@ -64,7 +64,7 @@ public class User {
 
     @OneToMany(mappedBy = "author", cascade = CascadeType.ALL,
             orphanRemoval = true, fetch = FetchType.EAGER)
-    @BatchSize(size = 0)
+    //@BatchSize(size = 0)
     private Set<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
@@ -80,5 +80,12 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<User> likesSentTo;
 
-    private static final String NOT_SPECIFIED = "Not specified";
+    @OneToMany(mappedBy = "bannedUser", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Ban> receivedBans;
+
+    @OneToMany(mappedBy = "givenFrom", cascade = CascadeType.ALL,
+            orphanRemoval = true, fetch = FetchType.EAGER)
+    private Set<Ban> givenBans;
+
 }

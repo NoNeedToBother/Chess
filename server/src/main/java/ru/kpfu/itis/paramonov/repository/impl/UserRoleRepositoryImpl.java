@@ -18,7 +18,7 @@ public class UserRoleRepositoryImpl implements UserRoleRepository {
     private UserRepository userRepository;
 
     @Override
-    public boolean isAdmin(Long id) {
+    public boolean hasAdminAuthority(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return false;
         Set<Role> roles = user.getRoles();
@@ -28,7 +28,7 @@ public class UserRoleRepositoryImpl implements UserRoleRepository {
     }
 
     @Override
-    public boolean isModerator(Long id) {
+    public boolean hasModeratorAuthority(Long id) {
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return false;
         Set<Role> roles = user.getRoles();

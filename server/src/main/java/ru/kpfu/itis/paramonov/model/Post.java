@@ -43,4 +43,9 @@ public class Post {
             orphanRemoval = true, fetch = FetchType.EAGER)
     @BatchSize(size = 100)
     private Set<Comment> comments;
+
+    @PreRemove
+    private void removePostFromAuthor() {
+
+    }
 }
