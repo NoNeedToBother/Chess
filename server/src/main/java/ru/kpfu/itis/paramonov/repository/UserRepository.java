@@ -17,6 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "insert into bans(banned_id, from_id, reason) values (:banned, :from, :reason)",
             nativeQuery = true)
+    @Modifying
     void ban(@Param("banned") Long bannedId, @Param("from") Long fromId, @Param("reason") String reason);
 
     @Query(value = "update Ban b set b.unbanned = true where b.bannedUser.id = :banned and b.givenFrom.id = :from")
@@ -32,4 +33,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query(value = "select count(r) <> 0 from user_role as r where r.user_id = :id and r.role = 'CHIEF_ADMIN'", nativeQuery = true)
     boolean isChiefAdmin(@Param("id") Long userId);
 
+    @Query(value = "insert into user_role(user_id, role) values (:id, :role)", nativeQuery = true)
+    @Modifying
+    void promote(@Param("id") Long id, @Param("role") String role);
+
+    @Query(value = "delete from user_role as r where r.user_id = :id and r.role = :role", nativeQuery = true)
+    @Modifying
+    void removeRole(@Param("id") Long id, @Param("role") String role);
 }

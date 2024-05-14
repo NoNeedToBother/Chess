@@ -152,8 +152,6 @@ public class PostServiceImpl implements PostService {
         User author = userRepository.findById(authorId).get();
         author.getPosts().removeIf(p -> p.getId().equals(post.getId()));
         userRepository.save(author);
-        //postRepository.removeAuthor(postId);
-        //postRepository.deleteById(postId);
     }
 
 }

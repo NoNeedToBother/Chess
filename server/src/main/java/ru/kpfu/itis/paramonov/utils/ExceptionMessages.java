@@ -18,6 +18,10 @@ public class ExceptionMessages {
 
     public final static String GET_ERROR = "Failed to get";
 
+
+    public final static String INCORRECT_ROLE_ERROR = "Incorrect role";
+
+
     public final static String EMPTY_CREDENTIALS_ERROR = "Credentials must be not empty";
 
     public final static String NON_UNIQUE_USERNAME_ERROR = "This username already belongs to other user";
