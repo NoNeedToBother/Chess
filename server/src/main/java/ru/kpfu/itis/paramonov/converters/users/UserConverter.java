@@ -6,9 +6,13 @@ import org.springframework.stereotype.Component;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.model.User;
 
+import java.util.stream.Collectors;
+
 @Component
 @AllArgsConstructor
 public class UserConverter implements Converter<User, UserDto> {
+
+    private RoleConverter roleConverter;
 
     @Override
     public UserDto convert(User source) {
@@ -22,6 +26,9 @@ public class UserConverter implements Converter<User, UserDto> {
                 .deactivated(source.isDeactivated())
                 .dateRegistered(source.getDateRegistered())
                 .profilePicture(source.getProfilePicture())
+                .roles(source.getRoles()
+                        .stream().map(role -> roleConverter.convert(role))
+                        .collect(Collectors.toList()))
                 .build();
     }
 

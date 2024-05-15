@@ -10,6 +10,8 @@ public interface UserService {
 
     Optional<UserDto> getById(Long userId);
 
+    Optional<UserDto> getByUsername(String username);
+
     boolean hasModeratorAuthority(Long userId);
 
     boolean hasAdminAuthority(Long userId);

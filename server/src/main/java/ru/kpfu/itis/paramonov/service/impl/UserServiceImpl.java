@@ -37,6 +37,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<UserDto> getByUsername(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+        return user.map(value -> userConverter.convert(value));
+    }
+
+    @Override
     public boolean hasModeratorAuthority(Long userId) {
         return userRoleRepository.hasModeratorAuthority(userId);
     }

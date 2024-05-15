@@ -3,30 +3,35 @@ package ru.kpfu.itis.paramonov.controller;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import ru.kpfu.itis.paramonov.dto.auth.RegisterUserResponse;
+import org.springframework.web.bind.annotation.*;
+import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 import ru.kpfu.itis.paramonov.dto.auth.RefreshJwtRequest;
 import ru.kpfu.itis.paramonov.dto.request.RegisterUserRequestDto;
+import ru.kpfu.itis.paramonov.dto.response.AuthenticateResponseDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
 import ru.kpfu.itis.paramonov.service.AuthService;
+import ru.kpfu.itis.paramonov.service.UserService;
 
 import javax.security.auth.message.AuthException;
 
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class AuthController {
 
     private final AuthService authService;
 
+    private final UserService userService;
+
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest jwtRequest) {
-        return ResponseEntity.ok(authService.login(jwtRequest));
+    public ResponseEntity<AuthenticateResponseDto> login(@RequestBody JwtRequest jwtRequest) {
+        JwtResponse jwtResponse = authService.login(jwtRequest);
+        UserDto user = userService.getByUsername(jwtRequest.getUsername()).get();
+        return new ResponseEntity<>(
+                new AuthenticateResponseDto(user, jwtResponse), HttpStatus.OK);
     }
 
     @PostMapping("/token")
@@ -42,7 +47,7 @@ public class AuthController {
     private static final String REGISTER_ERROR_INTERNAL = "Failed to register, try again later";
 
     @PostMapping(value = "/register", produces = "application/json")
-    public ResponseEntity<RegisterUserResponse> register(
+    public ResponseEntity<AuthenticateResponseDto> register(
             @RequestBody RegisterUserRequestDto registerUserRequestDto
     ) {
         String username = registerUserRequestDto.getUsername();
@@ -52,19 +57,20 @@ public class AuthController {
             authService.registerUser(username, password);
         } catch (InvalidCredentialsException e) {
             return new ResponseEntity<>(
-                    new RegisterUserResponse(e.getMessage()),
+                    new AuthenticateResponseDto(e.getMessage()),
                     HttpStatus.BAD_REQUEST
             );
         } catch (Exception e) {
             return new ResponseEntity<>(
-                    new RegisterUserResponse(REGISTER_ERROR_INTERNAL),
+                    new AuthenticateResponseDto(REGISTER_ERROR_INTERNAL),
                     HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
 
         JwtRequest jwtRequest = new JwtRequest(username, password);
+        JwtResponse jwtResponse = authService.login(jwtRequest);
+        UserDto user = userService.getByUsername(username).get();
         return new ResponseEntity<>(
-                new RegisterUserResponse(authService.login(jwtRequest)),
-                HttpStatus.CREATED);
+                new AuthenticateResponseDto(user, jwtResponse), HttpStatus.CREATED);
     }
 }

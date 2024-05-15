@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -30,4 +31,6 @@ public class UserDto {
     private boolean enabled;
 
     private boolean deactivated;
+
+    private List<RoleDto> roles;
 }
