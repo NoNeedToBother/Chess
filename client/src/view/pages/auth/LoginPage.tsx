@@ -6,6 +6,7 @@ import {UserContext} from "../../../context/UserContext";
 
 export function LoginPage() {
     const { updateUser, updateJwtInfo } = useContext(UserContext)
+    const [error, setError] = useState('')
 
     const onSubmit = async (username: string, password: string) => {
         const service = new AuthService()
@@ -14,17 +15,14 @@ export function LoginPage() {
             updateUser(data.user)
             updateJwtInfo(data.jwtInfo)
             window.location.href = "/"
-        } else {
-            alert(data.error)
-        }
+        } else if(data.error !== undefined) setError(data.error)
     }
 
     return (
-        <>
-            <AuthMenu title="Login">
+        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+            <AuthMenu title="Login" error={ error }>
                 <LoginForm onSubmit={ onSubmit }/>
             </AuthMenu>
-        </>
-
+        </div>
     )
 }

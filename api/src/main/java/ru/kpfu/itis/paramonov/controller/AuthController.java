@@ -11,6 +11,7 @@ import ru.kpfu.itis.paramonov.dto.auth.RefreshJwtRequest;
 import ru.kpfu.itis.paramonov.dto.request.RegisterUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.AuthenticateResponseDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
+import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.service.AuthService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
@@ -29,9 +30,26 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody JwtRequest jwtRequest) {
         JwtResponse jwtResponse = authService.login(jwtRequest);
-        UserDto user = userService.getByUsername(jwtRequest.getUsername()).get();
-        return new ResponseEntity<>(
-                new AuthenticateResponseDto(user, jwtResponse), HttpStatus.OK);
+        try {
+            UserDto user = userService.getByUsername(jwtRequest.getUsername()).get();
+            return new ResponseEntity<>(
+                    new AuthenticateResponseDto(user, jwtResponse), HttpStatus.OK);
+        } catch (InvalidCredentialsException e) {
+            return new ResponseEntity<>(
+                    new AuthenticateResponseDto(e.getMessage()),
+                    HttpStatus.BAD_REQUEST
+            );
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(
+                    new AuthenticateResponseDto(e.getMessage()),
+                    HttpStatus.NOT_FOUND
+            );
+        } catch (Exception e) {
+            return new ResponseEntity<>(
+                    new AuthenticateResponseDto(REGISTER_ERROR_INTERNAL),
+                    HttpStatus.INTERNAL_SERVER_ERROR
+            );
+        }
     }
 
     @PostMapping("/token")
