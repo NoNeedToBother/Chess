@@ -1,18 +1,22 @@
 import React, {useState} from "react";
 import {AuthMenu} from "../../components/AuthMenu";
 import {useUserContext} from "../../../context/UserContext";
-import {AuthService} from "../../../data/AuthService";
 import {RegisterForm} from "../../components/form/RegisterForm";
 import {useNavigate} from "react-router-dom";
+import {useDataContext} from "../../../context/DataContext";
 
 export function RegisterPage() {
     const { setUser, setJwt } = useUserContext()
+    const { authService } = useDataContext()
     const [error, setError] = useState('')
     const navigate = useNavigate();
 
-    const onSubmit = async (username: string, password: string) => {
-        const service = new AuthService()
-        const data = await service.register(username, password)
+    const onSubmit = async (username: string, password: string, confirmPassword: string) => {
+        if (password !== confirmPassword) {
+            setError("Password and confirm password field do not match")
+            return
+        }
+        const data = await authService.register(username, password)
         if (data.user !== undefined && data.jwtInfo !== undefined) {
             setUser(data.user)
             setJwt(data.jwtInfo)

@@ -1,6 +1,4 @@
-import {Role} from "./Role";
-
-export interface User {
+export interface UserResponse {
     id: number;
     username: string;
     name: string | null;
@@ -8,5 +6,5 @@ export interface User {
     profilePicture: string | null;
     bio: string | null;
     dateRegistered: string;
-    roles: Role[];
+    roles: string[]
 }

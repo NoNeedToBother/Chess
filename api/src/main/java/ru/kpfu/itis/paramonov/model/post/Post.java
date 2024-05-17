@@ -1,8 +1,10 @@
-package ru.kpfu.itis.paramonov.model;
+package ru.kpfu.itis.paramonov.model.post;
 
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.kpfu.itis.paramonov.model.comment.Comment;
+import ru.kpfu.itis.paramonov.model.User;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

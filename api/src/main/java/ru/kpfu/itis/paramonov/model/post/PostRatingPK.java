@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.model;
+package ru.kpfu.itis.paramonov.model.post;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

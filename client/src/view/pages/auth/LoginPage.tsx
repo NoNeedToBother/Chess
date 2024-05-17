@@ -1,18 +1,18 @@
 import React, {useState} from "react";
 import {AuthMenu} from "../../components/AuthMenu";
 import {LoginForm} from "../../components/form/LoginForm";
-import {AuthService} from "../../../data/AuthService";
 import {useUserContext} from "../../../context/UserContext";
 import {useNavigate} from "react-router-dom";
+import {useDataContext} from "../../../context/DataContext";
 
 export function LoginPage() {
     const { setUser, setJwt } = useUserContext()
+    const { authService } = useDataContext()
     const [error, setError] = useState('')
     const navigate = useNavigate();
 
     const onSubmit = async (username: string, password: string) => {
-        const service = new AuthService()
-        const data = await service.login(username, password)
+        const data = await authService.login(username, password)
 
         if (data.user !== undefined && data.jwtInfo !== undefined) {
             setUser(data.user)

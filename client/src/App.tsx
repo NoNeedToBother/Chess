@@ -6,12 +6,13 @@ import {MainPage} from "./view/pages/MainPage";
 import {NavItem} from "./view/components/nav/NavItem";
 import {NavBar} from "./view/components/nav/NavBar";
 import {useUserContext} from "./context/UserContext";
+import {Data} from "./context/DataContext";
 
 function App() {
     const { user } = useUserContext()
 
     return (
-        <>
+        <Data>
             { user !== null &&
                 <NavBar>
                     <NavItem href="/posts" name="Posts"/>
@@ -23,7 +24,7 @@ function App() {
                 <Route path="/register" element={<RegisterPage/>}/>
                 <Route path="/" element={<MainPage/>}/>
             </Routes>
-        </>
+        </Data>
 
     );
 }

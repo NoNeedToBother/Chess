@@ -16,7 +16,7 @@ export const UserContextProvider = UserContext.Provider
 export const useUserContext = () => {
     const data = useContext(UserContext)
     if (!data) {
-        throw new Error("Attempt to call outside of the provider")
+        throw new Error("Attempt to call UserContext outside of the provider")
     }
     return data;
 }

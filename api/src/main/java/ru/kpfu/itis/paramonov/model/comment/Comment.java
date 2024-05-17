@@ -1,7 +1,9 @@
-package ru.kpfu.itis.paramonov.model;
+package ru.kpfu.itis.paramonov.model.comment;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.kpfu.itis.paramonov.model.User;
+import ru.kpfu.itis.paramonov.model.post.Post;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

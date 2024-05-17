@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
-import ru.kpfu.itis.paramonov.model.Comment;
+import ru.kpfu.itis.paramonov.model.comment.Comment;
 
 @Component
 @AllArgsConstructor

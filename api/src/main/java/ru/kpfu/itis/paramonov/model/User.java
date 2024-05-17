@@ -3,6 +3,8 @@ import lombok.*;
 import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
+import ru.kpfu.itis.paramonov.model.comment.Comment;
+import ru.kpfu.itis.paramonov.model.post.Post;
 
 import javax.persistence.*;
 

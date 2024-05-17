@@ -4,8 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.kpfu.itis.paramonov.model.Post;
-import ru.kpfu.itis.paramonov.model.PostRating;
+import ru.kpfu.itis.paramonov.model.post.Post;
+import ru.kpfu.itis.paramonov.model.post.PostRating;
 import ru.kpfu.itis.paramonov.model.User;
 
 public interface PostRatingRepository extends JpaRepository<PostRating, Long> {

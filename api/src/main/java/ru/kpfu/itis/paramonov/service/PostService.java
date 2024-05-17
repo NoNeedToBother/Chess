@@ -1,5 +1,7 @@
 package ru.kpfu.itis.paramonov.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 public interface PostService {
 
-    List<PostDto> getAll();
+    Page<PostDto> getAll(Pageable pageable);
 
     Optional<PostDto> getById(long id);
 

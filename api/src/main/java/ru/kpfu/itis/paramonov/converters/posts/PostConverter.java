@@ -5,7 +5,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.kpfu.itis.paramonov.converters.users.UserConverter;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
-import ru.kpfu.itis.paramonov.model.Post;
+import ru.kpfu.itis.paramonov.model.post.Post;
 
 @Component
 @AllArgsConstructor

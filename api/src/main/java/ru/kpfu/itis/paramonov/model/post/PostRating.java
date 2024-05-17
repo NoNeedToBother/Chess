@@ -1,6 +1,7 @@
-package ru.kpfu.itis.paramonov.model;
+package ru.kpfu.itis.paramonov.model.post;
 
 import lombok.*;
+import ru.kpfu.itis.paramonov.model.User;
 
 import javax.persistence.*;
 

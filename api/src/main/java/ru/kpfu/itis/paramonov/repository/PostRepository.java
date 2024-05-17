@@ -3,7 +3,7 @@ package ru.kpfu.itis.paramonov.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import ru.kpfu.itis.paramonov.model.Post;
+import ru.kpfu.itis.paramonov.model.post.Post;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     Post findByTitle(String title);

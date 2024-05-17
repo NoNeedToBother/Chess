@@ -1,6 +1,8 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,6 +66,20 @@ public class PostController {
             }
         } catch (Exception e) {
             return new ResponseEntity<>(new PostResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/get/all")
+    public ResponseEntity<Page<PostResponseDto>> getAll(Pageable pageable) {
+        try {
+            Page<PostResponseDto> resp = postService.getAll(pageable).map(post -> {
+                UserDto author = userService.getById(post.getAuthorId()).get();
+                PostResponseDto postResponseDto = new PostResponseDto(author, post);
+                return postResponseDto;
+            });
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
         }
     }
 

@@ -2,6 +2,8 @@ package ru.kpfu.itis.paramonov.service.impl;
 
 import com.cloudinary.Cloudinary;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
@@ -15,7 +17,7 @@ import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
-import ru.kpfu.itis.paramonov.model.Post;
+import ru.kpfu.itis.paramonov.model.post.Post;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
@@ -55,16 +57,15 @@ public class PostServiceImpl implements PostService {
     private Cloudinary cloudinary;
 
     @Override
-    public List<PostDto> getAll() {
+    public Page<PostDto> getAll(Pageable pageable) {
         return postRepository
-                .findAll()
-                .stream().map( post -> {
+                .findAll(pageable)
+                .map( post -> {
                     PostDto dto = postConverter.convert(post);
                     dto.setRating(postRatingRepository.getAverageRating(post.getId()));
                     return dto;
                 }
-                )
-                .collect(Collectors.toList());
+                );
     }
 
     @Override

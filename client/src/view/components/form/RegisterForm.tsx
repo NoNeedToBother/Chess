@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {FormElement} from "./FormElement";
 
 interface LoginFormProps {
-    onSubmit: (username: string, password: string) => void
+    onSubmit: (username: string, password: string, confirmPassword: string) => void,
 }
 
 export function RegisterForm({ onSubmit }: LoginFormProps) {
@@ -12,9 +12,7 @@ export function RegisterForm({ onSubmit }: LoginFormProps) {
 
     const submitListener = (event: React.FormEvent) => {
         event.preventDefault()
-        if (password !== confirmPassword) {
-            alert("Debik?")
-        } else onSubmit(username, password)
+        onSubmit(username, password, confirmPassword)
     }
 
     const usernameChangeListener = (event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)
