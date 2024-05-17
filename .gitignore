@@ -3,6 +3,7 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
+/node_modules
 
 ### IntelliJ IDEA ###
 *.iws
@@ -40,3 +41,4 @@ bin/
 
 ### properties ###
 jwt.yaml
+cloudinary.yaml
