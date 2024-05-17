@@ -1,20 +1,23 @@
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import {AuthMenu} from "../../components/AuthMenu";
-import {LoginForm} from "../../components/LoginForm";
+import {LoginForm} from "../../components/form/LoginForm";
 import {AuthService} from "../../../data/AuthService";
-import {UserContext} from "../../../context/UserContext";
+import {useUserContext} from "../../../context/UserContext";
+import {useNavigate} from "react-router-dom";
 
 export function LoginPage() {
-    const { updateUser, updateJwtInfo } = useContext(UserContext)
+    const { setUser, setJwt } = useUserContext()
     const [error, setError] = useState('')
+    const navigate = useNavigate();
 
     const onSubmit = async (username: string, password: string) => {
         const service = new AuthService()
         const data = await service.login(username, password)
+
         if (data.user !== undefined && data.jwtInfo !== undefined) {
-            updateUser(data.user)
-            updateJwtInfo(data.jwtInfo)
-            window.location.href = "/"
+            setUser(data.user)
+            setJwt(data.jwtInfo)
+            navigate("/")
         } else if(data.error !== undefined) setError(data.error)
     }
 

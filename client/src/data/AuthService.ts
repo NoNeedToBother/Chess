@@ -26,6 +26,7 @@ export class AuthService {
                     "username": username,
                     "password": password
                 })
+            console.log(resp.data)
             return resp.data
         } catch (e: unknown) {
             return this.handleAxiosError(e)

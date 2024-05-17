@@ -1,51 +1,34 @@
-import React, {createContext, useState} from "react";
+import React, {createContext, useContext, useState} from "react";
 import {User} from "../models/User";
 import {JwtInfo} from "../models/JwtInfo";
 
 interface IUserContext {
-    getUser: () => (User | null)
-    updateUser: (u: User) => void;
-    clearUser: () => void;
-    getJwtInfo: () => (JwtInfo | null);
-    updateJwtInfo: (jwt: JwtInfo) => void;
+    user: User | null;
+    setUser: (u: User) => void;
+    jwt: JwtInfo | null;
+    setJwt: (jwt: JwtInfo) => void;
 }
 
-export const UserContext = createContext<IUserContext>({
-    getUser: () => { return null },
-    updateUser: () => {},
-    clearUser: () => {},
-    getJwtInfo: () => { return null },
-    updateJwtInfo: () => {}
-})
+const UserContext = createContext<IUserContext | null>(null)
+
+export const UserContextProvider = UserContext.Provider
+
+export const useUserContext = () => {
+    const data = useContext(UserContext)
+    if (!data) {
+        throw new Error("Attempt to call outside of the provider")
+    }
+    return data;
+}
 
 export const UserState = ({ children }: {children: React.ReactNode}) => {
-    const [userState, setUser] =
-        useState<{user: null | User}>({user: null})
-
-    const [jwtState, setJwtInfo] =
-        useState<{ jwt: null | JwtInfo }>({ jwt: null })
-
-    const updateUser = (u: User) => setUser({user: u })
-
-    const clearUser = () => setUser({ user: null })
-
-    const updateJwt = (jwt: JwtInfo) => setJwtInfo({ jwt: jwt })
-
-    const context = new class implements IUserContext {
-        clearUser(): void { clearUser() }
-        updateUser(u: User): void { updateUser(u)}
-        getUser(): User | null {
-            return userState.user;
-        }
-        getJwtInfo(): JwtInfo | null {
-            return jwtState.jwt
-        }
-        updateJwtInfo(jwt: JwtInfo): void { updateJwt(jwt) }
-    }()
-
+    const [user, setUser] =
+        useState<User | null>(null)
+    const [jwt, setJwt] =
+        useState<JwtInfo | null>(null)
     return(
-        <UserContext.Provider value={context}>
+        <UserContextProvider value={{user, setUser, jwt, setJwt}}>
             { children }
-        </UserContext.Provider>
+        </UserContextProvider>
     )
 }
