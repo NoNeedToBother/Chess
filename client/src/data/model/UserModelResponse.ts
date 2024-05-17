@@ -1,4 +1,4 @@
-export interface UserResponse {
+export interface UserModelResponse {
     id: number;
     username: string;
     name: string | null;

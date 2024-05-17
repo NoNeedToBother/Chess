@@ -1,15 +1,14 @@
 import {JwtInfo} from "../../models/JwtInfo";
-import {UserResponse} from "./UserResponse";
+import {UserModelResponse} from "./UserModelResponse";
 import {User} from "../../models/User";
+import {BaseResponse} from "./BaseResponse";
 
-export interface AuthDataResponse {
-    user?: UserResponse;
+export interface AuthDataResponse extends BaseResponse {
+    user?: UserModelResponse;
     jwtInfo?: JwtInfo;
-    error?: string;
 }
 
-export interface AuthResponse {
+export interface AuthResponse extends BaseResponse {
     user?: User;
     jwtInfo?: JwtInfo;
-    error?: string;
 }

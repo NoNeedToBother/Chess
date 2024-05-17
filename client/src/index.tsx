@@ -10,10 +10,10 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-      <BrowserRouter>
-          <UserState>
-              <App />
-          </UserState>
-      </BrowserRouter>
+      <UserState>
+        <BrowserRouter>
+            <App/>
+        </BrowserRouter>
+      </UserState>
   </React.StrictMode>
 );

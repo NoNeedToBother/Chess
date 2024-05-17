@@ -7,6 +7,8 @@ import {NavItem} from "./view/components/nav/NavItem";
 import {NavBar} from "./view/components/nav/NavBar";
 import {useUserContext} from "./context/UserContext";
 import {Data} from "./context/DataContext";
+import {PostPage} from "./view/pages/posts/PostPage";
+import {PostsPage} from "./view/pages/posts/PostsPage";
 
 function App() {
     const { user } = useUserContext()
@@ -23,6 +25,8 @@ function App() {
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path="/register" element={<RegisterPage/>}/>
                 <Route path="/" element={<MainPage/>}/>
+                <Route path="/post/:id" element={<PostPage/>}/>
+                <Route path="/posts" element={<PostsPage/>}/>
             </Routes>
         </Data>
 

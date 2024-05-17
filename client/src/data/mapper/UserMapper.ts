@@ -1,16 +1,16 @@
 import {Mapper} from "./Mapper";
 import {User} from "../../models/User";
-import {UserResponse} from "../model/UserResponse";
+import {UserModelResponse} from "../model/UserModelResponse";
 import {Role} from "../../models/Role";
 
-export class UserMapper implements Mapper<UserResponse, User> {
+export class UserMapper implements Mapper<UserModelResponse, User> {
     private roleMapper: RoleMapper
 
     constructor(roleMapper: RoleMapper) {
         this.roleMapper = roleMapper
     }
 
-    map(response: UserResponse): User {
+    map(response: UserModelResponse): User {
         return {
             id: response.id,
             username: response.username,

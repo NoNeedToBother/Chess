@@ -32,6 +32,7 @@ import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
+@CrossOrigin(origins = {"http://localhost:3000"})
 public class PostController {
 
     private final PostService postService;

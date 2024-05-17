@@ -1,11 +1,15 @@
-import {AuthService} from "../data/AuthService";
-import {PostService} from "../data/PostService";
-import React, {createContext, useContext, useState} from "react";
+import {AuthService} from "../data/service/AuthService";
+import {PostService} from "../data/service/PostService";
+import React, {createContext, useContext} from "react";
 import {RoleMapper, UserMapper} from "../data/mapper/UserMapper";
+import {UrlFormatter} from "../utils/UrlFormatter";
+import {useNavigate} from "react-router-dom";
+import {Navigator} from "../utils/Navigator";
 
 interface IDataContext {
     authService: AuthService;
     postService: PostService;
+    navigator: Navigator;
 }
 
 const DataContext = createContext<IDataContext | null>(null)
@@ -24,9 +28,12 @@ export const Data = ({ children }: {children: React.ReactNode}) => {
     const roleMapper = new RoleMapper()
     const userMapper = new UserMapper(roleMapper)
     const authService = new AuthService(userMapper)
-    const postService = new PostService()
+    const urlFormatter = new UrlFormatter()
+    const postService = new PostService(urlFormatter, userMapper)
+    const navigate = useNavigate()
+    const navigator = new Navigator(navigate)
     return(
-        <DataContextProvider value={{authService, postService}}>
+        <DataContextProvider value={{authService, postService, navigator}}>
             { children }
         </DataContextProvider>
     )
