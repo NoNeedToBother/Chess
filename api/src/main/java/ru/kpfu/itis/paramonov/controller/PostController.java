@@ -19,7 +19,7 @@ import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
-import ru.kpfu.itis.paramonov.filter.JwtAuthentication;
+import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
@@ -32,7 +32,6 @@ import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 @RestController
 @RequestMapping("/api/posts")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class PostController {
 
     private final PostService postService;

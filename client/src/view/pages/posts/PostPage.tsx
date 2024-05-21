@@ -14,9 +14,11 @@ export function PostPage() {
     useEffect(() => {
         let token = jwt?.accessToken
         if (token !== undefined && id !== undefined) {
-            console.log("parse")
-            postService.get(parseInt(id), token).then(res =>
-                setPost(res)
+            postService.get(parseInt(id), token).then(res => {
+                    if (res.post !== undefined) {
+                        setPost(res.post)
+                    }
+                }
             )
         }
     }, [])

@@ -9,7 +9,7 @@ import ru.kpfu.itis.paramonov.service.AuthService;
 import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
-import ru.kpfu.itis.paramonov.filter.JwtProvider;
+import ru.kpfu.itis.paramonov.filter.jwt.JwtProvider;
 import ru.kpfu.itis.paramonov.model.Role;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.UserRepository;

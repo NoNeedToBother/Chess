@@ -1,9 +1,8 @@
-import axios, {isAxiosError} from "axios";
+import axios from "axios";
 import {GET_POST_ENDPOINT, GET_POSTS_ENDPOINT} from "../../utils/Endpoints";
 import {UrlFormatter} from "../../utils/UrlFormatter";
 import {PagePostDataResponse, PagePostResponse} from "../model/PagePostResponse";
 import {PostDataResponse, PostModelResponse, PostResponse} from "../model/PostResponse";
-import {Post} from "../../models/Post";
 import {UserMapper} from "../mapper/UserMapper";
 import {UserModelResponse} from "../model/UserModelResponse";
 import {AbstractService} from "./AbstractService";

@@ -9,13 +9,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.kpfu.itis.paramonov.filter.JwtFilter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import ru.kpfu.itis.paramonov.filter.jwt.JwtFilter;
 import ru.kpfu.itis.paramonov.model.Role;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig {
+public class SecurityConfig implements WebMvcConfigurer {
 
     public SecurityConfig(JwtFilter jwtFilter) {
         this.jwtFilter = jwtFilter;
@@ -29,7 +30,7 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity.httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement()
@@ -42,7 +43,7 @@ public class SecurityConfig {
                                         Role.ADMIN.getAuthority(), Role.MODERATOR.getAuthority(), Role.CHIEF_ADMIN.getAuthority())
                                 .antMatchers("/api/**/admin/**").hasAnyAuthority(
                                         Role.ADMIN.getAuthority(), Role.CHIEF_ADMIN.getAuthority())
-                                .antMatchers("/api/**").hasAuthority(Role.USER.getAuthority())
+                                .antMatchers("/api/**").authenticated()
                                 .and().addFilterAfter(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 )
                 .build();
