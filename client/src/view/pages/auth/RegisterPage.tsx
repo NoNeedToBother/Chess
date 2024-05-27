@@ -5,7 +5,7 @@ import {RegisterForm} from "../../components/form/RegisterForm";
 import {useDataContext} from "../../../context/DataContext";
 
 export function RegisterPage() {
-    const { setUser, setJwt } = useUserContext()
+    const { updateUser, updateJwt } = useUserContext()
     const { authService, navigator } = useDataContext()
     const [error, setError] = useState('')
 
@@ -16,8 +16,8 @@ export function RegisterPage() {
         }
         const data = await authService.register(username, password)
         if (data.user !== undefined && data.jwtInfo !== undefined) {
-            setUser(data.user)
-            setJwt(data.jwtInfo)
+            updateUser(data.user)
+            updateJwt(data.jwtInfo)
             navigator.navigateToMain()
         } else if (data.error !== undefined) setError(data.error)
     }

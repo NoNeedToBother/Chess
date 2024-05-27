@@ -5,14 +5,14 @@ import {useUserContext} from "../../../context/UserContext";
 import {useDataContext} from "../../../context/DataContext";
 
 export function LoginPage() {
-    const { setUser, setJwt } = useUserContext()
+    const { updateUser, updateJwt } = useUserContext()
     const { authService, navigator } = useDataContext()
     const [error, setError] = useState('')
     const onSubmit = async (username: string, password: string) => {
         const data = await authService.login(username, password)
         if (data.user !== undefined && data.jwtInfo !== undefined) {
-            setUser(data.user)
-            setJwt(data.jwtInfo)
+            updateUser(data.user)
+            updateJwt(data.jwtInfo)
             navigator.navigateToMain()
         } else if(data.error !== undefined) setError(data.error)
     }

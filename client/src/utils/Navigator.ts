@@ -16,6 +16,10 @@ export class Navigator {
     }
 
     navigateToLogin() {
+        this.navigation("/login")
+    }
 
+    navigateToProfile() {
+        this.navigation("/profile")
     }
 }
