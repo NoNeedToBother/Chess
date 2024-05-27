@@ -70,6 +70,7 @@ public class PostController {
     }
 
     @GetMapping("/get/all")
+    @CrossOrigin
     public ResponseEntity<Page<PostResponseDto>> getAll(Pageable pageable) {
         try {
             Page<PostResponseDto> resp = postService.getAll(pageable).map(post -> {

@@ -7,6 +7,6 @@ export interface Post {
     title: string;
     content: string;
     description: string;
-    datePoster: string;
+    datePosted: string;
     rating: number;
 }

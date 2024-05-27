@@ -29,8 +29,8 @@ export class PostService extends AbstractService{
 
             if (resp.data.content !== undefined) {
                 resp.data.content.forEach( post => {
-                    if (post.user !== undefined && post.post !== undefined)
-                        posts.push(this.mapPostDataResponse(post.user, post.post))
+                    if (post.author !== undefined && post.post !== undefined)
+                        posts.push(this.mapPostDataResponse(post.author, post.post))
                 })
             }
             return {posts: posts} as PagePostResponse
@@ -45,8 +45,8 @@ export class PostService extends AbstractService{
                 this.urlFormatter.format(GET_POST_ENDPOINT, params),
                 { headers: {Authorization: "Bearer: " + accessToken}}
             )
-            if (resp.data.post !== undefined && resp.data.user !== undefined)
-                return this.mapPostDataResponse(resp.data.user, resp.data.post)
+            if (resp.data.post !== undefined && resp.data.author !== undefined)
+                return this.mapPostDataResponse(resp.data.author, resp.data.post)
             else return { error: "Something went wrong, try again later"}
         })
     }
@@ -60,7 +60,7 @@ export class PostService extends AbstractService{
                 title: post.title,
                 content: post.content,
                 description: post.description,
-                datePoster: post.datePoster,
+                datePosted: post.datePoster,
                 rating: post.rating,
             }
         }

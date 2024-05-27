@@ -3,7 +3,7 @@ import {Post} from "../../models/Post";
 import {BaseResponse} from "./BaseResponse";
 
 export interface PostDataResponse extends BaseResponse{
-    user?: UserModelResponse
+    author?: UserModelResponse
     post?: PostModelResponse
 }
 
