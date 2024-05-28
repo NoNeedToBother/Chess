@@ -4,9 +4,10 @@ import {JwtInfo} from "../models/JwtInfo";
 
 interface IUserContext {
     user: User | null;
-    setUser: (u: User) => void;
+    updateUser: (u: User) => void;
+    clearUser: () => void;
     jwt: JwtInfo | null;
-    setJwt: (jwt: JwtInfo) => void;
+    updateJwt: (jwt: JwtInfo) => void;
 }
 
 const UserContext = createContext<IUserContext | null>(null)
@@ -26,8 +27,10 @@ export const UserState = ({ children }: {children: React.ReactNode}) => {
         useState<User | null>(null)
     const [jwt, setJwt] =
         useState<JwtInfo | null>(null)
+    const clearUser = () => { setUser(null) }
     return(
-        <UserContextProvider value={{user, setUser, jwt, setJwt}}>
+        <UserContextProvider value={{user: user, updateUser: setUser, clearUser: clearUser,
+            jwt: jwt, updateJwt: setJwt}}>
             { children }
         </UserContextProvider>
     )

@@ -9,17 +9,14 @@ import org.springframework.web.bind.annotation.*;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
-import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.CommentsResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
+import ru.kpfu.itis.paramonov.dto.response.*;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
-import ru.kpfu.itis.paramonov.filter.JwtAuthentication;
+import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
@@ -115,19 +112,32 @@ public class PostController {
     }
 
     @PostMapping("/update/rating")
-    public ResponseEntity<BaseResponseDto> updateRating(
+    public ResponseEntity<PostResponseDto> updateRating(
             @RequestBody UpdatePostRatingRequestDto updatePostRatingRequestDto, JwtAuthentication authentication
     ) {
         try {
             Long from = authentication.getId();
-            postService.updateRating(updatePostRatingRequestDto, from);
-            return ResponseEntity.ok().build();
+            PostDto result = postService.updateRating(updatePostRatingRequestDto, from);
+            UserDto author = userService.getById(result.getAuthorId()).get();
+            return new ResponseEntity<>(new PostResponseDto(author, result), HttpStatus.OK);
         } catch (DeniedRequestException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new PostResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/get/pageamount")
+    public ResponseEntity<PageAmountResponseDto> getPageAmount(@RequestParam Integer size) {
+        try {
+            Integer amount = postService.getTotalPageAmount(size);
+            return new ResponseEntity<>(new PageAmountResponseDto(amount), HttpStatus.OK);
+        } catch (InvalidParameterException e) {
+            return new ResponseEntity<>(new PageAmountResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new PageAmountResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

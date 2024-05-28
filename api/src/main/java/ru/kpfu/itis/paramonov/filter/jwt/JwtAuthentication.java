@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.filter;
+package ru.kpfu.itis.paramonov.filter.jwt;
 
 import lombok.Getter;
 import lombok.Setter;

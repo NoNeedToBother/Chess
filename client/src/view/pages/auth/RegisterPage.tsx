@@ -1,15 +1,13 @@
 import React, {useState} from "react";
-import {AuthMenu} from "../../components/AuthMenu";
+import {AuthMenu} from "../../components/other/AuthMenu";
 import {useUserContext} from "../../../context/UserContext";
 import {RegisterForm} from "../../components/form/RegisterForm";
-import {useNavigate} from "react-router-dom";
 import {useDataContext} from "../../../context/DataContext";
 
 export function RegisterPage() {
-    const { setUser, setJwt } = useUserContext()
-    const { authService } = useDataContext()
+    const { updateUser, updateJwt } = useUserContext()
+    const { authService, navigator } = useDataContext()
     const [error, setError] = useState('')
-    const navigate = useNavigate();
 
     const onSubmit = async (username: string, password: string, confirmPassword: string) => {
         if (password !== confirmPassword) {
@@ -18,9 +16,9 @@ export function RegisterPage() {
         }
         const data = await authService.register(username, password)
         if (data.user !== undefined && data.jwtInfo !== undefined) {
-            setUser(data.user)
-            setJwt(data.jwtInfo)
-            navigate("/")
+            updateUser(data.user)
+            updateJwt(data.jwtInfo)
+            navigator.navigateToMain()
         } else if (data.error !== undefined) setError(data.error)
     }
 

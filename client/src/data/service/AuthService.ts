@@ -1,18 +1,20 @@
-import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "../utils/Endpoints";
+import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "../../utils/Endpoints";
 import axios from 'axios';
-import {AuthDataResponse, AuthResponse} from "./model/AuthResponse";
-import {UserMapper} from "./mapper/UserMapper";
+import {AuthDataResponse, AuthResponse} from "../model/AuthResponse";
+import {UserMapper} from "../mapper/UserMapper";
+import {AbstractService} from "./AbstractService";
 
-export class AuthService {
+export class AuthService extends AbstractService {
 
     private userMapper: UserMapper
 
     constructor(userMapper: UserMapper) {
+        super()
         this.userMapper = userMapper
     }
 
     async login(username: String, password: String): Promise<AuthResponse> {
-        try {
+        return this.handleAxios( async () => {
             let resp = await axios.post<AuthDataResponse>(
                 LOGIN_ENDPOINT,
                 {
@@ -20,13 +22,11 @@ export class AuthService {
                     "password": password
                 })
             return this.mapDataResponse(resp.data)
-        } catch (e: unknown) {
-            return this.handleAxiosError(e)
-        }
+        })
     }
 
     async register(username: String, password: String): Promise<AuthResponse> {
-        try {
+        return this.handleAxios( async () => {
             let resp = await axios.post<AuthDataResponse>(
                 REGISTER_ENDPOINT,
                 {
@@ -34,17 +34,7 @@ export class AuthService {
                     "password": password
                 })
             return this.mapDataResponse(resp.data)
-        } catch (e: unknown) {
-            return this.handleAxiosError(e)
-        }
-    }
-
-    private handleAxiosError(e: unknown) {
-        if (axios.isAxiosError(e)) {
-            let error = e.response?.data.error
-            if (error !== undefined) return { error: error }
-        }
-        return { error: "Something went wrong, try again later" }
+        })
     }
 
     private mapDataResponse(resp: AuthDataResponse): AuthResponse {

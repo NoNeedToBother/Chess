@@ -5,7 +5,7 @@ export interface User {
     username: string;
     name: string | null;
     lastname: string | null;
-    profilePicture: string | null;
+    profilePicture: string;
     bio: string | null;
     dateRegistered: string;
     roles: Role[];

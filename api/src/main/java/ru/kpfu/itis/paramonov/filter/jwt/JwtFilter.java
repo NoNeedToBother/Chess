@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.filter;
+package ru.kpfu.itis.paramonov.filter.jwt;
 
 import io.jsonwebtoken.Claims;
 import org.springframework.boot.actuate.metrics.data.DefaultRepositoryTagsProvider;

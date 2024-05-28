@@ -26,8 +26,10 @@ public interface PostService {
 
     void deleteById(Long postId, Long fromId);
 
-    void updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId);
+    PostDto updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId);
 
     Double getAverageRating(Long postId);
+
+    Integer getTotalPageAmount(int pageSize);
 
 }

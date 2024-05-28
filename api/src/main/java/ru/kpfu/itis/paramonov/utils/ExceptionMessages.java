@@ -20,7 +20,6 @@ public class ExceptionMessages {
 
     public final static String UPDATE_ERROR = "Failed to update";
 
-
     public final static String INCORRECT_ROLE_ERROR = "Incorrect role";
 
     public final static String UPDATE_OWN_POST_DENIED_ERROR = "Cannot perform for your own post";
@@ -41,5 +40,7 @@ public class ExceptionMessages {
     public final static String INVALID_REFRESH_TOKEN_ERROR = "Invalid refresh token";
 
     public final static String INTERNAL_SERVER_ERROR = "Something went wrong, try again later";
+
+    public final static String INVALID_PARAMETER_SIZE = "Invalid parameter of size";
 
 }

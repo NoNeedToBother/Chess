@@ -6,15 +6,21 @@ import {MainPage} from "./view/pages/MainPage";
 import {NavItem} from "./view/components/nav/NavItem";
 import {NavBar} from "./view/components/nav/NavBar";
 import {useUserContext} from "./context/UserContext";
-import {Data} from "./context/DataContext";
+import {useDataContext} from "./context/DataContext";
+import {PostPage} from "./view/pages/posts/PostPage";
+import {PostsPage} from "./view/pages/posts/PostsPage";
 
 function App() {
-    const { user } = useUserContext()
+    const { user, clearUser } = useUserContext()
+    const { navigator } = useDataContext()
 
+    const onLogout = () => {
+        clearUser()
+    }
     return (
-        <Data>
+        <>
             { user !== null &&
-                <NavBar>
+                <NavBar user={ user } onLogout={ onLogout } navigator={ navigator }>
                     <NavItem href="/posts" name="Posts"/>
                     <NavItem href="/upload/post" name="Upload post"/>
                 </NavBar>
@@ -23,8 +29,10 @@ function App() {
                 <Route path="/login" element={<LoginPage/>}/>
                 <Route path="/register" element={<RegisterPage/>}/>
                 <Route path="/" element={<MainPage/>}/>
+                <Route path="/post/:id" element={<PostPage/>}/>
+                <Route path="/posts" element={<PostsPage/>}/>
             </Routes>
-        </Data>
+        </>
 
     );
 }

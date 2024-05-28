@@ -11,7 +11,7 @@ import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
-import ru.kpfu.itis.paramonov.filter.JwtAuthentication;
+import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.CommentService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
