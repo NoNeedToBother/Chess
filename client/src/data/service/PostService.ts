@@ -1,5 +1,10 @@
 import axios from "axios";
-import {GET_POST_ENDPOINT, GET_POST_PAGE_AMOUNT_ENDPOINT, GET_POSTS_ENDPOINT} from "../../utils/Endpoints";
+import {
+    GET_POST_ENDPOINT,
+    GET_POST_PAGE_AMOUNT_ENDPOINT,
+    GET_POSTS_ENDPOINT,
+    UPDATE_POST_RATING_ENDPOINT
+} from "../../utils/Endpoints";
 import {UrlFormatter} from "../../utils/UrlFormatter";
 import {PageAmountResponse, PagePostDataResponse, PagePostResponse} from "../model/PagePostResponse";
 import {PostDataResponse, PostModelResponse, PostResponse} from "../model/PostResponse";
@@ -63,6 +68,19 @@ export class PostService extends AbstractService{
                 { headers: {Authorization: "Bearer " + accessToken}}
             )
             return resp.data
+        })
+    }
+
+    async updateRating(postId: number, rating: number, accessToken: string): Promise<PostResponse> {
+        return this.handleAxios(async () => {
+            let resp = await axios.post<PostDataResponse>(
+                UPDATE_POST_RATING_ENDPOINT,
+                {postId: postId, rating: rating},
+                { headers: {Authorization: "Bearer " + accessToken}}
+            )
+            if (resp.data.post !== undefined && resp.data.author !== undefined)
+                return this.mapPostDataResponse(resp.data.author, resp.data.post)
+            else return { error: "Something went wrong, try again later"}
         })
     }
 

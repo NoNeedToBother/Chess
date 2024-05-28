@@ -162,7 +162,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId) {
+    public PostDto updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId) {
         Optional<Post> post = postRepository.findById(updatePostRatingRequestDto.getPostId());
         User user = userRepository.findById(fromId).get();
         Integer rating = updatePostRatingRequestDto.getRating();
@@ -175,6 +175,7 @@ public class PostServiceImpl implements PostService {
             } else {
                 postRatingRepository.addRating(post.get().getId(), user.getId(), rating);
             }
+            return getById(post.get().getId()).get();
         } else throw new NotFoundException(NO_POST_FOUND_ERROR);
     }
 

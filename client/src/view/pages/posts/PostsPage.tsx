@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {PostCard} from "../../components/PostCard";
 import {Post} from "../../../models/Post";
-import {PaginationBar} from "../../components/pagination/PaginationBar";
-import {useLoadPage} from "../hooks/UseLoadPage";
+import {PaginationBar} from "../../components/other/PaginationBar";
+import {useLoadPostPage} from "../../../hooks/UseLoadPostPage";
 import {useDataContext} from "../../../context/DataContext";
 import {useUserContext} from "../../../context/UserContext";
 
@@ -12,7 +12,7 @@ export function PostsPage() {
     const { postService } = useDataContext()
     const { jwt } = useUserContext()
 
-    const {posts, loadPage} = useLoadPage()
+    const {posts, loadPage} = useLoadPostPage()
     const [ pageAmount, setPageAmount] = useState<number | undefined>(undefined)
 
     useEffect(() => {

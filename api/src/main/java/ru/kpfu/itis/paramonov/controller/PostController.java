@@ -112,19 +112,20 @@ public class PostController {
     }
 
     @PostMapping("/update/rating")
-    public ResponseEntity<BaseResponseDto> updateRating(
+    public ResponseEntity<PostResponseDto> updateRating(
             @RequestBody UpdatePostRatingRequestDto updatePostRatingRequestDto, JwtAuthentication authentication
     ) {
         try {
             Long from = authentication.getId();
-            postService.updateRating(updatePostRatingRequestDto, from);
-            return ResponseEntity.ok().build();
+            PostDto result = postService.updateRating(updatePostRatingRequestDto, from);
+            UserDto author = userService.getById(result.getAuthorId()).get();
+            return new ResponseEntity<>(new PostResponseDto(author, result), HttpStatus.OK);
         } catch (DeniedRequestException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (NotFoundException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(new PostResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

@@ -1,9 +1,9 @@
 import {useEffect, useState} from "react";
-import {Post} from "../../../models/Post";
-import {useDataContext} from "../../../context/DataContext";
-import {PagePostResponse} from "../../../data/model/PagePostResponse";
+import {Post} from "../models/Post";
+import {useDataContext} from "../context/DataContext";
+import {PagePostResponse} from "../data/model/PagePostResponse";
 
-export function useLoadPage() {
+export function useLoadPostPage() {
     const { postService } = useDataContext()
 
     const [ posts, setPosts ] = useState<Post[] | null>(null)
