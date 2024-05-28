@@ -3,8 +3,6 @@ package ru.kpfu.itis.paramonov.dto.social;
 
 import lombok.*;
 
-import java.sql.Timestamp;
-
 @AllArgsConstructor
 @Getter
 @Setter
@@ -16,7 +14,7 @@ public class CommentDto {
 
     private Long authorId;
 
-    private Timestamp datePublished;
+    private String datePublished;
 
     private String content;
 

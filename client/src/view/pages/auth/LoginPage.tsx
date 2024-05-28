@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {AuthMenu} from "../../components/AuthMenu";
+import {AuthMenu} from "../../components/other/AuthMenu";
 import {LoginForm} from "../../components/form/LoginForm";
 import {useUserContext} from "../../../context/UserContext";
 import {useDataContext} from "../../../context/DataContext";

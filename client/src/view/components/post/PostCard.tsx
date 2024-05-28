@@ -1,6 +1,6 @@
-import { Post} from "../../models/Post";
+import { Post} from "../../../models/Post";
 import {Link} from "react-router-dom";
-import {CircleImage} from "./CircleImage";
+import {CircleImage} from "../base/CircleImage";
 import {ArrowRightCircleIcon} from '@heroicons/react/16/solid'
 
 export interface PostProps {

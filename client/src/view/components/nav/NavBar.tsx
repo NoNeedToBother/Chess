@@ -1,6 +1,6 @@
 import React from "react";
 import {User} from "../../../models/User";
-import {CircleImage} from "../CircleImage";
+import {CircleImage} from "../base/CircleImage";
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
 import {Navigator} from "../../../utils/Navigator";

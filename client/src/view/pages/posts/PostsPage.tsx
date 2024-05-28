@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {PostCard} from "../../components/PostCard";
+import {PostCard} from "../../components/post/PostCard";
 import {Post} from "../../../models/Post";
 import {PaginationBar} from "../../components/other/PaginationBar";
 import {useLoadPostPage} from "../../../hooks/UseLoadPostPage";

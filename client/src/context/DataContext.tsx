@@ -5,10 +5,14 @@ import {RoleMapper, UserMapper} from "../data/mapper/UserMapper";
 import {UrlFormatter} from "../utils/UrlFormatter";
 import {useNavigate} from "react-router-dom";
 import {Navigator} from "../utils/Navigator";
+import {CommentService} from "../data/service/CommentService";
+import {PostMapper} from "../data/mapper/PostMapper";
+import {CommentMapper} from "../data/mapper/CommentMapper";
 
 interface IDataContext {
     authService: AuthService;
     postService: PostService;
+    commentService: CommentService;
     navigator: Navigator;
 }
 
@@ -27,13 +31,17 @@ export const useDataContext = () => {
 export const Data = ({ children }: {children: React.ReactNode}) => {
     const roleMapper = new RoleMapper()
     const userMapper = new UserMapper(roleMapper)
+    const postMapper = new PostMapper(userMapper)
+    const commentMapper = new CommentMapper(userMapper)
+
     const authService = new AuthService(userMapper)
     const urlFormatter = new UrlFormatter()
-    const postService = new PostService(urlFormatter, userMapper)
+    const postService = new PostService(urlFormatter, userMapper, postMapper, commentMapper)
     const navigate = useNavigate()
     const navigator = new Navigator(navigate)
+    const commentService = new CommentService(urlFormatter, commentMapper)
     return(
-        <DataContextProvider value={{authService, postService, navigator}}>
+        <DataContextProvider value={{authService, postService, commentService, navigator}}>
             { children }
         </DataContextProvider>
     )

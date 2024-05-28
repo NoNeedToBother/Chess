@@ -1,24 +1,37 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {useParams} from "react-router-dom";
-import {CircleImage} from "../../components/CircleImage";
+import {CircleImage} from "../../components/base/CircleImage";
 import {RatingBar} from "../../components/post/RatingBar";
 import {usePost} from "../../../hooks/UsePost";
+import {CommentCard} from "../../components/post/comment/CommentCard";
+import {CommentForm} from "../../components/post/comment/CommentForm";
+import {useComment} from "../../../hooks/UseComment";
 
 export function PostPage() {
     const { id } = useParams()
+    const { post, comments, updateRating, addComment } = usePost(id)
+    const { comment, uploadComment } = useComment()
 
     const onRatingChosen = (rating: number) => {
         updateRating(rating)
     }
+    const onCommentSubmit = (content: string) => {
+        if (post !== null) {
+            uploadComment({postId: post.id, content: content})
+        }
+    }
 
-    const { post, updateRating } = usePost(id)
+    useEffect(() => {
+        if (comment !== null) {
+            addComment(comment)
+        }
+    }, [comment]);
 
     return (
         <>
             {post !== null &&
                 <div className="w-full h-full bg-white dark:bg-gray-800">
                     <div className="w-full mx-auto py-32 bg-white dark:bg-gray-800">
-
                         <h1 className="w-[92%] mx-auto lg:text-4xl md:text-3xl xs:text-2xl text-center font-serif font-semibold pb-4 pt-8 dark:text-white">
                             { post.title }</h1>
 
@@ -46,7 +59,17 @@ export function PostPage() {
                                 </p>
                             </div>
                         </div>
-
+                        <div className="w-[40%] my-4 mx-auto block md:gap-16 xs:gap-8">
+                            { comments !== null &&
+                                <CommentForm onSubmit={ onCommentSubmit }/>
+                            }
+                        </div>
+                        <div className="w-[60%] my-4 mx-auto block md:gap-16 xs:gap-8">
+                            { comments !== null && comments.map((comment, index) => (
+                                <CommentCard comment={ comment } key={ comment.id } />
+                            ))
+                            }
+                        </div>
                     </div>
                 </div>
             }

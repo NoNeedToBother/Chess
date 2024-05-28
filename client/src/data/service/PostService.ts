@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+    GET_COMMENTS_ENDPOINT,
     GET_POST_ENDPOINT,
     GET_POST_PAGE_AMOUNT_ENDPOINT,
     GET_POSTS_ENDPOINT,
@@ -11,15 +12,24 @@ import {PostDataResponse, PostModelResponse, PostResponse} from "../model/PostRe
 import {UserMapper} from "../mapper/UserMapper";
 import {UserModelResponse} from "../model/UserModelResponse";
 import {AbstractService} from "./AbstractService";
+import {CommentsDataResponse, CommentModelResponse, CommentsResponse} from "../model/CommentResponse";
+import {Comment} from "../../models/Comment";
+import {Post} from "../../models/Post";
+import {PostMapper} from "../mapper/PostMapper";
+import {CommentMapper} from "../mapper/CommentMapper";
 
 export class PostService extends AbstractService{
     private urlFormatter: UrlFormatter
     private userMapper: UserMapper
+    private postMapper: PostMapper
+    private commentMapper: CommentMapper
 
-    constructor(urlFormatter: UrlFormatter, userMapper: UserMapper) {
+    constructor(urlFormatter: UrlFormatter, userMapper: UserMapper, postMapper: PostMapper, commentMapper: CommentMapper) {
         super()
         this.urlFormatter = urlFormatter
         this.userMapper = userMapper
+        this.postMapper = postMapper
+        this.commentMapper = commentMapper
     }
 
     async getAll(page: number, pageSize: number, accessToken: string): Promise<PagePostResponse> {
@@ -38,7 +48,9 @@ export class PostService extends AbstractService{
             if (resp.data.content !== undefined) {
                 resp.data.content.forEach( post => {
                     if (post.author !== undefined && post.post !== undefined)
-                        posts.push(this.mapPostDataResponse(post.author, post.post))
+                        posts.push({
+                            post: this.postMapper.map(post.author, post.post)
+                        })
                 })
             }
             return {posts: posts} as PagePostResponse
@@ -54,7 +66,7 @@ export class PostService extends AbstractService{
                 { headers: {Authorization: "Bearer " + accessToken}}
             )
             if (resp.data.post !== undefined && resp.data.author !== undefined)
-                return this.mapPostDataResponse(resp.data.author, resp.data.post)
+                return {post: this.postMapper.map(resp.data.author, resp.data.post)}
             else return { error: "Something went wrong, try again later"}
         })
     }
@@ -79,23 +91,28 @@ export class PostService extends AbstractService{
                 { headers: {Authorization: "Bearer " + accessToken}}
             )
             if (resp.data.post !== undefined && resp.data.author !== undefined)
-                return this.mapPostDataResponse(resp.data.author, resp.data.post)
+                return {post: this.postMapper.map(resp.data.author, resp.data.post)}
             else return { error: "Something went wrong, try again later"}
         })
     }
 
-    private mapPostDataResponse(user: UserModelResponse, post: PostModelResponse): PostResponse {
-        return {
-            post: {
-                id: post.id,
-                author: this.userMapper.map(user),
-                imageUrl: post.imageUrl,
-                title: post.title,
-                content: post.content,
-                description: post.description,
-                datePosted: post.datePosted,
-                rating: post.rating,
-            }
-        }
+    async getComments(postId: number, accessToken: string): Promise<CommentsResponse> {
+        let params = new Map<string, string>()
+        params.set("id", postId.toString())
+        return this.handleAxios(async () => {
+            let resp = await axios.get<CommentsDataResponse>(
+                this.urlFormatter.format(GET_COMMENTS_ENDPOINT, params),
+                { headers: {Authorization: "Bearer " + accessToken}}
+            )
+            if (resp.data.comments !== undefined) {
+                let comments: Comment[] = []
+                resp.data.comments.forEach( (obj, _) => {
+                    if (obj.comment !== undefined && obj.author !== undefined) {
+                        comments.push(this.commentMapper.map(obj.author, obj.comment))
+                    }
+                })
+                return {comments: comments}
+            } else return { error: "Something went wrong, try again later"}
+        })
     }
 }
