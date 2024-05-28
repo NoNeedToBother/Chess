@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
+import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.repository.PostRatingRepository;
 import ru.kpfu.itis.paramonov.service.PostService;
@@ -29,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
-import java.security.InvalidParameterException;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -184,6 +184,15 @@ public class PostServiceImpl implements PostService {
         if (post.isPresent()) {
             return postRatingRepository.getAverageRating(postId);
         } else throw new NotFoundException(NO_POST_FOUND_ERROR);
+    }
+
+    @Override
+    public Integer getTotalPageAmount(int pageSize) {
+        if (pageSize <= 0) throw new InvalidParameterException(INVALID_PARAMETER_SIZE);
+
+        Integer totalPostAmount = postRepository.getTotalAmount();
+        if (totalPostAmount % pageSize == 0) return totalPostAmount / pageSize;
+        else return postRepository.getTotalAmount() / pageSize + 1;
     }
 
     private void deletePost(Long authorId, Post post) {

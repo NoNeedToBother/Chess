@@ -19,7 +19,7 @@ public class PostConverter implements Converter<Post, PostDto> {
     public PostDto convert(Post source) {
         return PostDto.builder()
                 .id(source.getId())
-                .datePosted(source.getDatePosted())
+                .datePosted(source.getDatePosted().toString())
                 .title(source.getTitle())
                 .content(source.getContent())
                 .description(source.getDescription())

@@ -30,4 +30,6 @@ public interface PostService {
 
     Double getAverageRating(Long postId);
 
+    Integer getTotalPageAmount(int pageSize);
+
 }

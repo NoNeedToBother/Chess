@@ -3,9 +3,9 @@ export class UrlFormatter {
         if (params.size > 0) {
             url = url + "?"
             params.forEach((value, key) =>
-                url = url + key + "=" + value
+                url = url + key + "=" + value + "&"
             )
         }
-        return url
+        return url.slice(0, url.length - 1)
     }
 }

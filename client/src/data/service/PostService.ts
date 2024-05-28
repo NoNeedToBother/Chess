@@ -1,7 +1,7 @@
 import axios from "axios";
-import {GET_POST_ENDPOINT, GET_POSTS_ENDPOINT} from "../../utils/Endpoints";
+import {GET_POST_ENDPOINT, GET_POST_PAGE_AMOUNT_ENDPOINT, GET_POSTS_ENDPOINT} from "../../utils/Endpoints";
 import {UrlFormatter} from "../../utils/UrlFormatter";
-import {PagePostDataResponse, PagePostResponse} from "../model/PagePostResponse";
+import {PageAmountResponse, PagePostDataResponse, PagePostResponse} from "../model/PagePostResponse";
 import {PostDataResponse, PostModelResponse, PostResponse} from "../model/PostResponse";
 import {UserMapper} from "../mapper/UserMapper";
 import {UserModelResponse} from "../model/UserModelResponse";
@@ -17,11 +17,14 @@ export class PostService extends AbstractService{
         this.userMapper = userMapper
     }
 
-    async getAll(page: number, accessToken: string): Promise<PagePostResponse> {
+    async getAll(page: number, pageSize: number, accessToken: string): Promise<PagePostResponse> {
         return this.handleAxios(async () => {
             let params = new Map<string, string>()
+            params.set("page", page.toString())
+                .set("size", pageSize.toString())
             let resp = await axios.get<PagePostDataResponse>(
-                this.urlFormatter.format(GET_POSTS_ENDPOINT, params.set("page", page.toString())),
+                this.urlFormatter.format(
+                    GET_POSTS_ENDPOINT, params),
                 {
                     headers: { Authorization: "Bearer " + accessToken }
                 })
@@ -43,11 +46,23 @@ export class PostService extends AbstractService{
             params.set("id", id.toString())
             let resp = await axios.get<PostDataResponse>(
                 this.urlFormatter.format(GET_POST_ENDPOINT, params),
-                { headers: {Authorization: "Bearer: " + accessToken}}
+                { headers: {Authorization: "Bearer " + accessToken}}
             )
             if (resp.data.post !== undefined && resp.data.author !== undefined)
                 return this.mapPostDataResponse(resp.data.author, resp.data.post)
             else return { error: "Something went wrong, try again later"}
+        })
+    }
+
+    async getPageAmount(pageSize: number, accessToken: string): Promise<PageAmountResponse> {
+        return this.handleAxios(async () => {
+            let params = new Map<string, string>()
+            params.set("size", pageSize.toString())
+            let resp = await axios.get<PageAmountResponse>(
+                this.urlFormatter.format(GET_POST_PAGE_AMOUNT_ENDPOINT, params),
+                { headers: {Authorization: "Bearer " + accessToken}}
+            )
+            return resp.data
         })
     }
 
@@ -60,7 +75,7 @@ export class PostService extends AbstractService{
                 title: post.title,
                 content: post.content,
                 description: post.description,
-                datePosted: post.datePoster,
+                datePosted: post.datePosted,
                 rating: post.rating,
             }
         }

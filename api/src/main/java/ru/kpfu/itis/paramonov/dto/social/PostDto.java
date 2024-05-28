@@ -2,8 +2,6 @@ package ru.kpfu.itis.paramonov.dto.social;
 
 import lombok.*;
 
-import java.sql.Timestamp;
-
 @AllArgsConstructor
 @Getter
 @Setter
@@ -23,7 +21,7 @@ public class PostDto {
 
     private String description;
 
-    private Timestamp datePosted;
+    private String datePosted;
 
     private Double rating;
 }

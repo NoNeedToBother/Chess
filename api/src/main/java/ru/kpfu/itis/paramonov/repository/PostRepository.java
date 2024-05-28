@@ -13,4 +13,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Query("select count(p) <> 0 from Post p where p.id = :postId and p.author.id = :userId")
     boolean doesBelongToUser(@Param("userId") Long userId, @Param("postId") Long postId);
 
+    @Query("select count(p) from Post p")
+    Integer getTotalAmount();
+
 }

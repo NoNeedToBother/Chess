@@ -8,3 +8,7 @@ export interface PagePostDataResponse extends BaseResponse{
 export interface PagePostResponse extends BaseResponse {
     posts?: PostResponse[]
 }
+
+export interface PageAmountResponse extends BaseResponse {
+    pageAmount?: number
+}

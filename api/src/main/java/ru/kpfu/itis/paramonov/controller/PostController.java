@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
-import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.CommentsResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
+import ru.kpfu.itis.paramonov.dto.response.*;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
@@ -70,7 +67,6 @@ public class PostController {
     }
 
     @GetMapping("/get/all")
-    @CrossOrigin
     public ResponseEntity<Page<PostResponseDto>> getAll(Pageable pageable) {
         try {
             Page<PostResponseDto> resp = postService.getAll(pageable).map(post -> {
@@ -129,6 +125,18 @@ public class PostController {
             return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(new BaseResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/get/pageamount")
+    public ResponseEntity<PageAmountResponseDto> getPageAmount(@RequestParam Integer size) {
+        try {
+            Integer amount = postService.getTotalPageAmount(size);
+            return new ResponseEntity<>(new PageAmountResponseDto(amount), HttpStatus.OK);
+        } catch (InvalidParameterException e) {
+            return new ResponseEntity<>(new PageAmountResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new PageAmountResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }
