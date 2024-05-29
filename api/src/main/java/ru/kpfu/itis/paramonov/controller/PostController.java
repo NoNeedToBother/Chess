@@ -4,8 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.dto.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
@@ -35,13 +37,17 @@ public class PostController {
 
     private final UserService userService;
 
-    @PostMapping("/upload")
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PostResponseDto> upload(
-            @RequestBody UploadPostRequestDto uploadPostRequestDto,
+            @RequestPart("image") MultipartFile image,
+            @RequestPart("title") String title,
+            @RequestPart("content") String content,
+            @RequestPart("description") String description,
             JwtAuthentication jwtAuthentication) {
         try {
             Long authorId = jwtAuthentication.getId();
-            PostDto postDto = postService.save(uploadPostRequestDto, authorId);
+            UploadPostRequestDto uploadPostRequestDto = new UploadPostRequestDto(title, description, content);
+            PostDto postDto = postService.save(uploadPostRequestDto, image, authorId);
             return get(postDto.getId());
         } catch (InvalidParameterException e) {
             return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);

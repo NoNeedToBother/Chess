@@ -36,7 +36,7 @@ export const Data = ({ children }: {children: React.ReactNode}) => {
 
     const authService = new AuthService(userMapper)
     const urlFormatter = new UrlFormatter()
-    const postService = new PostService(urlFormatter, userMapper, postMapper, commentMapper)
+    const postService = new PostService(urlFormatter, postMapper, commentMapper)
     const navigate = useNavigate()
     const navigator = new Navigator(navigate)
     const commentService = new CommentService(urlFormatter, commentMapper)

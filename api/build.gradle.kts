@@ -34,6 +34,7 @@ dependencies {
     runtimeOnly("org.bouncycastle:bcprov-jdk18on:1.76")
     implementation("com.cloudinary:cloudinary-core:${properties["cloudinaryVersion"]}")
     implementation("com.cloudinary:cloudinary-http44:${properties["cloudinaryVersion"]}")
+    implementation("commons-fileupload:commons-fileupload:1.5")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")

@@ -4,6 +4,12 @@ import {Post} from "../models/Post";
 import {useDataContext} from "../context/DataContext";
 import {Comment} from "../models/Comment";
 
+export interface PostUploadData {
+    title: string;
+    content: string;
+    description: string;
+}
+
 export function usePost(id: string | undefined) {
     const { postService } = useDataContext()
     const { jwt } = useUserContext()

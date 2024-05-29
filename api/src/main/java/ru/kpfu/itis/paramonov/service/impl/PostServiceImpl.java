@@ -87,12 +87,12 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDto save(UploadPostRequestDto uploadPostRequestDto, Long authorId) {
+    public PostDto save(UploadPostRequestDto uploadPostRequestDto, MultipartFile image, Long authorId) {
         User poster = userRepository.findById(authorId).orElseThrow(RuntimeException::new);
         if (!checkTitle(uploadPostRequestDto.getTitle()))
             throw new InvalidParameterException(POST_EXISTS_ERROR);
         try {
-            String imageUrl = uploadPostImage(uploadPostRequestDto.getImage());
+            String imageUrl = uploadPostImage(image);
             Post post = Post.builder()
                     .author(poster)
                     .imageUrl(imageUrl)

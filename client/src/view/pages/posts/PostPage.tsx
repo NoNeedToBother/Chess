@@ -37,7 +37,7 @@ export function PostPage() {
 
                         <img src={ post.imageUrl }
                              alt="Post image"
-                             className="xl:w-[80%] xs:w-[96%] mx-auto lg:h-[560px] md:h-[480px] rounded-lg"/>
+                             className="xl:w-[80%] xs:w-[96%] mx-auto rounded-lg"/>
 
                         <div className="w-[90%] mx-auto flex md:gap-4 xs:gap-2 justify-center items-center pt-4">
                             <div className="flex gap-2 items-center">

@@ -11,3 +11,4 @@ export const GET_POST_PAGE_AMOUNT_ENDPOINT = DOMAIN_NAME + POSTS + "/get/pageamo
 export const UPDATE_POST_RATING_ENDPOINT = DOMAIN_NAME + POSTS + "/update/rating"
 export const GET_COMMENTS_ENDPOINT = DOMAIN_NAME + POSTS + "/get/comments"
 export const UPLOAD_COMMENT_ENDPOINT = DOMAIN_NAME + COMMENTS + "/upload"
+export const UPLOAD_POST_ENDPOINT = DOMAIN_NAME + POSTS + "/upload"

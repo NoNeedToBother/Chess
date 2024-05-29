@@ -9,6 +9,7 @@ import {useUserContext} from "./context/UserContext";
 import {useDataContext} from "./context/DataContext";
 import {PostPage} from "./view/pages/posts/PostPage";
 import {PostsPage} from "./view/pages/posts/PostsPage";
+import {UploadPostPage} from "./view/pages/posts/UploadPostPage";
 
 function App() {
     const { user, clearUser } = useUserContext()
@@ -22,7 +23,7 @@ function App() {
             { user !== null &&
                 <NavBar user={ user } onLogout={ onLogout } navigator={ navigator }>
                     <NavItem href="/posts" name="Posts"/>
-                    <NavItem href="/upload/post" name="Upload post"/>
+                    <NavItem href="/post/upload" name="Upload post"/>
                 </NavBar>
             }
             <Routes>
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/" element={<MainPage/>}/>
                 <Route path="/post/:id" element={<PostPage/>}/>
                 <Route path="/posts" element={<PostsPage/>}/>
+                <Route path="/post/upload" element={ <UploadPostPage/>}/>
             </Routes>
         </>
 

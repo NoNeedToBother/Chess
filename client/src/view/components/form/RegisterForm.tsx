@@ -15,17 +15,17 @@ export function RegisterForm({ onSubmit }: LoginFormProps) {
         onSubmit(username, password, confirmPassword)
     }
 
-    const usernameChangeListener = (event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)
-    const passwordChangeListener = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)
-    const confirmPasswordChangeListener = (event: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(event.target.value)
+    const onUsernameChange = (username: string) => setUsername(username)
+    const onPasswordChange = (password: string) => setPassword(password)
+    const onConfirmChange = (confirmPassword: string) => setConfirmPassword(confirmPassword)
 
     return (
         <form className="space-y-6" onSubmit={submitListener}>
-            <FormElement changeListener={usernameChangeListener}
+            <FormElement onChange={ onUsernameChange }
                          identifier="username" name="Username" type="text"/>
-            <FormElement changeListener={passwordChangeListener}
+            <FormElement onChange={ onPasswordChange }
                          identifier="password" name="Password" type="password"/>
-            <FormElement changeListener={ confirmPasswordChangeListener }
+            <FormElement onChange={ onConfirmChange }
                          identifier="confirmPassword" name="Confirm password" type="password"/>
 
             <div>
