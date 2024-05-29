@@ -3,6 +3,7 @@ import {FormElement} from "../../components/form/FormElement";
 import {useUploadPost} from "../../../hooks/UseUploadPost";
 import {FormTextAreaElement} from "../../components/form/FormTextAreaElement";
 import {useDataContext} from "../../../context/DataContext";
+import {ArrowUpTrayIcon} from "@heroicons/react/16/solid";
 
 export function UploadPostPage() {
     const {upload, uploadedPost} = useUploadPost()
@@ -72,7 +73,9 @@ export function UploadPostPage() {
                 <div className="flex mx-auto w-[20%] mt-4">
                     <button type="submit"
                            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                    >Upload</button>
+                    >Upload
+                        <ArrowUpTrayIcon className="h-6 justify-end"/>
+                    </button>
                 </div>
             </div>
         </form>

@@ -19,6 +19,7 @@ export class UserMapper implements Mapper<UserModelResponse, User> {
             profilePicture: response.profilePicture,
             bio: response.bio,
             dateRegistered: response.dateRegistered,
+            likes: response.likes,
             roles: response.roles.map(role => this.roleMapper.map(role))
         }
     }

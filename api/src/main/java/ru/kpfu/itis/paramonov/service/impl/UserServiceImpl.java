@@ -42,7 +42,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public Optional<UserDto> getById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
-        return user.map(value -> userConverter.convert(value));
+        Optional<UserDto> result = user.map(value -> userConverter.convert(value));
+        if (result.isPresent()) {
+            int likeAmount = userRepository.getLikeAmount(userId);
+            result.get().setLikes(likeAmount);
+            return result;
+        } else return result;
     }
 
     @Override

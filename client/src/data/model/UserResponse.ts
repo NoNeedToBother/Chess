@@ -9,6 +9,7 @@ export interface UserModelResponse {
     profilePicture: string;
     bio: string | null;
     dateRegistered: string;
+    likes: number;
     roles: string[]
 }
 

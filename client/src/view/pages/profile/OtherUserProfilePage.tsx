@@ -5,6 +5,8 @@ import {ProfileInfo} from "../../components/other/ProfileInfo";
 import {useParams} from "react-router-dom";
 import {useDataContext} from "../../../context/DataContext";
 import {PostCard} from "../../components/post/PostCard";
+import {RoleLabel} from "../../components/profile/RoleLabel";
+import {HandThumbUpIcon} from "@heroicons/react/16/solid";
 
 export function OtherUserProfilePage() {
     const { id } = useParams()
@@ -25,6 +27,16 @@ export function OtherUserProfilePage() {
         }
     }, []);
 
+    const getLikeColor = () => {
+        if (user !== null && liked !== null) {
+            if (liked) return " text-green-800"
+            else return " text-black"
+        } else return " text-black"
+    }
+    const onLikeClicked = () => {
+
+    }
+
     return <div>
         <section className="w-full overflow-hidden dark:bg-gray-900">
             <div className="flex flex-col">
@@ -33,16 +45,23 @@ export function OtherUserProfilePage() {
 
                 <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
                     {user !== null &&
-                        <img
-                            src={user.profilePicture}
-                            alt="User Profile"
-                            className="rounded-md lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-blue-500 relative lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
-                        />
-                    }
-                    {user !== null &&
-                        <h1
-                            className="w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif">
-                            {user.username}</h1>
+                        <>
+                            <div className="block w-full items-center">
+                                <img
+                                    src={user.profilePicture}
+                                    alt="User Profile"
+                                    className="rounded-md mx-auto lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-blue-500 lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
+                                />
+                                <div className="lg:w-[6rem] md:w-[5rem] sm:w-[4rem] mx-auto">
+                                    <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{user.likes + " likes"}</p>
+                                    <HandThumbUpIcon className={"h-10 hover:text-green-800" + getLikeColor()}/>
+                                </div>
+                            </div>
+                            <h1
+                                className="w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif">
+                                {user.username}</h1>
+                            <RoleLabel roles={user.roles}/>
+                        </>
                     }
 
                 </div>
@@ -85,7 +104,7 @@ export function OtherUserProfilePage() {
                 <div className="mx-auto w-1/2 gap-4 columns-1">
                     {userPosts !== null &&
                         userPosts.map((post, _) =>
-                            <PostCard post={post} onProfilePictureClick={(id: number) => console.log("a")}/>
+                            <PostCard post={post} onProfilePictureClick={(id: number) => {}}/>
                         )
                     }
                 </div>

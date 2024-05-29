@@ -5,15 +5,17 @@ import {ArrowRightCircleIcon} from '@heroicons/react/16/solid'
 
 export interface PostProps {
     post: Post;
-    onProfilePictureClick: (id: number) => void;
+    onProfilePictureClick?: (id: number) => void;
 }
 
 export function PostCard({ post, onProfilePictureClick }: PostProps) {
     const onProfilePictureClicked = () => {
-        onProfilePictureClick(post.author.id);
+        if (onProfilePictureClick !== undefined) {
+            onProfilePictureClick(post.author.id);
+        }
     }
     return <article
-        className="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        className="p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="flex mb-5 text-gray-500 justify-between items-center">
             <div></div>
             <span className="text-sm"> { post.datePosted }</span>

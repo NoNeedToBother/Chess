@@ -43,4 +43,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query(value = "select count(l) > 0 from user_likes l where l.receiver_id=:id and l.sender_id=:from", nativeQuery = true)
     boolean checkLike(@Param("id") Long userId, @Param("from") Long fromId);
+
+    @Query(value = "select count(*) from user_likes l where l.receiver_id = :id", nativeQuery = true)
+    int getLikeAmount(@Param("id") Long userId);
 }
