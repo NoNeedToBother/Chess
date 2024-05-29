@@ -1,5 +1,5 @@
 import {UserMapper} from "./UserMapper";
-import {UserModelResponse} from "../model/UserModelResponse";
+import {UserModelResponse} from "../model/UserResponse";
 import {PostModelResponse} from "../model/PostResponse";
 import {Post} from "../../models/Post";
 

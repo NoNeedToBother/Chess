@@ -10,6 +10,8 @@ import {useDataContext} from "./context/DataContext";
 import {PostPage} from "./view/pages/posts/PostPage";
 import {PostsPage} from "./view/pages/posts/PostsPage";
 import {UploadPostPage} from "./view/pages/posts/UploadPostPage";
+import {ProfilePage} from "./view/pages/profile/ProfilePage";
+import {OtherUserProfilePage} from "./view/pages/profile/OtherUserProfilePage";
 
 function App() {
     const { user, clearUser } = useUserContext()
@@ -38,6 +40,8 @@ function App() {
                 <Route path="/post/:id" element={<PostPage/>}/>
                 <Route path="/posts" element={<PostsPage/>}/>
                 <Route path="/post/upload" element={ <UploadPostPage/>}/>
+                <Route path="/profile" element={<ProfilePage/>}/>
+                <Route path="/profile/:id" element={<OtherUserProfilePage/>}/>
             </Routes>
         </>
 

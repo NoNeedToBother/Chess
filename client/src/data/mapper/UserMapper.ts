@@ -1,6 +1,6 @@
 import {Mapper} from "./Mapper";
 import {User} from "../../models/User";
-import {UserModelResponse} from "../model/UserModelResponse";
+import {UserModelResponse} from "../model/UserResponse";
 import {Role} from "../../models/Role";
 
 export class UserMapper implements Mapper<UserModelResponse, User> {

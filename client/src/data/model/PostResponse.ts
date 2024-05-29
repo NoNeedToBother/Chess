@@ -1,4 +1,4 @@
-import {UserModelResponse} from "./UserModelResponse";
+import {UserModelResponse} from "./UserResponse";
 import {Post} from "../../models/Post";
 import {BaseResponse} from "./BaseResponse";
 
@@ -9,6 +9,14 @@ export interface PostDataResponse extends BaseResponse{
 
 export interface PostResponse extends BaseResponse{
     post?: Post;
+}
+
+export interface PostsDataResponse extends BaseResponse{
+    posts?: PostDataResponse[]
+}
+
+export interface PostsResponse extends BaseResponse{
+    posts?: Post[]
 }
 
 export interface PostModelResponse {

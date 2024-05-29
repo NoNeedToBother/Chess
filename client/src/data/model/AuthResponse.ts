@@ -1,5 +1,5 @@
 import {JwtInfo} from "../../models/JwtInfo";
-import {UserModelResponse} from "./UserModelResponse";
+import {UserModelResponse} from "./UserResponse";
 import {User} from "../../models/User";
 import {BaseResponse} from "./BaseResponse";
 
