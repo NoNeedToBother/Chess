@@ -37,7 +37,7 @@ export function UploadPostPage() {
             upload({
                 title: title, content: content, description: description, image: image
             })
-        } else console.log("debil?")
+        }
     }
 
     return <div className="w-full h-full bg-white dark:bg-gray-800">
@@ -74,7 +74,7 @@ export function UploadPostPage() {
                     <button type="submit"
                            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >Upload
-                        <ArrowUpTrayIcon className="h-6 justify-end"/>
+                        <ArrowUpTrayIcon className="h-6"/>
                     </button>
                 </div>
             </div>

@@ -3,13 +3,21 @@ import {useParams} from "react-router-dom";
 import {CircleImage} from "../../components/base/CircleImage";
 import {RatingBar} from "../../components/post/RatingBar";
 import {usePost} from "../../../hooks/UsePost";
-import {CommentCard} from "../../components/post/comment/CommentCard";
-import {CommentForm} from "../../components/post/comment/CommentForm";
 import {useComment} from "../../../hooks/UseComment";
+import {useUserContext} from "../../../context/UserContext";
+import {Role} from "../../../models/Role";
+import {CommentForm} from "../../components/post/comment/CommentForm";
+import {CommentCard} from "../../components/post/comment/CommentCard";
+import {TrashIcon} from "@heroicons/react/16/solid";
+import {useDataContext} from "../../../context/DataContext";
+
 
 export function PostPage() {
     const { id } = useParams()
-    const { post, comments, updateRating, addComment } = usePost(id)
+    const { user } = useUserContext()
+    const { navigator } = useDataContext()
+
+    const { post, comments, updateRating, addComment, deletePost } = usePost(id)
     const { comment, uploadComment } = useComment()
 
     const onRatingChosen = (rating: number) => {
@@ -26,6 +34,10 @@ export function PostPage() {
             addComment(comment)
         }
     }, [comment]);
+
+    const deleteHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+        deletePost(() => navigator.navigateToPosts())
+    }
 
     return (
         <>
@@ -51,10 +63,20 @@ export function PostPage() {
                         <div className="w-full justify-center items-center mx-auto">
                             <RatingBar rating={ post.rating } onRatingChosen={ onRatingChosen }/>
                         </div>
+                        { user !== null && (post.author.id === user.id || user.roles.includes(Role.ADMIN) || user.roles.includes(Role.CHIEF_ADMIN))
+                            &&
+                            <div className="md:w-[10%] sm:w-[20%] items-center mx-auto">
+                                <button className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 justify-center"
+                                onClick={deleteHandler}>
+                                    Delete
+                                    <TrashIcon className="h-4 pt-0.5"/>
+                                </button>
+                            </div>
+                        }
 
                         <div className="py-6 bg-white dark:bg-gray-800">
                             <div className="md:w-[80%] xs:w-[90%] mx-auto pt-4">
-                                <p className="mt-2 text-2xl dark:text-gray-300">
+                            <p className="mt-2 text-2xl dark:text-gray-300">
                                     { post.content }
                                 </p>
                             </div>

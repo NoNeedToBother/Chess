@@ -29,4 +29,6 @@ public interface UserService {
     boolean checkLike(Long userId, Long fromId);
 
     List<PostDto> getLastPosts(Long userId, Integer max);
+
+    boolean updateLike(Long userId, Long fromId);
 }

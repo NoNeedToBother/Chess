@@ -1,5 +1,6 @@
 import axios from "axios";
 import {
+    DELETE_POST_ENDPOINT,
     GET_COMMENTS_ENDPOINT,
     GET_POST_ENDPOINT,
     GET_POST_PAGE_AMOUNT_ENDPOINT,
@@ -14,6 +15,7 @@ import {CommentsDataResponse, CommentsResponse} from "../model/CommentResponse";
 import {Comment} from "../../models/Comment";
 import {PostMapper} from "../mapper/PostMapper";
 import {CommentMapper} from "../mapper/CommentMapper";
+import {BaseResponse} from "../model/BaseResponse";
 
 
 export interface UploadPostRequest {
@@ -135,6 +137,19 @@ export class PostService extends AbstractService{
             if (resp.data.post !== undefined && resp.data.author !== undefined) {
                 return {post: this.postMapper.map(resp.data.author, resp.data.post)}
             } else return { error: "Something went wrong, try again later"}
+        })
+    }
+
+    async delete(id: number, accessToken: string): Promise<BaseResponse> {
+        let params = new Map<string, string>()
+        params.set("id", id.toString())
+        return this.handleAxios(async (): Promise<BaseResponse> => {
+            let resp = await axios.post<BaseResponse>(
+                this.urlFormatter.format(DELETE_POST_ENDPOINT, params),
+                {},
+                { "headers": {"Authorization": "Bearer " + accessToken}}
+            )
+            return resp.data
         })
     }
 }

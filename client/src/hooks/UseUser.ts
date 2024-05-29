@@ -35,5 +35,17 @@ export function useUser() {
         }
     }
 
-    return { user, liked, banned, get, getPosts, userPosts }
+    const updateLike = (id: number) => {
+        if (jwt !== null) {
+            userService.updateLike(id, jwt.accessToken).then((res) => {
+                if (res.user !== undefined && res.isLiked !== undefined && res.isBanned !== undefined) {
+                    setUser(res.user)
+                    setLiked(res.isLiked)
+                    setBanned(res.isBanned)
+                }
+            })
+        }
+    }
+
+    return { user, liked, banned, get, getPosts, userPosts, updateLike }
 }

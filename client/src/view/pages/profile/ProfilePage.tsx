@@ -83,7 +83,7 @@ export function ProfilePage() {
                 <div className="mx-auto w-1/2 gap-4 columns-1">
                     {userPosts !== null &&
                         userPosts.map((post, _) =>
-                            <PostCard post={post} onProfilePictureClick={(id: number) => console.log("a")}/>
+                            <PostCard post={post}/>
                         )
                     }
                 </div>

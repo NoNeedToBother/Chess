@@ -160,6 +160,18 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public boolean updateLike(Long userId, Long fromId) {
+        if (checkLike(userId, fromId)) {
+            userRepository.removeLike(userId, fromId);
+            return false;
+        } else {
+            userRepository.like(userId, fromId);
+            return true;
+        }
+    }
+
     public void checkAuthoritiesAndPromoteIfSatisfy(Long promotedId, Long fromId, Role role) {
         if (isAdmin(fromId) && !isChiefAdmin(fromId)) {
             if (role == Role.MODERATOR) {

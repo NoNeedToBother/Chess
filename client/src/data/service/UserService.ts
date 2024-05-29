@@ -4,7 +4,7 @@ import {PostMapper} from "../mapper/PostMapper";
 import {UserMapper} from "../mapper/UserMapper";
 import {UserDataResponse, UserResponse} from "../model/UserResponse";
 import axios from "axios";
-import {GET_USER_ENDPOINT, GET_USER_POSTS_ENDPOINT} from "../../utils/Endpoints";
+import {GET_USER_ENDPOINT, GET_USER_POSTS_ENDPOINT, UPDATE_LIKE_ENDPOINT} from "../../utils/Endpoints";
 import {PostsDataResponse, PostsResponse} from "../model/PostResponse";
 import {Post} from "../../models/Post";
 
@@ -54,6 +54,22 @@ export class UserService extends AbstractService{
                 })
                 return {posts: posts}
             } else return {error: "Something went wrong, try again later"}
+        })
+    }
+
+    async updateLike(id: number, accessToken: string): Promise<UserResponse> {
+        return this.handleAxios(async (): Promise<UserResponse> => {
+            let params = new Map<string, string>()
+            params.set("id", id.toString())
+            let resp = await axios.get<UserDataResponse>(
+                this.urlFormatter.format(UPDATE_LIKE_ENDPOINT, params),
+                {headers: { Authorization: "Bearer " + accessToken }}
+            )
+            if (resp.data.user !== undefined && resp.data.isBanned !== undefined && resp.data.isLiked !== undefined) {
+                return {user: this.userMapper.map(resp.data.user),
+                    isLiked: resp.data.isLiked, isBanned: resp.data.isBanned}
+            }
+            else return {error: "Something went wrong, try again later"}
         })
     }
 }

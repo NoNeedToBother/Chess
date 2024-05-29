@@ -24,6 +24,14 @@ export function usePost(id: string | undefined) {
     const addComment = (comment: Comment) => {
         setComments(prev => [comment, ...prev])
     }
+    const deletePost = (onDeleted: () => void) => {
+        if (jwt !== null && id !== undefined) {
+            postService.delete(parseInt(id), jwt.accessToken)
+                .then((res) => {
+                    if (res.error === undefined) onDeleted()
+            })
+        }
+    }
 
     useEffect(() => {
         let token = jwt?.accessToken
@@ -56,5 +64,5 @@ export function usePost(id: string | undefined) {
         }
     }, []);
 
-    return { post, comments, updateRating, addComment }
+    return { post, comments, updateRating, addComment, deletePost }
 }

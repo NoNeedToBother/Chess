@@ -108,7 +108,6 @@ public class UserController {
                 return new ResponseEntity<>(new UserResponseDto(user.get(), liked, banned), HttpStatus.OK);
             } else return new ResponseEntity<>(new UserResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            log.info(e.getMessage());
             return new ResponseEntity<>(new UserResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -127,6 +126,21 @@ public class UserController {
             } else return new ResponseEntity<>(new PostsResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(new PostsResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/update/like")
+    public ResponseEntity<UserResponseDto> updateLike(
+            @RequestParam("id") Long userId, JwtAuthentication authentication
+    ) {
+        try {
+            Long fromId = authentication.getId();
+            Optional<UserDto> user = userService.getById(userId);
+            if (user.isPresent()) {
+                userService.updateLike(userId, fromId);
+                return get(userId, authentication);
+            } else return new ResponseEntity<>(new UserResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new UserResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

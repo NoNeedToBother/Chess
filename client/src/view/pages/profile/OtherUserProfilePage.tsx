@@ -1,5 +1,5 @@
 import {useUser} from "../../../hooks/UseUser";
-import {useEffect} from "react";
+import React, {useEffect} from "react";
 import {useUserContext} from "../../../context/UserContext";
 import {ProfileInfo} from "../../components/other/ProfileInfo";
 import {useParams} from "react-router-dom";
@@ -13,7 +13,7 @@ export function OtherUserProfilePage() {
     const userContext = useUserContext()
     const { navigator } = useDataContext()
 
-    const {user, liked, banned, get, userPosts, getPosts} = useUser()
+    const {user, liked, banned, get, userPosts, getPosts, updateLike} = useUser()
     useEffect(() => {
         if (userContext.user !== null && id !== undefined) {
             if (userContext.user.id === parseInt(id)) navigator.navigateToProfile()
@@ -33,8 +33,10 @@ export function OtherUserProfilePage() {
             else return " text-black"
         } else return " text-black"
     }
-    const onLikeClicked = () => {
-
+    const likeHandler = (event: React.MouseEvent) => {
+        if (id !== undefined) {
+            updateLike(parseInt(id))
+        }
     }
 
     return <div>
@@ -54,7 +56,7 @@ export function OtherUserProfilePage() {
                                 />
                                 <div className="lg:w-[6rem] md:w-[5rem] sm:w-[4rem] mx-auto">
                                     <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{user.likes + " likes"}</p>
-                                    <HandThumbUpIcon className={"h-10 hover:text-green-800" + getLikeColor()}/>
+                                    <HandThumbUpIcon className={"h-10 hover:text-green-800" + getLikeColor()} onClick={ likeHandler }/>
                                 </div>
                             </div>
                             <h1
@@ -67,7 +69,7 @@ export function OtherUserProfilePage() {
                 </div>
 
                 <div
-                    className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center relative lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
+                    className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
                     {user !== null &&
                         <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{user.bio}
                         </p>
