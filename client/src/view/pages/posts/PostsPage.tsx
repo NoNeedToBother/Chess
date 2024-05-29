@@ -1,32 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect} from "react";
 import {PostCard} from "../../components/post/PostCard";
 import {Post} from "../../../models/Post";
 import {PaginationBar} from "../../components/other/PaginationBar";
-import {useLoadPostPage} from "../../../hooks/UseLoadPostPage";
-import {useDataContext} from "../../../context/DataContext";
-import {useUserContext} from "../../../context/UserContext";
-
-const PAGE_SIZE = 10
+import {usePostPage} from "../../../hooks/UsePostPage";
 
 export function PostsPage() {
-    const { postService } = useDataContext()
-    const { jwt } = useUserContext()
-
-    const {posts, loadPage} = useLoadPostPage()
-    const [ pageAmount, setPageAmount] = useState<number | undefined>(undefined)
+    const {posts, loadPage, pageAmount, getPageAmount} = usePostPage()
 
     useEffect(() => {
-        if (jwt?.accessToken !== undefined) {
-            postService
-                .getPageAmount(PAGE_SIZE, jwt.accessToken)
-                .then(res => setPageAmount(res.pageAmount)
-            )
-        }
+        loadPage(0)
     }, []);
 
     useEffect(() => {
-        if (jwt?.accessToken !== undefined)
-            loadPage(0, PAGE_SIZE, jwt.accessToken)
+        getPageAmount()
     }, []);
 
     const evenPosts = (posts: Post[]) => {
@@ -36,8 +22,7 @@ export function PostsPage() {
     }
 
     const onPageChanged = (page: number) => {
-        if (jwt?.accessToken !== undefined)
-            loadPage(page, PAGE_SIZE, jwt.accessToken)
+        loadPage(page)
     }
 
     return <>
@@ -49,7 +34,7 @@ export function PostsPage() {
                             <PostCard post={ post } onProfilePictureClick={ () => {}} key={ post.id } />)}
                     </div>
                     {posts.length % 2 === 1 &&
-                        <div className="lg:px-40 md:px-20 grid grid-cols-1">
+                        <div className="lg:px-40 md:px-20 gap-8 py-8 grid grid-cols-1">
                             <PostCard post={ posts[posts.length - 1] } onProfilePictureClick={ () => {}}
                                       key={ posts[posts.length - 1].id }/>
                         </div>
@@ -57,7 +42,7 @@ export function PostsPage() {
                 </div>
                 { pageAmount !== undefined &&
                     <div className="absolute py-8 lg:px-32 md:px-16 w-full flex items-center justify-center">
-                        <PaginationBar pageAmount={pageAmount} onPageChanged={ onPageChanged }/>
+                        <PaginationBar pageAmount={ pageAmount } onPageChanged={ onPageChanged }/>
                     </div>
                 }
             </section>

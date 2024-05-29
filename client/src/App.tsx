@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Route, Routes} from "react-router-dom";
 import {LoginPage} from "./view/pages/auth/LoginPage";
 import {RegisterPage} from "./view/pages/auth/RegisterPage";
@@ -18,6 +18,11 @@ function App() {
     const onLogout = () => {
         clearUser()
     }
+    useEffect(() => {
+        if (user === null) {
+            navigator.navigateToLogin()
+        }
+    }, [user]);
     return (
         <>
             { user !== null &&

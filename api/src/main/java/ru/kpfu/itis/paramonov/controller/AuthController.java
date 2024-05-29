@@ -1,6 +1,7 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import ru.kpfu.itis.paramonov.service.UserService;
 
 import javax.security.auth.message.AuthException;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
@@ -28,8 +30,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody JwtRequest jwtRequest) {
-        JwtResponse jwtResponse = authService.login(jwtRequest);
         try {
+            JwtResponse jwtResponse = authService.login(jwtRequest);
             UserDto user = userService.getByUsername(jwtRequest.getUsername()).get();
             return new ResponseEntity<>(
                     new AuthenticateResponseDto(user, jwtResponse), HttpStatus.OK);
@@ -44,6 +46,7 @@ public class AuthController {
                     HttpStatus.NOT_FOUND
             );
         } catch (Exception e) {
+            log.info("why");
             return new ResponseEntity<>(
                     new AuthenticateResponseDto(REGISTER_ERROR_INTERNAL),
                     HttpStatus.INTERNAL_SERVER_ERROR

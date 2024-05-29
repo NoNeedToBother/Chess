@@ -18,7 +18,6 @@ export function NavBar({ children, user, navigator, onLogout }: NavBarProps) {
     }
     const logoutClickedHandler = (event: React.MouseEvent) => {
         onLogout()
-        navigator.navigateToLogin()
     }
     const onProfilePictureClicked = () => navigator.navigateToProfile()
     return (

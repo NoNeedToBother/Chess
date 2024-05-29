@@ -2,18 +2,29 @@ import {useEffect, useState} from "react";
 import {Post} from "../models/Post";
 import {useDataContext} from "../context/DataContext";
 import {PagePostResponse} from "../data/model/PagePostResponse";
+import {useUserContext} from "../context/UserContext";
 
-export function useLoadPostPage() {
+const PAGE_SIZE = 10
+
+export function usePostPage() {
     const { postService } = useDataContext()
+    const { jwt } = useUserContext()
 
     const [ posts, setPosts ] = useState<Post[] | null>(null)
     const [ page, setPage ] = useState<number | null>(null)
-    const [ pageSize, setPageSize] = useState<number | null>(null)
-    const [ token, setToken ] = useState<string | null>(null)
+    const [ pageAmount, setPageAmount] = useState<number | undefined>(undefined)
 
-    const loadPage = (page: number, pageSize: number, token: string) => {
-        setPageSize(pageSize)
-        setToken(token)
+    const getPageAmount = () => {
+        if (jwt?.accessToken !== undefined) {
+            postService.getPageAmount(PAGE_SIZE, jwt.accessToken)
+                .then(res => {
+                    setPageAmount(res.pageAmount)
+                    }
+                )
+        }
+    }
+
+    const loadPage = (page: number) => {
         setPage(page)
     }
 
@@ -29,12 +40,12 @@ export function useLoadPostPage() {
     }
 
     useEffect(() => {
-        if (token !== null && pageSize !== null && page !== null) {
-            postService.getAll(page, pageSize, token).then(res =>
+        if (jwt !== null && PAGE_SIZE !== null && page !== null) {
+            postService.getAll(page, PAGE_SIZE, jwt.accessToken).then(res =>
                 setPosts(checkPosts(res))
             )
         }
     }, [page])
 
-    return { posts, loadPage }
+    return { posts, loadPage, pageAmount, getPageAmount }
 }

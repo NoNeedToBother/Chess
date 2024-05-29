@@ -65,7 +65,7 @@ export function PostPage() {
                             }
                         </div>
                         <div className="w-[60%] my-4 mx-auto block md:gap-16 xs:gap-8">
-                            { comments !== null && comments.map((comment, index) => (
+                            { comments !== null && comments.map((comment, _) => (
                                 <CommentCard comment={ comment } key={ comment.id } />
                             ))
                             }

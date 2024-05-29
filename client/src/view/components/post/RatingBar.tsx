@@ -27,6 +27,10 @@ export function RatingBar({ rating, onRatingChosen }: RatingBarProps) {
     const onStarHoverEnd = () => {
         setHoverValue(-1)
     }
+    const getRating = () => {
+        if (rating === null) return "No ratings yet"
+        else return rating + " out of 5"
+    }
 
     return <div className="flex justify-center gap-4">
         <div className="flex">
@@ -40,6 +44,6 @@ export function RatingBar({ rating, onRatingChosen }: RatingBarProps) {
 
             )}
         </div>
-        <span className="text-slate-400 font-medium">{ rating + " out of 5"}</span>
+        <span className="text-slate-400 font-medium">{ getRating() }</span>
     </div>
 }
