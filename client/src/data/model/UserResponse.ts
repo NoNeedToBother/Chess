@@ -1,5 +1,6 @@
 import {BaseResponse} from "./BaseResponse";
 import {User} from "../../models/User";
+import {Ban} from "../../models/Ban";
 
 export interface UserModelResponse {
     id: number;
@@ -16,11 +17,11 @@ export interface UserModelResponse {
 export interface UserDataResponse extends BaseResponse{
     user?: UserModelResponse;
     isLiked?: boolean;
-    isBanned?: boolean;
+    ban?: Ban;
 }
 
 export interface UserResponse extends BaseResponse{
     user?: User;
     isLiked?: boolean;
-    isBanned?: boolean;
+    ban?: Ban;
 }

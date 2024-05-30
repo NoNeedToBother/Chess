@@ -29,8 +29,8 @@ function App() {
         <>
             { user !== null &&
                 <NavBar user={ user } onLogout={ onLogout } navigator={ navigator }>
-                    <NavItem href="/posts" name="Posts"/>
-                    <NavItem href="/post/upload" name="Upload post"/>
+                    <NavItem href="/posts" name="POSTS"/>
+                    <NavItem href="/post/upload" name="UPLOAD POST"/>
                 </NavBar>
             }
             <Routes>

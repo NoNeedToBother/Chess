@@ -3,6 +3,7 @@ import {User} from "../models/User";
 import {useUserContext} from "../context/UserContext";
 import {useDataContext} from "../context/DataContext";
 import {Post} from "../models/Post";
+import {Ban} from "../models/Ban";
 
 export function useUser() {
     const { userService } = useDataContext();
@@ -10,16 +11,16 @@ export function useUser() {
 
     const [user, setUser] = useState<User | null>(null);
     const [liked, setLiked] = useState<boolean | null>(null);
-    const [banned, setBanned] = useState<boolean | null>(null);
+    const [ban, setBan] = useState<Ban | null>(null);
     const [userPosts, setUsersPosts] = useState<Post[] | null>(null);
 
     const get = (id: number) => {
         if (jwt !== null) {
             userService.get(id, jwt.accessToken).then((res) => {
-                if (res.user !== undefined && res.isLiked !== undefined && res.isBanned !== undefined) {
+                if (res.user !== undefined && res.isLiked !== undefined) {
                     setUser(res.user)
                     setLiked(res.isLiked)
-                    setBanned(res.isBanned)
+                    if (res.ban !== undefined) setBan(res.ban)
                 }
             })
         }
@@ -38,14 +39,14 @@ export function useUser() {
     const updateLike = (id: number) => {
         if (jwt !== null) {
             userService.updateLike(id, jwt.accessToken).then((res) => {
-                if (res.user !== undefined && res.isLiked !== undefined && res.isBanned !== undefined) {
+                if (res.user !== undefined && res.isLiked !== undefined) {
                     setUser(res.user)
                     setLiked(res.isLiked)
-                    setBanned(res.isBanned)
+                    if (res.ban !== undefined) setBan(res.ban)
                 }
             })
         }
     }
 
-    return { user, liked, banned, get, getPosts, userPosts, updateLike }
+    return { user, liked, ban, get, getPosts, userPosts, updateLike }
 }

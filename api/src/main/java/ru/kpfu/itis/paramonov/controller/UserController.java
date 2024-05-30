@@ -5,7 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.BanDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
@@ -17,6 +18,7 @@ import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
+import ru.kpfu.itis.paramonov.service.BanService;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
@@ -36,6 +38,8 @@ public class UserController {
     private UserService userService;
 
     private PostService postService;
+
+    private BanService banService;
 
     @PostMapping("/moderator/ban")
     public ResponseEntity<BaseResponseDto> ban(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
@@ -105,7 +109,11 @@ public class UserController {
             if (user.isPresent()) {
                 boolean liked = userService.checkLike(userId, fromId);
                 boolean banned = userService.isBanned(userId);
-                return new ResponseEntity<>(new UserResponseDto(user.get(), liked, banned), HttpStatus.OK);
+                if (banned) {
+                    BanDto ban = banService.getLatestBan(userId);
+                    return new ResponseEntity<>(new UserResponseDto(user.get(), liked, ban), HttpStatus.OK);
+                }
+                else return new ResponseEntity<>(new UserResponseDto(user.get(), liked), HttpStatus.OK);
             } else return new ResponseEntity<>(new UserResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             return new ResponseEntity<>(new UserResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);

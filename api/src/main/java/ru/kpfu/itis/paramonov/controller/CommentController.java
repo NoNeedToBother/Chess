@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadCommentRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;

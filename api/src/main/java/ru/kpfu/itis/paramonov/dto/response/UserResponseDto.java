@@ -1,7 +1,8 @@
 package ru.kpfu.itis.paramonov.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.BanDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 
 public class UserResponseDto extends BaseResponseDto{
 
@@ -11,13 +12,18 @@ public class UserResponseDto extends BaseResponseDto{
     @JsonProperty("isLiked")
     private Boolean isLiked;
 
-    @JsonProperty("isBanned")
-    private Boolean isBanned;
+    @JsonProperty("ban")
+    private BanDto ban;
 
-    public UserResponseDto(UserDto user, boolean isLiked, boolean isBanned) {
+    public UserResponseDto(UserDto user, boolean isLiked) {
         this.user = user;
         this.isLiked = isLiked;
-        this.isBanned = isBanned;
+    }
+
+    public UserResponseDto(UserDto user, boolean isLiked, BanDto ban) {
+        this.user = user;
+        this.isLiked = isLiked;
+        this.ban = ban;
     }
     public UserResponseDto(String error) {
         super(error);

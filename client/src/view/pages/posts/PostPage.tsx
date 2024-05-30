@@ -10,6 +10,7 @@ import {CommentForm} from "../../components/post/comment/CommentForm";
 import {CommentCard} from "../../components/post/comment/CommentCard";
 import {TrashIcon} from "@heroicons/react/16/solid";
 import {useDataContext} from "../../../context/DataContext";
+import {checkAuthorityToDeletePost} from "../../../utils/CheckAuthorities";
 
 
 export function PostPage() {
@@ -63,7 +64,7 @@ export function PostPage() {
                         <div className="w-full justify-center items-center mx-auto">
                             <RatingBar rating={ post.rating } onRatingChosen={ onRatingChosen }/>
                         </div>
-                        { user !== null && (post.author.id === user.id || user.roles.includes(Role.ADMIN) || user.roles.includes(Role.CHIEF_ADMIN))
+                        { user !== null && checkAuthorityToDeletePost(user, post)
                             &&
                             <div className="md:w-[10%] sm:w-[20%] items-center mx-auto">
                                 <button className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 justify-center"

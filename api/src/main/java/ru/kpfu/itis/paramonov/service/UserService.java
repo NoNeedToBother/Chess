@@ -1,6 +1,6 @@
 package ru.kpfu.itis.paramonov.service;
 
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;

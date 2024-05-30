@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {Post} from "../models/Post";
 import {useDataContext} from "../context/DataContext";
 import {PagePostResponse} from "../data/model/PagePostResponse";
@@ -11,7 +11,6 @@ export function usePostPage() {
     const { jwt } = useUserContext()
 
     const [ posts, setPosts ] = useState<Post[] | null>(null)
-    const [ page, setPage ] = useState<number | null>(null)
     const [ pageAmount, setPageAmount] = useState<number | undefined>(undefined)
 
     const getPageAmount = () => {
@@ -25,7 +24,11 @@ export function usePostPage() {
     }
 
     const loadPage = (page: number) => {
-        setPage(page)
+        if (jwt !== null && page !== null) {
+            postService.getAll(page, PAGE_SIZE, jwt.accessToken).then(res =>
+                setPosts(checkPosts(res))
+            )
+        }
     }
 
     const checkPosts = (posts: PagePostResponse): Post[] => {
@@ -39,13 +42,14 @@ export function usePostPage() {
         } return res
     }
 
-    useEffect(() => {
-        if (jwt !== null && PAGE_SIZE !== null && page !== null) {
-            postService.getAll(page, PAGE_SIZE, jwt.accessToken).then(res =>
-                setPosts(checkPosts(res))
-            )
+    const deleteFromPosts = (id: number, onDeleted: () => void) => {
+        if (jwt !== null) {
+            postService.delete(id, jwt.accessToken)
+                .then((res) => {
+                    if (res.error === undefined) onDeleted()
+                })
         }
-    }, [page])
+    }
 
-    return { posts, loadPage, pageAmount, getPageAmount }
+    return { posts, loadPage, pageAmount, getPageAmount, deleteFromPosts }
 }

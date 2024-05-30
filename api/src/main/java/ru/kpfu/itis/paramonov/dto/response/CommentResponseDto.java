@@ -2,7 +2,7 @@ package ru.kpfu.itis.paramonov.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 
 @AllArgsConstructor

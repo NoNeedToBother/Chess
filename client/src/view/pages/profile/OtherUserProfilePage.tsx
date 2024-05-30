@@ -1,19 +1,21 @@
 import {useUser} from "../../../hooks/UseUser";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import {useUserContext} from "../../../context/UserContext";
 import {ProfileInfo} from "../../components/other/ProfileInfo";
-import {useParams} from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
 import {useDataContext} from "../../../context/DataContext";
 import {PostCard} from "../../components/post/PostCard";
 import {RoleLabel} from "../../components/profile/RoleLabel";
-import {HandThumbUpIcon} from "@heroicons/react/16/solid";
+import {HandThumbUpIcon, NoSymbolIcon, InformationCircleIcon} from "@heroicons/react/16/solid";
+import {Modal} from "../../components/base/Modal";
 
 export function OtherUserProfilePage() {
     const { id } = useParams()
     const userContext = useUserContext()
     const { navigator } = useDataContext()
 
-    const {user, liked, banned, get, userPosts, getPosts, updateLike} = useUser()
+    const {user, liked, ban, get, userPosts, getPosts, updateLike} = useUser()
+    const [ showModal, setShowModal ] = useState(false)
     useEffect(() => {
         if (userContext.user !== null && id !== undefined) {
             if (userContext.user.id === parseInt(id)) navigator.navigateToProfile()
@@ -38,11 +40,21 @@ export function OtherUserProfilePage() {
             updateLike(parseInt(id))
         }
     }
+    const infoHandler = (event: React.MouseEvent) => {
+        setShowModal(true)
+    }
+    const onModalClose = () => setShowModal(false)
 
     return <div>
         <section className="w-full overflow-hidden dark:bg-gray-900">
+            { showModal && ban !== null && <Modal title="Ban info" onClose={onModalClose}>
+                <h1 className="text-gray-700"> {"Given by " + ban.givenFromUsername}</h1>
+                <h1 className="text-gray-700"> {"Given at " + ban.givenAt}</h1>
+                <h1 className="text-xl">{"Reason: " + ban.reason}</h1>
+            </Modal>
+            }
             <div className="flex flex-col">
-                <div
+            <div
                     className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] bg-gray-200"/>
 
                 <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
@@ -70,6 +82,14 @@ export function OtherUserProfilePage() {
 
                 <div
                     className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
+                    { ban !== null &&
+                        <span className="flex">
+                            <NoSymbolIcon className="md:h-12 sm:h-8 my-auto text-red-500"/>
+                            <p className="w-fit text-red-600 pl-4 xl:text-6xl md:text-5xl sm:text-4xl">
+                            This user is banned</p>
+                            <InformationCircleIcon className="md:h-12 sm:h-8 my-auto" onClick={ infoHandler }/>
+                        </span>
+                    }
                     {user !== null &&
                         <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{user.bio}
                         </p>

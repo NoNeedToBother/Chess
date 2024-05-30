@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.dto;
+package ru.kpfu.itis.paramonov.dto.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

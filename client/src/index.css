@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: "ChessLogo";
+    src: url("/public/Danfo-Regular-VariableFont_ELSH.ttf");
+}

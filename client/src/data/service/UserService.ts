@@ -28,9 +28,10 @@ export class UserService extends AbstractService{
                 this.urlFormatter.format(GET_USER_ENDPOINT, params),
                 {headers: { Authorization: "Bearer " + accessToken }}
             )
-            if (resp.data.user !== undefined && resp.data.isBanned !== undefined && resp.data.isLiked !== undefined) {
-                return {user: this.userMapper.map(resp.data.user),
-                    isLiked: resp.data.isLiked, isBanned: resp.data.isBanned}
+            if (resp.data.user !== undefined && resp.data.isLiked !== undefined) {
+                if (resp.data.ban !== undefined)
+                    return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked, ban: resp.data.ban}
+                else return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked}
             }
             else return {error: "Something went wrong, try again later"}
         })
@@ -65,9 +66,10 @@ export class UserService extends AbstractService{
                 this.urlFormatter.format(UPDATE_LIKE_ENDPOINT, params),
                 {headers: { Authorization: "Bearer " + accessToken }}
             )
-            if (resp.data.user !== undefined && resp.data.isBanned !== undefined && resp.data.isLiked !== undefined) {
-                return {user: this.userMapper.map(resp.data.user),
-                    isLiked: resp.data.isLiked, isBanned: resp.data.isBanned}
+            if (resp.data.user !== undefined && resp.data.isLiked !== undefined) {
+                if (resp.data.ban !== undefined)
+                    return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked, ban: resp.data.ban}
+                else return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked}
             }
             else return {error: "Something went wrong, try again later"}
         })

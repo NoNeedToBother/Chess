@@ -9,7 +9,7 @@ import {HandThumbUpIcon} from "@heroicons/react/16/solid";
 export function ProfilePage() {
     const userContext = useUserContext()
 
-    const {user, liked, banned, get, userPosts, getPosts} = useUser()
+    const {user, liked, get, userPosts, getPosts} = useUser()
     useEffect(() => {
         if (userContext.user !== null) {
             get(userContext.user.id)

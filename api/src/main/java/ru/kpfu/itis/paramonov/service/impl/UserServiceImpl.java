@@ -13,7 +13,7 @@ import ru.kpfu.itis.paramonov.model.Role;
 import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.service.UserService;
 import ru.kpfu.itis.paramonov.converters.users.UserConverter;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
