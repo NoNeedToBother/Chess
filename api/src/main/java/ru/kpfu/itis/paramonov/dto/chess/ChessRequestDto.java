@@ -11,9 +11,13 @@ public class ChessRequestDto {
 
     private String moveTo;
 
-    private Long from;
+    private Integer from;
 
     private String gameId;
 
-    //private Long to;
+    private String promotion;
+
+    private String color;
+
+    private String fen;
 }

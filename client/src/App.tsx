@@ -22,6 +22,7 @@ function App() {
 
     const onLogout = () => {
         clearUser()
+        chessService.disconnect()
     }
     useEffect(() => {
         if (user === null) {

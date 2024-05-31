@@ -4,18 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@AllArgsConstructor
 @Getter
 @Setter
-public class ChessBeginResponseDto {
+@AllArgsConstructor
+public class ChessIncorrectMoveResponseDto {
 
     private String action;
-
-    private String color;
-
-    private Integer opponent;
-
-    private String gameId;
 
     private String fen;
 }

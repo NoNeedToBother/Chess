@@ -6,10 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import ru.kpfu.itis.paramonov.dto.chess.ChessBeginResponseDto;
+import ru.kpfu.itis.paramonov.dto.chess.*;
 
 import java.util.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class ChessController {
@@ -23,15 +24,37 @@ public class ChessController {
     private final Random rand = new Random();
 
     @MessageMapping("/game")
-    public void processRequest(Map<String, Object> requestData) {
-        String action = (String) requestData.get("action");
-        Integer from = (Integer) requestData.get("from");
-        switch (action) {
+    public void processRequest(ChessRequestDto requestData) {
+        switch (requestData.getAction()) {
             case "SEEK":
-                onSeek(from);
+                onSeek(requestData.getFrom());
+                break;
+            case "MOVE":
+                onMove(requestData);
                 break;
         }
     }
+
+    private void onMove(ChessRequestDto data) {
+        ChessGame game = games.get(data.getGameId());
+        if (game == null) sendGameDataErrorAndOmitGame(data.getFrom());
+        else {
+            String fen = data.getFen();
+            game.setFen(fen);
+            if ("white".equals(data.getColor())) game.setTurn("black");
+            else game.setTurn("white");
+            sendMessageToUser(game.white, new ChessMoveResponseDto(
+                    "MOVE", game.turn, game.fen
+            ));
+            sendMessageToUser(game.black, new ChessMoveResponseDto(
+                    "MOVE", game.turn, game.fen
+            ));
+        }
+    }
+
+    /*private void sendMoveErrorMessage(Integer playerId) {
+        sendMessageToUser();
+    }*/
 
     private void onSeek(Integer id) {
         queue.add(id);
@@ -40,7 +63,13 @@ public class ChessController {
 
     private void seekGame(Integer id) {
         Runnable seekTask = () -> {
+            long MAX_WAIT_TIME_MILLIS = 600 * 1000L;
+            long time = 0;
             while(true) {
+                if (time > MAX_WAIT_TIME_MILLIS) {
+                    sendCancelGame(id);
+                    break;
+                }
                 synchronized (queue) {
                     if (!queue.isEmpty() && queue.contains(id)) {
                         int random = rand.nextInt(queue.size());
@@ -55,6 +84,7 @@ public class ChessController {
                 }
                 try {
                     Thread.sleep(200L);
+                    time += 200L;
                 } catch (InterruptedException ignored) {}
             }
         };
@@ -83,15 +113,25 @@ public class ChessController {
         String gameId = player1 + "-" + player2;
         games.put(gameId, new ChessGame(gameId, white, black));
 
+        sendMessageToUser(player1, new ChessBeginResponseDto(
+                "BEGIN", player1Color, player2, gameId, INITIAL_FEN
+        ));
+        sendMessageToUser(player2, new ChessBeginResponseDto(
+                "BEGIN", player2Color, player1, gameId, INITIAL_FEN
+        ));
+    }
+
+    private void sendGameDataErrorAndOmitGame(Integer playerId) {
+        sendMessageToUser(playerId, new ChessOmitGameResponseDto("OMIT", "The game does not exist"));
+    }
+
+    private void sendCancelGame(Integer playerId) {
+        sendMessageToUser(playerId, new ChessCancelGameSearchResponseDto("CANCEL_SEARCH"));
+    }
+
+    private void sendMessageToUser(Integer playerId, Object payload) {
         messagingTemplate.convertAndSendToUser(
-                player1.toString(), "/queue/messages", new ChessBeginResponseDto(
-                        "BEGIN", player1Color, player2, gameId, INITIAL_FEN
-                )
-        );
-        messagingTemplate.convertAndSendToUser(
-                player2.toString(), "/queue/messages", new ChessBeginResponseDto(
-                        "BEGIN", player2Color, player1, gameId, INITIAL_FEN
-                )
+                playerId.toString(), "/queue/messages", payload
         );
     }
 

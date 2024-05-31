@@ -15,8 +15,7 @@ public class ChessConfig implements WebSocketMessageBrokerConfigurer {
         registry.addEndpoint("/chess-websocket")
                 .setAllowedOrigins("http://localhost:3000")
                 .withSockJS()
-                .setDisconnectDelay(1000 * 1000);
-        ;
+                .setDisconnectDelay(300 * 1000);
     }
 
     @Override

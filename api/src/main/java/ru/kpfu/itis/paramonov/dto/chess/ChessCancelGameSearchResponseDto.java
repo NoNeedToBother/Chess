@@ -7,15 +7,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChessBeginResponseDto {
+public class ChessCancelGameSearchResponseDto {
 
     private String action;
 
-    private String color;
-
-    private Integer opponent;
-
-    private String gameId;
-
-    private String fen;
 }

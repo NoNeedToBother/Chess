@@ -5,3 +5,17 @@ export interface BeginResponse {
     gameId: string
     fen: string
 }
+
+export interface OmitResponse {
+    action: string
+    error: string
+}
+
+export interface MoveResponse {
+    action: string
+    turn: string
+    /*from: string
+    to: string
+    promotion?: string*/
+    fen: string
+}
