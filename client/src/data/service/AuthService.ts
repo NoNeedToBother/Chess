@@ -1,8 +1,9 @@
-import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "../../utils/Endpoints";
+import {LOGIN_ENDPOINT, REFRESH_TOKEN_ENDPOINT, REGISTER_ENDPOINT} from "../../utils/Endpoints";
 import axios from 'axios';
-import {AuthDataResponse, AuthResponse} from "../model/AuthResponse";
+import {AuthDataResponse, AuthResponse, JwtInfoDataResponse, JwtInfoResponse} from "../model/AuthResponse";
 import {UserMapper} from "../mapper/UserMapper";
 import {AbstractService} from "./AbstractService";
+import {JwtInfo} from "../../models/JwtInfo";
 
 export class AuthService extends AbstractService {
 

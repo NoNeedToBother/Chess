@@ -14,8 +14,11 @@ export interface OmitResponse {
 export interface MoveResponse {
     action: string
     turn: string
-    /*from: string
-    to: string
-    promotion?: string*/
     fen: string
+}
+
+export interface EndResponse {
+    action: string
+    fen: string
+    result: string
 }

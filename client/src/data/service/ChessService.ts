@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
 import {CompatClient, Stomp} from "@stomp/stompjs";
 import {Message} from "stompjs";
-import {BeginResponse, MoveResponse, OmitResponse} from "../model/ChessResponse";
+import {BeginResponse, EndResponse, MoveResponse, OmitResponse} from "../model/ChessResponse";
 
 const API_DOMAIN = "http://localhost:8080"
 
@@ -13,6 +13,15 @@ export interface MoveRequest {
     moveFrom: string
     moveTo: string
     promotion?: string
+    result?: string
+}
+
+export interface EndRequest {
+    gameId: string
+    color: string
+    from: number
+    result: string
+    fen: string
 }
 
 export class ChessService {
@@ -52,9 +61,11 @@ export class ChessService {
                 this.onGameEnd()
                 break
             case "MOVE":
-                console.log(json)
-                if (this.onMove !== undefined) console.log("jsdhs")
                 this.onMove?.(json as MoveResponse)
+                break
+            case "END":
+                this.onEnd?.(json as EndResponse)
+                this.onGameEnd()
                 break
         }
     }
@@ -63,16 +74,18 @@ export class ChessService {
     private onSearchCancelled: (() => void) | undefined
     private onGameOmitted: ((error: string) => void) | undefined
     private onMove: ((response: MoveResponse) => void) | undefined
+    private onEnd: ((response: EndResponse) => void) | undefined
 
-    seek(id: number, onEnd?: (response: BeginResponse) => void,
+    seek(id: number, onSeekEnd?: (response: BeginResponse) => void,
          onSearchCancelled?: () => void, onOmit?: (error: string) => void,
-         onMove?: (response: MoveResponse) => void
+         onMove?: (response: MoveResponse) => void, onEnd?: (response: EndResponse) => void,
          ) {
         if (this.client !== undefined) {
-            this.onSeekEnd = onEnd
+            this.onSeekEnd = onSeekEnd
             this.onSearchCancelled = onSearchCancelled
             this.onGameOmitted = onOmit
             this.onMove = onMove
+            this.onEnd = onEnd
             this.client.send(
                 "/chess/game", {}, JSON.stringify(
                     {
@@ -98,6 +111,18 @@ export class ChessService {
         )
     }
 
+    claimEnd(request: EndRequest) {
+        this.client?.send(
+            "/chess/game", {}, JSON.stringify({
+                action: "END",
+                gameId: request.gameId,
+                from: request.from,
+                fen: request.fen,
+                result: request.result
+            })
+        )
+    }
+
     disconnect() {
         this.client?.disconnect()
     }
@@ -105,5 +130,6 @@ export class ChessService {
     private onGameEnd() {
         this.onGameOmitted = undefined
         this.onMove = undefined
+        this.onEnd = undefined
     }
 }

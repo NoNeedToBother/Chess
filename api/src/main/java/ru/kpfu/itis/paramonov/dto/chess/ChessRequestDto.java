@@ -20,4 +20,6 @@ public class ChessRequestDto {
     private String color;
 
     private String fen;
+
+    private String result;
 }

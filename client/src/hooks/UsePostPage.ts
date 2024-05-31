@@ -16,9 +16,8 @@ export function usePostPage() {
     const getPageAmount = () => {
         if (jwt?.accessToken !== undefined) {
             postService.getPageAmount(PAGE_SIZE, jwt.accessToken)
-                .then(res => {
+                .then(res =>
                     setPageAmount(res.pageAmount)
-                    }
                 )
         }
     }
@@ -27,7 +26,7 @@ export function usePostPage() {
         if (jwt !== null && page !== null) {
             postService.getAll(page, PAGE_SIZE, jwt.accessToken).then(res =>
                 setPosts(checkPosts(res))
-            )
+                )
         }
     }
 

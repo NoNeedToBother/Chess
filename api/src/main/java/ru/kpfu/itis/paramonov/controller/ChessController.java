@@ -32,7 +32,49 @@ public class ChessController {
             case "MOVE":
                 onMove(requestData);
                 break;
+            case "END":
+                onEnd(requestData);
+                break;
         }
+    }
+
+    private void onEnd(ChessRequestDto data) {
+        ChessGame game = games.get(data.getGameId());
+        if (game == null) sendGameDataErrorAndOmitGame(data.getFrom());
+        else {
+            switch (data.getResult()) {
+                case "win":
+                    onWin(game, data);
+                    break;
+                case "insufficient":
+                case "stalemate":
+                case "draw":
+                    onDraw(game, data);
+                    break;
+            }
+        }
+    }
+
+    private void onWin(ChessGame game, ChessRequestDto requestData) {
+        sendMessageToUser(requestData.getFrom(), new ChessEndResponseDto(
+                "END", "win", requestData.getFen()
+        ));
+        if (requestData.getFrom().equals(game.white)) {
+            sendMessageToUser(game.black, new ChessEndResponseDto(
+                    "END", "lose", requestData.getFen()
+            ));
+        } else sendMessageToUser(game.white, new ChessEndResponseDto(
+                "END", "lose", requestData.getFen()
+        ));
+    }
+
+    private void onDraw(ChessGame game, ChessRequestDto requestData) {
+        sendMessageToUser(game.white, new ChessEndResponseDto(
+                "END", requestData.getResult(), requestData.getFen()
+        ));
+        sendMessageToUser(game.black, new ChessEndResponseDto(
+                "END", requestData.getResult(), requestData.getFen()
+        ));
     }
 
     private void onMove(ChessRequestDto data) {
@@ -57,6 +99,7 @@ public class ChessController {
     }*/
 
     private void onSeek(Integer id) {
+        if (queue.contains(id)) return;
         queue.add(id);
         seekGame(id);
     }

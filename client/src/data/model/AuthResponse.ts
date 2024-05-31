@@ -12,3 +12,12 @@ export interface AuthResponse extends BaseResponse {
     user?: User;
     jwtInfo?: JwtInfo;
 }
+
+export interface JwtInfoDataResponse extends BaseResponse {
+    accessToken?: string;
+    refreshToken?: string
+}
+
+export interface JwtInfoResponse extends BaseResponse {
+    jwtInfo?: JwtInfo;
+}

@@ -28,7 +28,7 @@ public class JwtProvider {
     private final SecretKey jwtAccessSecret;
     private final SecretKey jwtRefreshSecret;
 
-    private static final int JWT_TOKEN_EXPIRATION_TIME_MINUTES = 10;
+    private static final int JWT_TOKEN_EXPIRATION_TIME_MINUTES = 20;
 
     private static final int JWT_REFRESH_TOKEN_EXPIRATION_TIME_DAYS = 14;
 

@@ -18,10 +18,11 @@ function App() {
     const { user, clearUser } = useUserContext()
     const { navigator } = useDataContext()
 
-    const { chessService } = useChessContext()
+    const { chessService, clearChess } = useChessContext()
 
     const onLogout = () => {
         clearUser()
+        clearChess()
         chessService.disconnect()
     }
     useEffect(() => {
