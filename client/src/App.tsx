@@ -12,10 +12,13 @@ import {PostsPage} from "./view/pages/posts/PostsPage";
 import {UploadPostPage} from "./view/pages/posts/UploadPostPage";
 import {ProfilePage} from "./view/pages/profile/ProfilePage";
 import {OtherUserProfilePage} from "./view/pages/profile/OtherUserProfilePage";
+import {useChessContext} from "./context/ChessContext";
 
 function App() {
     const { user, clearUser } = useUserContext()
     const { navigator } = useDataContext()
+
+    const { chessService } = useChessContext()
 
     const onLogout = () => {
         clearUser()
@@ -23,6 +26,8 @@ function App() {
     useEffect(() => {
         if (user === null) {
             navigator.navigateToLogin()
+        } else {
+            chessService.connect(user.id)
         }
     }, [user]);
     return (

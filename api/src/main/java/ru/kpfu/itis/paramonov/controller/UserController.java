@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.INTERNAL_SERVER_ERROR;
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
 
-@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
