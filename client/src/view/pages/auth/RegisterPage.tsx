@@ -1,30 +1,40 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {AuthMenu} from "../../components/other/AuthMenu";
-import {useUserContext} from "../../../context/UserContext";
 import {RegisterForm} from "../../components/form/RegisterForm";
 import {useDataContext} from "../../../context/DataContext";
+import {useAuthentication} from "../../../hooks/UseAuthentication";
 
 export function RegisterPage() {
-    const { updateUser, updateJwt } = useUserContext()
-    const { authService, navigator } = useDataContext()
-    const [error, setError] = useState('')
+    const { navigator } = useDataContext()
+    const { register, success, registerError} = useAuthentication()
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (success !== null && success) navigator.navigateToMain()
+    }, [success]);
+
+    useEffect(() => {
+        setError(null)
+    }, [registerError]);
 
     const onSubmit = async (username: string, password: string, confirmPassword: string) => {
         if (password !== confirmPassword) {
             setError("Password and confirm password field do not match")
             return
         }
-        const data = await authService.register(username, password)
-        if (data.user !== undefined && data.jwtInfo !== undefined) {
-            updateUser(data.user)
-            updateJwt(data.jwtInfo)
-            navigator.navigateToMain()
-        } else if (data.error !== undefined) setError(data.error)
+        register(username, password)
+    }
+    const getError = () => {
+        if (registerError.length > 0 && error !== null) return registerError
+        else if (registerError.length === 0 && error !== null) return error
+        else if (registerError.length > 0) return registerError
+        else if (error !== null) return error
+        else return ""
     }
 
     return (
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <AuthMenu title="Register" error={ error }>
+            <AuthMenu title="Register" error={ getError() }>
                 <RegisterForm onSubmit={ onSubmit }/>
             </AuthMenu>
         </div>

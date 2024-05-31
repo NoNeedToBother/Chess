@@ -2,6 +2,7 @@ package ru.kpfu.itis.paramonov.service;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
@@ -18,7 +19,7 @@ public interface PostService {
 
     Optional<PostDto> getByTitle(String title);
 
-    PostDto save(UploadPostRequestDto uploadPostRequestDto, Long authorId);
+    PostDto save(UploadPostRequestDto uploadPostRequestDto, MultipartFile image, Long authorId);
 
     boolean checkTitle(String title);
 

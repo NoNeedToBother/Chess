@@ -16,7 +16,6 @@ export function useComment() {
     const [comment, setComment ] = useState<Comment | null>(null)
 
     const uploadComment = (data: CommentUploadData) => {
-        console.log("upload")
         setCommentData(data)
     }
 
@@ -29,9 +28,6 @@ export function useComment() {
             }).then(res => {
                 if (res.comment !== undefined) {
                     setComment(res.comment)
-                }
-                if (res.error !== undefined) {
-                    console.log(res.error)
                 }
             })
         }

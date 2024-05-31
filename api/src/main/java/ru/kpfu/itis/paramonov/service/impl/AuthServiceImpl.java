@@ -5,10 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
 import ru.kpfu.itis.paramonov.service.AuthService;
 import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
-import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtProvider;
 import ru.kpfu.itis.paramonov.model.Role;
 import ru.kpfu.itis.paramonov.model.User;
@@ -34,12 +34,12 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public JwtResponse login(JwtRequest request) {
         checkUsernameAndPassword(request.getUsername(), request.getPassword());
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR));
-        if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            String accessToken = jwtProvider.generateAccessToken(user);
-            String refreshToken = jwtProvider.generateRefreshToken(user);
-            refreshStorage.put(user.getUsername(), refreshToken);
+        Optional<User> user = userRepository.findByUsername(request.getUsername());
+        if (!user.isPresent()) throw new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR);
+        if (passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
+            String accessToken = jwtProvider.generateAccessToken(user.get());
+            String refreshToken = jwtProvider.generateRefreshToken(user.get());
+            refreshStorage.put(user.get().getUsername(), refreshToken);
             return new JwtResponse(accessToken, refreshToken);
         } else {
             throw new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR);

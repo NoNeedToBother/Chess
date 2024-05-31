@@ -2,7 +2,7 @@ package ru.kpfu.itis.paramonov.converters.users;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import ru.kpfu.itis.paramonov.dto.RoleDto;
+import ru.kpfu.itis.paramonov.dto.users.RoleDto;
 import ru.kpfu.itis.paramonov.model.Role;
 
 @Component

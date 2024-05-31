@@ -1,7 +1,7 @@
 import {CommentModelResponse} from "../model/CommentResponse";
 import {Comment} from "../../models/Comment";
 import {Mapper} from "./Mapper";
-import {UserModelResponse} from "../model/UserModelResponse";
+import {UserModelResponse} from "../model/UserResponse";
 import {UserMapper} from "./UserMapper";
 
 export class CommentMapper {

@@ -2,21 +2,26 @@ package ru.kpfu.itis.paramonov.service.impl;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
 import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
+import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.model.Role;
+import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.service.UserService;
 import ru.kpfu.itis.paramonov.converters.users.UserConverter;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
@@ -26,14 +31,23 @@ public class UserServiceImpl implements UserService {
 
     private UserRepository userRepository;
 
+    private PostRepository postRepository;
+
     private UserRoleRepository userRoleRepository;
 
     private UserConverter userConverter;
 
+    private PostConverter postConverter;
+
     @Override
     public Optional<UserDto> getById(Long userId) {
         Optional<User> user = userRepository.findById(userId);
-        return user.map(value -> userConverter.convert(value));
+        Optional<UserDto> result = user.map(value -> userConverter.convert(value));
+        if (result.isPresent()) {
+            int likeAmount = userRepository.getLikeAmount(userId);
+            result.get().setLikes(likeAmount);
+            return result;
+        } else return result;
     }
 
     @Override
@@ -131,6 +145,30 @@ public class UserServiceImpl implements UserService {
             } else throw new NotFoundException(NO_USER_FOUND_ERROR);
         } catch (IllegalArgumentException e) {
             throw new InvalidParameterException(INCORRECT_ROLE_ERROR);
+        }
+    }
+
+    @Override
+    public boolean checkLike(Long userId, Long fromId) {
+        return userRepository.checkLike(userId, fromId);
+    }
+
+    @Override
+    public List<PostDto> getLastPosts(Long userId, Integer max) {
+        return postRepository.findAllByUserId(userId, max)
+                .stream().map( post -> postConverter.convert(post))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public boolean updateLike(Long userId, Long fromId) {
+        if (checkLike(userId, fromId)) {
+            userRepository.removeLike(userId, fromId);
+            return false;
+        } else {
+            userRepository.like(userId, fromId);
+            return true;
         }
     }
 

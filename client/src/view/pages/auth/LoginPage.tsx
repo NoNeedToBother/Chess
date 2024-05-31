@@ -1,25 +1,22 @@
-import React, {useState} from "react";
+import React, {useEffect} from "react";
 import {AuthMenu} from "../../components/other/AuthMenu";
 import {LoginForm} from "../../components/form/LoginForm";
-import {useUserContext} from "../../../context/UserContext";
 import {useDataContext} from "../../../context/DataContext";
+import {useAuthentication} from "../../../hooks/UseAuthentication";
 
 export function LoginPage() {
-    const { updateUser, updateJwt } = useUserContext()
-    const { authService, navigator } = useDataContext()
-    const [error, setError] = useState('')
-    const onSubmit = async (username: string, password: string) => {
-        const data = await authService.login(username, password)
-        if (data.user !== undefined && data.jwtInfo !== undefined) {
-            updateUser(data.user)
-            updateJwt(data.jwtInfo)
-            navigator.navigateToMain()
-        } else if(data.error !== undefined) setError(data.error)
-    }
+    const { navigator } = useDataContext()
+    const { login, success, loginError} = useAuthentication()
+
+    const onSubmit = (username: string, password: string) => login(username, password)
+
+    useEffect(() => {
+        if (success !== null && success) navigator.navigateToMain()
+    }, [success]);
 
     return (
         <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <AuthMenu title="Login" error={ error }>
+            <AuthMenu title="Login" error={ loginError }>
                 <LoginForm onSubmit={ onSubmit }/>
             </AuthMenu>
         </div>

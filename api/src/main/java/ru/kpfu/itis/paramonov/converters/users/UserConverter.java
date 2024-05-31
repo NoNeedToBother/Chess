@@ -3,7 +3,7 @@ package ru.kpfu.itis.paramonov.converters.users;
 import lombok.AllArgsConstructor;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.model.User;
 
 import java.util.stream.Collectors;
@@ -22,9 +22,7 @@ public class UserConverter implements Converter<User, UserDto> {
                 .name(source.getName())
                 .lastname(source.getLastname())
                 .bio(source.getBio())
-                .enabled(source.isEnabled())
-                .deactivated(source.isDeactivated())
-                .dateRegistered(source.getDateRegistered())
+                .dateRegistered(source.getDateRegistered().toString())
                 .profilePicture(source.getProfilePicture())
                 .roles(source.getRoles()
                         .stream().map(role -> roleConverter.convert(role))

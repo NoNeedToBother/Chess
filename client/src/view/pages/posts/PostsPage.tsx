@@ -2,31 +2,22 @@ import React, {useEffect, useState} from "react";
 import {PostCard} from "../../components/post/PostCard";
 import {Post} from "../../../models/Post";
 import {PaginationBar} from "../../components/other/PaginationBar";
-import {useLoadPostPage} from "../../../hooks/UseLoadPostPage";
-import {useDataContext} from "../../../context/DataContext";
+import {usePostPage} from "../../../hooks/UsePostPage";
 import {useUserContext} from "../../../context/UserContext";
-
-const PAGE_SIZE = 10
+import {checkAuthorityToDeletePost} from "../../../utils/CheckAuthorities";
 
 export function PostsPage() {
-    const { postService } = useDataContext()
-    const { jwt } = useUserContext()
-
-    const {posts, loadPage} = useLoadPostPage()
-    const [ pageAmount, setPageAmount] = useState<number | undefined>(undefined)
+    const { user } = useUserContext()
+    //const {  }
+    const {posts, loadPage, pageAmount, getPageAmount, deleteFromPosts} = usePostPage()
+    const [ currentPage, setCurrentPage ] = useState<number>(0)
 
     useEffect(() => {
-        if (jwt?.accessToken !== undefined) {
-            postService
-                .getPageAmount(PAGE_SIZE, jwt.accessToken)
-                .then(res => setPageAmount(res.pageAmount)
-            )
-        }
+        loadPage(0)
     }, []);
 
     useEffect(() => {
-        if (jwt?.accessToken !== undefined)
-            loadPage(0, PAGE_SIZE, jwt.accessToken)
+        getPageAmount()
     }, []);
 
     const evenPosts = (posts: Post[]) => {
@@ -36,8 +27,23 @@ export function PostsPage() {
     }
 
     const onPageChanged = (page: number) => {
-        if (jwt?.accessToken !== undefined)
-            loadPage(page, PAGE_SIZE, jwt.accessToken)
+        setCurrentPage(page)
+        loadPage(page)
+    }
+    const getPost = (post: Post) => {
+        if (user !== null) {
+            if (checkAuthorityToDeletePost(user, post)) {
+                return <PostCard post={post} onProfilePictureClick={() => {
+                }} key={post.id} showDelete={ true } onDelete={ onPostDelete }/>
+            }
+        }
+        return <PostCard post={post} onProfilePictureClick={() => {
+        }} key={post.id}/>
+    }
+    const onPostDelete = (id: number) => {
+        deleteFromPosts(id, () => {
+            loadPage(currentPage)
+        })
     }
 
     return <>
@@ -45,19 +51,18 @@ export function PostsPage() {
             <section className="bg-white dark:bg-gray-900">
                 <div className="py-24 px-8 mx-auto max-w-screen-xl lg:py-32 lg:px-6">
                     <div className="grid gap-8 lg:grid-cols-2">
-                        { evenPosts(posts).map((post, _) =>
-                            <PostCard post={ post } onProfilePictureClick={ () => {}} key={ post.id } />)}
+                        { evenPosts(posts).map((post, _) => getPost(post)
+                        )}
                     </div>
                     {posts.length % 2 === 1 &&
-                        <div className="lg:px-40 md:px-20 grid grid-cols-1">
-                            <PostCard post={ posts[posts.length - 1] } onProfilePictureClick={ () => {}}
-                                      key={ posts[posts.length - 1].id }/>
+                        <div className="lg:px-40 md:px-20 gap-8 py-8 grid grid-cols-1">
+                            { getPost(posts[posts.length - 1]) }
                         </div>
                     }
                 </div>
                 { pageAmount !== undefined &&
                     <div className="absolute py-8 lg:px-32 md:px-16 w-full flex items-center justify-center">
-                        <PaginationBar pageAmount={pageAmount} onPageChanged={ onPageChanged }/>
+                        <PaginationBar pageAmount={ pageAmount } onPageChanged={ onPageChanged }/>
                     </div>
                 }
             </section>

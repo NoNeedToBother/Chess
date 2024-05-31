@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import ru.kpfu.itis.paramonov.model.post.Post;
 
+import java.util.List;
+
 public interface PostRepository extends JpaRepository<Post, Long> {
     Post findByTitle(String title);
 
@@ -15,5 +17,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query("select count(p) from Post p")
     Integer getTotalAmount();
+
+    @Query(value = "select * from posts as p where p.poster_id = :userId order by p.date_posted desc limit :limit", nativeQuery = true)
+    List<Post> findAllByUserId(@Param("userId") Long userId, @Param("limit") Integer limit);
 
 }

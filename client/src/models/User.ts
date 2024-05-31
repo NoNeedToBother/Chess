@@ -8,5 +8,6 @@ export interface User {
     profilePicture: string;
     bio: string | null;
     dateRegistered: string;
+    likes: number;
     roles: Role[];
 }

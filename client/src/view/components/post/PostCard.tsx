@@ -1,31 +1,44 @@
 import { Post} from "../../../models/Post";
 import {Link} from "react-router-dom";
 import {CircleImage} from "../base/CircleImage";
-import {ArrowRightCircleIcon} from '@heroicons/react/16/solid'
+import {ArrowRightCircleIcon, TrashIcon} from '@heroicons/react/16/solid'
 
 export interface PostProps {
     post: Post;
-    onProfilePictureClick: (id: number) => void;
+    onProfilePictureClick?: (id: number) => void;
+    showDelete?: boolean
+    onDelete?: (id: number) => void
 }
 
-export function PostCard({ post, onProfilePictureClick }: PostProps) {
+export function PostCard({ post, onProfilePictureClick, onDelete, showDelete }: PostProps) {
     const onProfilePictureClicked = () => {
-        onProfilePictureClick(post.author.id);
+        if (onProfilePictureClick !== undefined) {
+            onProfilePictureClick(post.author.id);
+        }
+    }
+    const deleteHandler = () => {
+        if (onDelete !== undefined) {
+            onDelete(post.id)
+        }
     }
     return <article
-        className="p-6 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-        <div className="flex mb-5 text-gray-500 justify-between items-center">
-            <div></div>
+        className="p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        <span className="flex mb-5 text-gray-500 justify-between items-center">
+            { showDelete !== undefined &&
+                <TrashIcon className="h-8 text-gray-200 hover:text-red-400" onClick={ deleteHandler }/>
+            }
+            {showDelete === undefined && <div/>}
             <span className="text-sm"> { post.datePosted }</span>
-        </div>
+        </span>
         <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             { post.title }
         </h2>
+        <div className="h-0.5 bg-gray-200"/>
         <p className="mb-5 font-light text-gray-500 dark:text-gray-400"> { post.description }</p>
         <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
                 <CircleImage src={ post.author.profilePicture } className="h-8" onClick={ onProfilePictureClicked }/>
-                <span className="font-medium dark:text-white">
+                <span className="font-medium dark:text-white hover:text-blue-500">
                     <Link to={"/profile/" + post.author.id}>{ post.author.username }</Link>
                 </span>
             </div>

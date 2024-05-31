@@ -1,33 +1,39 @@
 import axios from "axios";
 import {
+    DELETE_POST_ENDPOINT,
     GET_COMMENTS_ENDPOINT,
     GET_POST_ENDPOINT,
     GET_POST_PAGE_AMOUNT_ENDPOINT,
     GET_POSTS_ENDPOINT,
-    UPDATE_POST_RATING_ENDPOINT
+    UPDATE_POST_RATING_ENDPOINT, UPLOAD_POST_ENDPOINT
 } from "../../utils/Endpoints";
 import {UrlFormatter} from "../../utils/UrlFormatter";
 import {PageAmountResponse, PagePostDataResponse, PagePostResponse} from "../model/PagePostResponse";
-import {PostDataResponse, PostModelResponse, PostResponse} from "../model/PostResponse";
-import {UserMapper} from "../mapper/UserMapper";
-import {UserModelResponse} from "../model/UserModelResponse";
+import {PostDataResponse, PostResponse} from "../model/PostResponse";
 import {AbstractService} from "./AbstractService";
-import {CommentsDataResponse, CommentModelResponse, CommentsResponse} from "../model/CommentResponse";
+import {CommentsDataResponse, CommentsResponse} from "../model/CommentResponse";
 import {Comment} from "../../models/Comment";
-import {Post} from "../../models/Post";
 import {PostMapper} from "../mapper/PostMapper";
 import {CommentMapper} from "../mapper/CommentMapper";
+import {BaseResponse} from "../model/BaseResponse";
+
+
+export interface UploadPostRequest {
+    title: string
+    content: string
+    description: string
+    token: string
+    image: File
+}
 
 export class PostService extends AbstractService{
     private urlFormatter: UrlFormatter
-    private userMapper: UserMapper
     private postMapper: PostMapper
     private commentMapper: CommentMapper
 
-    constructor(urlFormatter: UrlFormatter, userMapper: UserMapper, postMapper: PostMapper, commentMapper: CommentMapper) {
+    constructor(urlFormatter: UrlFormatter, postMapper: PostMapper, commentMapper: CommentMapper) {
         super()
         this.urlFormatter = urlFormatter
-        this.userMapper = userMapper
         this.postMapper = postMapper
         this.commentMapper = commentMapper
     }
@@ -113,6 +119,37 @@ export class PostService extends AbstractService{
                 })
                 return {comments: comments}
             } else return { error: "Something went wrong, try again later"}
+        })
+    }
+
+    async upload({title, content, description, token, image}: UploadPostRequest): Promise<PostResponse> {
+        let formData = new FormData()
+        formData.append("title", title.toString())
+        formData.append("content", content.toString())
+        formData.append("description", description.toString())
+        formData.append("image", image)
+        return this.handleAxios(async () => {
+            let resp = await axios.post<PostDataResponse>(
+                UPLOAD_POST_ENDPOINT,
+                formData,
+                { "headers": {"Authorization": "Bearer " + token}}
+            )
+            if (resp.data.post !== undefined && resp.data.author !== undefined) {
+                return {post: this.postMapper.map(resp.data.author, resp.data.post)}
+            } else return { error: "Something went wrong, try again later"}
+        })
+    }
+
+    async delete(id: number, accessToken: string): Promise<BaseResponse> {
+        let params = new Map<string, string>()
+        params.set("id", id.toString())
+        return this.handleAxios(async (): Promise<BaseResponse> => {
+            let resp = await axios.post<BaseResponse>(
+                this.urlFormatter.format(DELETE_POST_ENDPOINT, params),
+                {},
+                { "headers": {"Authorization": "Bearer " + accessToken}}
+            )
+            return resp.data
         })
     }
 }

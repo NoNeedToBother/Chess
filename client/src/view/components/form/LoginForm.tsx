@@ -15,13 +15,13 @@ export function LoginForm({ onSubmit }: LoginFormProps) {
         onSubmit(username, password)
     }
 
-    const usernameChangeListener = (event: React.ChangeEvent<HTMLInputElement>) => setUsername(event.target.value)
-    const passwordChangeListener = (event: React.ChangeEvent<HTMLInputElement>) => setPassword(event.target.value)
+    const onUsernameChange = (username: string) => setUsername(username)
+    const onPasswordChange = (password: string) => setPassword(password)
 
     return (
         <form className="space-y-6" onSubmit={ submitListener }>
-            <FormElement changeListener={ usernameChangeListener } identifier="username" name="Username" type="text"/>
-            <FormElement changeListener={ passwordChangeListener } identifier="password" name="Password" type="password"/>
+            <FormElement onChange={ onUsernameChange } identifier="username" name="Username" type="text"/>
+            <FormElement onChange={ onPasswordChange } identifier="password" name="Password" type="password"/>
             <div>
                 <button type="submit"
                         className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

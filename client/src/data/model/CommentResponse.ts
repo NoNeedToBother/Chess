@@ -1,4 +1,4 @@
-import {UserModelResponse} from "./UserModelResponse";
+import {UserModelResponse} from "./UserResponse";
 import {BaseResponse} from "./BaseResponse";
 import {Comment} from "../../models/Comment";
 

@@ -4,6 +4,12 @@ import {Post} from "../models/Post";
 import {useDataContext} from "../context/DataContext";
 import {Comment} from "../models/Comment";
 
+export interface PostUploadData {
+    title: string;
+    content: string;
+    description: string;
+}
+
 export function usePost(id: string | undefined) {
     const { postService } = useDataContext()
     const { jwt } = useUserContext()
@@ -17,6 +23,14 @@ export function usePost(id: string | undefined) {
     }
     const addComment = (comment: Comment) => {
         setComments(prev => [comment, ...prev])
+    }
+    const deletePost = (onDeleted: () => void) => {
+        if (jwt !== null && id !== undefined) {
+            postService.delete(parseInt(id), jwt.accessToken)
+                .then((res) => {
+                    if (res.error === undefined) onDeleted()
+            })
+        }
     }
 
     useEffect(() => {
@@ -50,5 +64,5 @@ export function usePost(id: string | undefined) {
         }
     }, []);
 
-    return { post, comments, updateRating, addComment }
+    return { post, comments, updateRating, addComment, deletePost }
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 import ru.kpfu.itis.paramonov.dto.auth.RefreshJwtRequest;
@@ -28,8 +28,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody JwtRequest jwtRequest) {
-        JwtResponse jwtResponse = authService.login(jwtRequest);
         try {
+            JwtResponse jwtResponse = authService.login(jwtRequest);
             UserDto user = userService.getByUsername(jwtRequest.getUsername()).get();
             return new ResponseEntity<>(
                     new AuthenticateResponseDto(user, jwtResponse), HttpStatus.OK);

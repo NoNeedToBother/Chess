@@ -22,4 +22,8 @@ export class Navigator {
     navigateToProfile() {
         this.navigation("/profile")
     }
+
+    navigateToPosts() {
+        this.navigation("/posts")
+    }
 }

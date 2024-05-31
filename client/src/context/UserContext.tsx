@@ -8,6 +8,8 @@ interface IUserContext {
     clearUser: () => void;
     jwt: JwtInfo | null;
     updateJwt: (jwt: JwtInfo) => void;
+    opponent: User | null;
+    setOpponent: (u: User | null) => void;
 }
 
 const UserContext = createContext<IUserContext | null>(null)
@@ -23,14 +25,12 @@ export const useUserContext = () => {
 }
 
 export const UserState = ({ children }: {children: React.ReactNode}) => {
-    const [user, setUser] =
-        useState<User | null>(null)
-    const [jwt, setJwt] =
-        useState<JwtInfo | null>(null)
+    const [user, setUser] = useState<User | null>(null)
+    const [ opponent, setOpponent ] = useState<User | null>(null)
+    const [jwt, setJwt] = useState<JwtInfo | null>(null)
     const clearUser = () => { setUser(null) }
     return(
-        <UserContextProvider value={{user: user, updateUser: setUser, clearUser: clearUser,
-            jwt: jwt, updateJwt: setJwt}}>
+        <UserContextProvider value={{user, updateUser: setUser, clearUser, jwt, updateJwt: setJwt, opponent, setOpponent}}>
             { children }
         </UserContextProvider>
     )

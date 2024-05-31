@@ -1,19 +1,33 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.kpfu.itis.paramonov.dto.users.BanDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
+import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
+import ru.kpfu.itis.paramonov.dto.response.PostsResponseDto;
+import ru.kpfu.itis.paramonov.dto.response.UserResponseDto;
+import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
+import ru.kpfu.itis.paramonov.service.BanService;
+import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.INTERNAL_SERVER_ERROR;
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
 
 @RestController
 @RequestMapping("/api/users")
@@ -21,6 +35,10 @@ import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.INTERNAL_SERVER_ERR
 public class UserController {
 
     private UserService userService;
+
+    private PostService postService;
+
+    private BanService banService;
 
     @PostMapping("/moderator/ban")
     public ResponseEntity<BaseResponseDto> ban(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
@@ -76,6 +94,60 @@ public class UserController {
             return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             return new ResponseEntity<>(new BaseResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/get")
+    public ResponseEntity<UserResponseDto> get(
+            @RequestParam("id") Long userId,
+            JwtAuthentication authentication
+    ) {
+        try {
+            Long fromId = authentication.getId();
+            Optional<UserDto> user = userService.getById(userId);
+            if (user.isPresent()) {
+                boolean liked = userService.checkLike(userId, fromId);
+                boolean banned = userService.isBanned(userId);
+                if (banned) {
+                    BanDto ban = banService.getLatestBan(userId);
+                    return new ResponseEntity<>(new UserResponseDto(user.get(), liked, ban), HttpStatus.OK);
+                }
+                else return new ResponseEntity<>(new UserResponseDto(user.get(), liked), HttpStatus.OK);
+            } else return new ResponseEntity<>(new UserResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new UserResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/get/posts")
+    public ResponseEntity<PostsResponseDto> getPosts(
+            @RequestParam("id") Long userId, @RequestParam("amount") Integer maxAmount
+    ) {
+        try {
+            Optional<UserDto> user = userService.getById(userId);
+            if (user.isPresent()) {
+                List<PostDto> posts = userService.getLastPosts(userId, maxAmount);
+                List<PostResponseDto> responses = posts.stream()
+                        .map(postDto -> new PostResponseDto(user.get(), postDto)
+                        ).collect(Collectors.toList());
+                return new ResponseEntity<>(new PostsResponseDto(responses), HttpStatus.OK);
+            } else return new ResponseEntity<>(new PostsResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new PostsResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/update/like")
+    public ResponseEntity<UserResponseDto> updateLike(
+            @RequestParam("id") Long userId, JwtAuthentication authentication
+    ) {
+        try {
+            Long fromId = authentication.getId();
+            Optional<UserDto> user = userService.getById(userId);
+            if (user.isPresent()) {
+                userService.updateLike(userId, fromId);
+                return get(userId, authentication);
+            } else return new ResponseEntity<>(new UserResponseDto(NO_USER_FOUND_ERROR), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>(new UserResponseDto(INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

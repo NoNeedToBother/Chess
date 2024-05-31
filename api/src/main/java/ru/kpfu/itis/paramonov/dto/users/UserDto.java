@@ -1,11 +1,10 @@
-package ru.kpfu.itis.paramonov.dto;
+package ru.kpfu.itis.paramonov.dto.users;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.sql.Timestamp;
 import java.util.List;
 
 @AllArgsConstructor
@@ -26,11 +25,9 @@ public class UserDto {
 
     private String bio;
 
-    private Timestamp dateRegistered;
+    private String dateRegistered;
 
-    private boolean enabled;
-
-    private boolean deactivated;
+    private Integer likes;
 
     private List<RoleDto> roles;
 }

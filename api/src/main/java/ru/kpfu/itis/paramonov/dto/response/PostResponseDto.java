@@ -1,7 +1,7 @@
 package ru.kpfu.itis.paramonov.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import ru.kpfu.itis.paramonov.dto.UserDto;
+import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 
 public class PostResponseDto extends BaseResponseDto {
