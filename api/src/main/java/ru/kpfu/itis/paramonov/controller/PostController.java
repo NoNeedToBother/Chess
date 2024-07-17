@@ -14,9 +14,6 @@ import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.*;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
-import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
-import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
-import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.PostService;
@@ -44,106 +41,64 @@ public class PostController {
             @RequestPart("content") String content,
             @RequestPart("description") String description,
             JwtAuthentication jwtAuthentication) {
-        try {
-            Long authorId = jwtAuthentication.getId();
-            UploadPostRequestDto uploadPostRequestDto = new UploadPostRequestDto(title, description, content);
-            PostDto postDto = postService.save(uploadPostRequestDto, image, authorId);
-            return get(postDto.getId());
-        } catch (InvalidParameterException e) {
-            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new PostResponseDto(UPLOAD_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long authorId = jwtAuthentication.getId();
+        UploadPostRequestDto uploadPostRequestDto = new UploadPostRequestDto(title, description, content);
+        PostDto postDto = postService.save(uploadPostRequestDto, image, authorId);
+        return get(postDto.getId());
     }
 
     @GetMapping("/get")
     public ResponseEntity<PostResponseDto> get(@RequestParam Long id) {
-        try {
-            Optional<PostDto> post = postService.getById(id);
-            if (post.isPresent()) {
-                UserDto author = userService.getById(post.get().getAuthorId()).get();
-                PostResponseDto postResponseDto = new PostResponseDto(author, post.get());
-                return ResponseEntity.ok(postResponseDto);
-            } else {
-                return new ResponseEntity<>(new PostResponseDto(NO_POST_FOUND_ERROR), HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception e) {
-            return new ResponseEntity<>(new PostResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Optional<PostDto> post = postService.getById(id);
+        if (post.isPresent()) {
+            UserDto author = userService.getById(post.get().getAuthorId()).get();
+            PostResponseDto postResponseDto = new PostResponseDto(author, post.get());
+            return ResponseEntity.ok(postResponseDto);
+        } else throw new NotFoundException(NO_POST_FOUND_ERROR);
     }
 
     @GetMapping("/get/all")
     public ResponseEntity<Page<PostResponseDto>> getAll(Pageable pageable) {
-        try {
-            Page<PostResponseDto> resp = postService.getAll(pageable).map(post -> {
-                UserDto author = userService.getById(post.getAuthorId()).get();
-                PostResponseDto postResponseDto = new PostResponseDto(author, post);
-                return postResponseDto;
-            });
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        Page<PostResponseDto> resp = postService.getAll(pageable).map(post -> {
+            UserDto author = userService.getById(post.getAuthorId()).get();
+            PostResponseDto postResponseDto = new PostResponseDto(author, post);
+            return postResponseDto;
+        });
+        return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 
     @GetMapping("/get/comments")
     public ResponseEntity<CommentsResponseDto> getComments(@RequestParam Long id) {
-        try {
-            List<CommentDto> comments = postService.getComments(id);
-            List<CommentResponseDto> commentResponseDtoList = comments.stream()
-                    .map(comment -> {
-                        UserDto author = userService.getById(comment.getAuthorId()).get();
-                        return new CommentResponseDto(comment, author);
-                    })
-                    .collect(Collectors.toList());
-            return new ResponseEntity<>(new CommentsResponseDto(commentResponseDtoList), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new CommentsResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        List<CommentDto> comments = postService.getComments(id);
+        List<CommentResponseDto> commentResponseDtoList = comments.stream()
+                .map(comment -> {
+                    UserDto author = userService.getById(comment.getAuthorId()).get();
+                    return new CommentResponseDto(comment, author);
+                })
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(new CommentsResponseDto(commentResponseDtoList), HttpStatus.OK);
     }
     @PostMapping("/delete")
     public ResponseEntity<BaseResponseDto> delete(
             @RequestParam Long id, JwtAuthentication authentication) {
-        try {
-            Long from = authentication.getId();
-            postService.deleteById(id, from);
-            return ResponseEntity.ok().build();
-        } catch (NoSufficientAuthorityException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponseDto(DELETE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long from = authentication.getId();
+        postService.deleteById(id, from);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/update/rating")
     public ResponseEntity<PostResponseDto> updateRating(
             @RequestBody UpdatePostRatingRequestDto updatePostRatingRequestDto, JwtAuthentication authentication
     ) {
-        try {
-            Long from = authentication.getId();
-            PostDto result = postService.updateRating(updatePostRatingRequestDto, from);
-            UserDto author = userService.getById(result.getAuthorId()).get();
-            return new ResponseEntity<>(new PostResponseDto(author, result), HttpStatus.OK);
-        } catch (DeniedRequestException e) {
-            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(new PostResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new PostResponseDto(UPDATE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long from = authentication.getId();
+        PostDto result = postService.updateRating(updatePostRatingRequestDto, from);
+        UserDto author = userService.getById(result.getAuthorId()).get();
+        return new ResponseEntity<>(new PostResponseDto(author, result), HttpStatus.OK);
     }
 
     @GetMapping("/get/pageamount")
     public ResponseEntity<PageAmountResponseDto> getPageAmount(@RequestParam Integer size) {
-        try {
-            Integer amount = postService.getTotalPageAmount(size);
-            return new ResponseEntity<>(new PageAmountResponseDto(amount), HttpStatus.OK);
-        } catch (InvalidParameterException e) {
-            return new ResponseEntity<>(new PageAmountResponseDto(e.getMessage()), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new PageAmountResponseDto(GET_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Integer amount = postService.getTotalPageAmount(size);
+        return new ResponseEntity<>(new PageAmountResponseDto(amount), HttpStatus.OK);
     }
 }

@@ -30,31 +30,17 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> upload(
             @RequestBody UploadCommentRequestDto uploadCommentRequestDto,
             JwtAuthentication authentication) {
-        try {
-            Long authorId = authentication.getId();
-            CommentDto commentDto = commentService.save(uploadCommentRequestDto, authorId);
-            UserDto userDto = userService.getById(authorId).get();
-            return new ResponseEntity<>(new CommentResponseDto(commentDto, userDto), HttpStatus.CREATED);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(new CommentResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new CommentResponseDto(UPLOAD_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long authorId = authentication.getId();
+        CommentDto commentDto = commentService.save(uploadCommentRequestDto, authorId);
+        UserDto userDto = userService.getById(authorId).get();
+        return new ResponseEntity<>(new CommentResponseDto(commentDto, userDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/delete")
     public ResponseEntity<BaseResponseDto> delete(
             @RequestParam Long id, JwtAuthentication authentication) {
-        try {
-            Long from = authentication.getId();
-            commentService.deleteById(id, from);
-            return ResponseEntity.ok().build();
-        } catch (NoSufficientAuthorityException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponseDto(DELETE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long from = authentication.getId();
+        commentService.deleteById(id, from);
+        return ResponseEntity.ok().build();
     }
 }
