@@ -6,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-import ru.kpfu.itis.paramonov.dto.request.UpdatePostRatingRequestDto;
 import ru.kpfu.itis.paramonov.exceptions.DeniedRequestException;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
@@ -14,7 +13,6 @@ import ru.kpfu.itis.paramonov.repository.PostRatingRepository;
 import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.converters.posts.CommentConverter;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
-import ru.kpfu.itis.paramonov.dto.request.UploadPostRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
@@ -62,7 +60,8 @@ public class PostServiceImpl implements PostService {
                 .findAll(pageable)
                 .map( post -> {
                     PostDto dto = postConverter.convert(post);
-                    dto.setRating(postRatingRepository.getAverageRating(post.getId()));
+                    if (dto != null)
+                        dto.setRating(postRatingRepository.getAverageRating(post.getId()));
                     return dto;
                 }
                 );
@@ -76,7 +75,7 @@ public class PostServiceImpl implements PostService {
         } else {
             PostDto dto = postConverter.convert(post);
             dto.setRating(postRatingRepository.getAverageRating(post.getId()));
-            return Optional.ofNullable(dto);
+            return Optional.of(dto);
         }
     }
 
@@ -87,18 +86,18 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostDto save(UploadPostRequestDto uploadPostRequestDto, MultipartFile image, Long authorId) {
+    public PostDto save(String title, String description, String content, MultipartFile image, Long authorId) {
         User poster = userRepository.findById(authorId).orElseThrow(RuntimeException::new);
-        if (!checkTitle(uploadPostRequestDto.getTitle()))
+        if (!checkTitle(title))
             throw new InvalidParameterException(POST_EXISTS_ERROR);
         try {
             String imageUrl = uploadPostImage(image);
             Post post = Post.builder()
                     .author(poster)
                     .imageUrl(imageUrl)
-                    .content(uploadPostRequestDto.getContent())
-                    .description(uploadPostRequestDto.getDescription())
-                    .title(uploadPostRequestDto.getTitle())
+                    .content(content)
+                    .description(description)
+                    .title(title)
                     .build();
             Post savedPost = postRepository.save(post);
             return postConverter.convert(savedPost);
@@ -162,10 +161,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public PostDto updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId) {
-        Optional<Post> post = postRepository.findById(updatePostRatingRequestDto.getPostId());
-        User user = userRepository.findById(fromId).get();
-        Integer rating = updatePostRatingRequestDto.getRating();
+    public PostDto updateRating(Long postId, Integer rating, Long fromId) {
+        Optional<Post> post = postRepository.findById(postId);
+        User user = userRepository.findById(fromId).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
         if (post.isPresent()) {
             if (post.get().getAuthor().getId().equals(fromId)) {
                 throw new DeniedRequestException(UPDATE_OWN_POST_DENIED_ERROR);
@@ -175,7 +175,9 @@ public class PostServiceImpl implements PostService {
             } else {
                 postRatingRepository.addRating(post.get().getId(), user.getId(), rating);
             }
-            return getById(post.get().getId()).get();
+            return getById(post.get().getId()).orElseThrow(
+                    () -> new NotFoundException(NO_POST_FOUND_ERROR)
+            );
         } else throw new NotFoundException(NO_POST_FOUND_ERROR);
     }
 
@@ -197,7 +199,9 @@ public class PostServiceImpl implements PostService {
     }
 
     private void deletePost(Long authorId, Post post) {
-        User author = userRepository.findById(authorId).get();
+        User author = userRepository.findById(authorId).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
         author.getPosts().removeIf(p -> p.getId().equals(post.getId()));
         userRepository.save(author);
     }

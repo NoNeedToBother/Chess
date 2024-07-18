@@ -10,10 +10,13 @@ import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 import ru.kpfu.itis.paramonov.dto.auth.RefreshJwtRequest;
 import ru.kpfu.itis.paramonov.dto.request.RegisterUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.AuthenticateResponseDto;
+import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.service.AuthService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
 import javax.security.auth.message.AuthException;
+
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,8 +29,10 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthenticateResponseDto> login(@RequestBody JwtRequest jwtRequest) {
-        JwtResponse jwtResponse = authService.login(jwtRequest);
-        UserDto user = userService.getByUsername(jwtRequest.getUsername()).get();
+        JwtResponse jwtResponse = authService.login(jwtRequest.getUsername(), jwtRequest.getPassword());
+        UserDto user = userService.getByUsername(jwtRequest.getUsername()).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
         return new ResponseEntity<>(
                 new AuthenticateResponseDto(user, jwtResponse), HttpStatus.OK);
     }
@@ -42,8 +47,6 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(jwtRequest.getToken()));
     }
 
-    private static final String REGISTER_ERROR_INTERNAL = "Failed to register, try again later";
-
     @PostMapping(value = "/register", produces = "application/json")
     public ResponseEntity<AuthenticateResponseDto> register(
             @RequestBody RegisterUserRequestDto registerUserRequestDto
@@ -53,9 +56,10 @@ public class AuthController {
 
         authService.registerUser(username, password);
 
-        JwtRequest jwtRequest = new JwtRequest(username, password);
-        JwtResponse jwtResponse = authService.login(jwtRequest);
-        UserDto user = userService.getByUsername(username).get();
+        JwtResponse jwtResponse = authService.login(username, password);
+        UserDto user = userService.getByUsername(username).orElseThrow(
+                RuntimeException::new
+        );
         return new ResponseEntity<>(
                 new AuthenticateResponseDto(user, jwtResponse), HttpStatus.CREATED);
     }

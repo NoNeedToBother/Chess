@@ -20,6 +20,7 @@ import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -43,7 +44,11 @@ public class PostController {
             JwtAuthentication jwtAuthentication) {
         Long authorId = jwtAuthentication.getId();
         UploadPostRequestDto uploadPostRequestDto = new UploadPostRequestDto(title, description, content);
-        PostDto postDto = postService.save(uploadPostRequestDto, image, authorId);
+        PostDto postDto = postService.save(
+                uploadPostRequestDto.getTitle(),
+                uploadPostRequestDto.getDescription(),
+                uploadPostRequestDto.getContent(),
+                image, authorId);
         return get(postDto.getId());
     }
 
@@ -51,7 +56,9 @@ public class PostController {
     public ResponseEntity<PostResponseDto> get(@RequestParam Long id) {
         Optional<PostDto> post = postService.getById(id);
         if (post.isPresent()) {
-            UserDto author = userService.getById(post.get().getAuthorId()).get();
+            UserDto author = userService.getById(post.get().getAuthorId()).orElseThrow(
+                    () -> new NotFoundException(NO_USER_FOUND_ERROR)
+            );
             PostResponseDto postResponseDto = new PostResponseDto(author, post.get());
             return ResponseEntity.ok(postResponseDto);
         } else throw new NotFoundException(NO_POST_FOUND_ERROR);
@@ -60,9 +67,10 @@ public class PostController {
     @GetMapping("/get/all")
     public ResponseEntity<Page<PostResponseDto>> getAll(Pageable pageable) {
         Page<PostResponseDto> resp = postService.getAll(pageable).map(post -> {
-            UserDto author = userService.getById(post.getAuthorId()).get();
-            PostResponseDto postResponseDto = new PostResponseDto(author, post);
-            return postResponseDto;
+            UserDto author = userService.getById(post.getAuthorId()).orElseThrow(
+                    () -> new NotFoundException(NO_USER_FOUND_ERROR)
+            );
+            return new PostResponseDto(author, post);
         });
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
@@ -72,9 +80,10 @@ public class PostController {
         List<CommentDto> comments = postService.getComments(id);
         List<CommentResponseDto> commentResponseDtoList = comments.stream()
                 .map(comment -> {
-                    UserDto author = userService.getById(comment.getAuthorId()).get();
-                    return new CommentResponseDto(comment, author);
+                    Optional<UserDto> author = userService.getById(comment.getAuthorId());
+                    return author.map(userDto -> new CommentResponseDto(comment, userDto)).orElse(null);
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         return new ResponseEntity<>(new CommentsResponseDto(commentResponseDtoList), HttpStatus.OK);
     }
@@ -91,8 +100,11 @@ public class PostController {
             @RequestBody UpdatePostRatingRequestDto updatePostRatingRequestDto, JwtAuthentication authentication
     ) {
         Long from = authentication.getId();
-        PostDto result = postService.updateRating(updatePostRatingRequestDto, from);
-        UserDto author = userService.getById(result.getAuthorId()).get();
+        PostDto result = postService.updateRating(updatePostRatingRequestDto.getPostId(),
+                updatePostRatingRequestDto.getRating(), from);
+        UserDto author = userService.getById(result.getAuthorId()).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
         return new ResponseEntity<>(new PostResponseDto(author, result), HttpStatus.OK);
     }
 

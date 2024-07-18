@@ -3,7 +3,6 @@ package ru.kpfu.itis.paramonov.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.paramonov.converters.posts.CommentConverter;
-import ru.kpfu.itis.paramonov.dto.request.UploadCommentRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
@@ -35,9 +34,9 @@ public class CommentServiceImpl implements CommentService {
     private UserRoleRepository userRoleRepository;
 
     @Override
-    public CommentDto save(UploadCommentRequestDto uploadCommentRequestDto, Long authorId) {
+    public CommentDto save(Long postId, String content, Long authorId) {
         Optional<User> userOptional = userRepository.findById(authorId);
-        Optional<Post> postOptional = postRepository.findById(uploadCommentRequestDto.getPostId());
+        Optional<Post> postOptional = postRepository.findById(postId);
         if (userOptional.isPresent()) {
             if (postOptional.isPresent()) {
                 User author = userOptional.get();
@@ -45,7 +44,7 @@ public class CommentServiceImpl implements CommentService {
                 Comment comment = Comment.builder()
                         .author(author)
                         .post(post)
-                        .content(uploadCommentRequestDto.getContent())
+                        .content(content)
                         .build();
                 Comment res = commentRepository.saveAndFlush(comment);
                 return commentConverter.convert(res);
@@ -68,7 +67,9 @@ public class CommentServiceImpl implements CommentService {
     }
 
     public void deleteComment(Long authorId, Comment comment) {
-        User author = userRepository.findById(authorId).get();
+        User author = userRepository.findById(authorId).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
         author.getComments().removeIf(c -> c.getId().equals(comment.getId()));
         userRepository.save(author);
         Post post = comment.getPost();

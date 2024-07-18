@@ -16,7 +16,6 @@ import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.BanService;
-import ru.kpfu.itis.paramonov.service.PostService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
 import java.util.List;
@@ -32,14 +31,12 @@ public class UserController {
 
     private UserService userService;
 
-    private PostService postService;
-
     private BanService banService;
 
     @PostMapping("/moderator/ban")
     public ResponseEntity<BaseResponseDto> ban(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
         Long fromId = authentication.getId();
-        userService.ban(banUserRequestDto, fromId);
+        userService.ban(banUserRequestDto.getBannedId(), banUserRequestDto.getReason(), fromId);
         return ResponseEntity.ok().build();
     }
 
@@ -51,7 +48,8 @@ public class UserController {
     }
 
     @PostMapping("/admin/ban")
-    public ResponseEntity<BaseResponseDto> banAdmin(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
+    public ResponseEntity<BaseResponseDto> banAdmin(@RequestBody BanUserRequestDto banUserRequestDto,
+                                                    JwtAuthentication authentication) {
         return ban(banUserRequestDto, authentication);
     }
 
@@ -61,9 +59,11 @@ public class UserController {
     }
 
     @PostMapping("/admin/promote")
-    public ResponseEntity<BaseResponseDto> promote(@RequestBody PromoteUserRequestDto promoteUserRequestDto, JwtAuthentication authentication) {
+    public ResponseEntity<BaseResponseDto> promote(@RequestBody PromoteUserRequestDto promoteUserRequestDto,
+                                                   JwtAuthentication authentication) {
         Long fromId = authentication.getId();
-        userService.promote(promoteUserRequestDto, fromId);
+        userService.promote(
+                promoteUserRequestDto.getPromotedId(), promoteUserRequestDto.getRole(), fromId);
         return ResponseEntity.ok().build();
     }
 

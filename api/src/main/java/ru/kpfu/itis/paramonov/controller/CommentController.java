@@ -9,13 +9,12 @@ import ru.kpfu.itis.paramonov.dto.request.UploadCommentRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
-import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.CommentService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
-import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -31,8 +30,11 @@ public class CommentController {
             @RequestBody UploadCommentRequestDto uploadCommentRequestDto,
             JwtAuthentication authentication) {
         Long authorId = authentication.getId();
-        CommentDto commentDto = commentService.save(uploadCommentRequestDto, authorId);
-        UserDto userDto = userService.getById(authorId).get();
+        CommentDto commentDto = commentService.save(uploadCommentRequestDto.getPostId(),
+                uploadCommentRequestDto.getContent(), authorId);
+        UserDto userDto = userService.getById(authorId).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
         return new ResponseEntity<>(new CommentResponseDto(commentDto, userDto), HttpStatus.CREATED);
     }
 

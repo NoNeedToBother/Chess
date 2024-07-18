@@ -2,14 +2,13 @@ package ru.kpfu.itis.paramonov.service;
 
 
 
-import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 
 import javax.security.auth.message.AuthException;
 
 public interface AuthService {
 
-    JwtResponse login(JwtRequest request);
+    JwtResponse login(String username, String password);
 
     JwtResponse token(String request) throws AuthException;
 

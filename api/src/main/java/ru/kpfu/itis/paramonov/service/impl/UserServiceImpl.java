@@ -3,8 +3,6 @@ package ru.kpfu.itis.paramonov.service.impl;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
-import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
-import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
 import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
@@ -46,8 +44,8 @@ public class UserServiceImpl implements UserService {
         if (result.isPresent()) {
             int likeAmount = userRepository.getLikeAmount(userId);
             result.get().setLikes(likeAmount);
-            return result;
-        } else return result;
+        }
+        return result;
     }
 
     @Override
@@ -73,10 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void ban(BanUserRequestDto requestDto, Long fromId) {
-        Long bannedId = requestDto.getBannedId();
-        String reason = requestDto.getReason();
-
+    public void ban(Long bannedId, String reason, Long fromId) {
         Optional<User> banned = userRepository.findById(bannedId);
         Optional<User> from = userRepository.findById(fromId);
         if (banned.isPresent() && from.isPresent()) {
@@ -128,9 +123,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void promote(PromoteUserRequestDto promoteUserRequestDto, Long fromId) {
-        String role = promoteUserRequestDto.getRole();
-        Long promotedId = promoteUserRequestDto.getPromotedId();
+    public void promote(Long promotedId, String role, Long fromId) {
         try {
             Role enumRole = Role.valueOf(role);
             if (enumRole == Role.USER) throw new InvalidParameterException(INCORRECT_ROLE_ERROR);

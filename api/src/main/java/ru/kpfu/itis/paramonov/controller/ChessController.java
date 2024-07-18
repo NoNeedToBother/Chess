@@ -2,7 +2,6 @@ package ru.kpfu.itis.paramonov.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -10,16 +9,14 @@ import ru.kpfu.itis.paramonov.dto.chess.*;
 
 import java.util.*;
 
-@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class ChessController {
     private final SimpMessagingTemplate messagingTemplate;
 
-    private Map<String, ChessGame> games = new HashMap<>();
+    private final Map<String, ChessGame> games = new HashMap<>();
 
     private final List<Integer> queue = new ArrayList<>();
-    //private final Map<Long, Runnable> runnables = new HashMap<>();
 
     private final Random rand = new Random();
 
@@ -104,9 +101,10 @@ public class ChessController {
         seekGame(id);
     }
 
+    private static final long MAX_WAIT_TIME_MILLIS = 600 * 1000L;
+
     private void seekGame(Integer id) {
         Runnable seekTask = () -> {
-            long MAX_WAIT_TIME_MILLIS = 600 * 1000L;
             long time = 0;
             while(true) {
                 if (time > MAX_WAIT_TIME_MILLIS) {
@@ -157,10 +155,10 @@ public class ChessController {
         games.put(gameId, new ChessGame(gameId, white, black));
 
         sendMessageToUser(player1, new ChessBeginResponseDto(
-                "BEGIN", player1Color, player2, gameId, INITIAL_FEN
+                "BEGIN", player1Color, player2, gameId, ChessGame.INITIAL_FEN
         ));
         sendMessageToUser(player2, new ChessBeginResponseDto(
-                "BEGIN", player2Color, player1, gameId, INITIAL_FEN
+                "BEGIN", player2Color, player1, gameId, ChessGame.INITIAL_FEN
         ));
     }
 
@@ -178,8 +176,6 @@ public class ChessController {
         );
     }
 
-    private static final String INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-
     @RequiredArgsConstructor
     @Setter
     private static class ChessGame {
@@ -192,6 +188,8 @@ public class ChessController {
         private String fen = INITIAL_FEN;
 
         private String turn = "white";
+
+        private static final String INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     }
 
 }
