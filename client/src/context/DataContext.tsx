@@ -1,6 +1,6 @@
 import {AuthService} from "../data/service/AuthService";
 import {PostService} from "../data/service/PostService";
-import React, {createContext, useContext, useState} from "react";
+import React, {createContext, useContext} from "react";
 import {RoleMapper, UserMapper} from "../data/mapper/UserMapper";
 import {UrlFormatter} from "../utils/UrlFormatter";
 import {useNavigate} from "react-router-dom";
