@@ -82,7 +82,7 @@ export function ProfilePage() {
                 <h1 className="w-full text-center my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif">
                     Last posts
                 </h1>
-                <div className="mx-auto w-1/2 gap-80 columns-1">
+                <div className="mx-auto w-1/2 gap-4 columns-1">
                     {userPosts !== null &&
                         userPosts.map((post, _) =>
                             <PostCard post={post}/>

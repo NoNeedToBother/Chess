@@ -10,10 +10,7 @@ export interface MoveRequest {
     color: string
     from: number
     fen: string
-    moveFrom: string
-    moveTo: string
     promotion?: string
-    result?: string
 }
 
 export interface EndRequest {

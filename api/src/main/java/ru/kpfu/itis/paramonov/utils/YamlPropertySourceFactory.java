@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.properties;
+package ru.kpfu.itis.paramonov.utils;
 
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;

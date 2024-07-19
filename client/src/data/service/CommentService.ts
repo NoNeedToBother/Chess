@@ -22,11 +22,11 @@ export class CommentService extends AbstractService{
     }
 
     async upload({postId, content, token}: UploadCommentRequest): Promise<CommentResponse> {
-        return this.handleAxios( async () => {
+        return this.handleAxios( async (localToken = token) => {
             let resp = await axios.post<CommentDataResponse>(
                 UPLOAD_COMMENT_ENDPOINT,
                 {postId: postId, content: content},
-                {headers: { Authorization: "Bearer " + token }}
+                {headers: { Authorization: "Bearer " + localToken }}
             )
             if (resp.data.comment !== undefined && resp.data.author !== undefined) {
                 return {comment: this.commentMapper.map(resp.data.author, resp.data.comment)}

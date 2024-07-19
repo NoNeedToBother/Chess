@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import ru.kpfu.itis.paramonov.model.User;
-import ru.kpfu.itis.paramonov.properties.YamlPropertySourceFactory;
+import ru.kpfu.itis.paramonov.utils.YamlPropertySourceFactory;
 
 import javax.crypto.SecretKey;
 
@@ -43,7 +43,7 @@ public class JwtProvider {
 
     public String generateAccessToken(User user) {
         LocalDateTime now = LocalDateTime.now();
-        Instant accessExpirationTime = now.plusMinutes(JWT_TOKEN_EXPIRATION_TIME_MINUTES)
+        Instant accessExpirationTime = now.plusSeconds(30L)
                 .atZone(ZoneId.systemDefault()).toInstant();
         Date accessExpiration = Date.from(accessExpirationTime);
         return Jwts.builder()

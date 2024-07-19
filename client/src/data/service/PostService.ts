@@ -16,6 +16,7 @@ import {Comment} from "../../models/Comment";
 import {PostMapper} from "../mapper/PostMapper";
 import {CommentMapper} from "../mapper/CommentMapper";
 import {BaseResponse} from "../model/BaseResponse";
+import {JwtInfo} from "../../models/JwtInfo";
 
 
 export interface UploadPostRequest {
@@ -38,8 +39,8 @@ export class PostService extends AbstractService{
         this.commentMapper = commentMapper
     }
 
-    async getAll(page: number, pageSize: number, accessToken: string): Promise<PagePostResponse> {
-        return this.handleAxios(async () => {
+    async getAll(page: number, pageSize: number, jwtInfo: JwtInfo): Promise<PagePostResponse> {
+        return this.handleAxios(async (localToken = jwtInfo.accessToken) => {
             let params = new Map<string, string>()
             params.set("page", page.toString())
                 .set("size", pageSize.toString())
@@ -47,7 +48,7 @@ export class PostService extends AbstractService{
                 this.urlFormatter.format(
                     GET_POSTS_ENDPOINT, params),
                 {
-                    headers: { Authorization: "Bearer " + accessToken }
+                    headers: { Authorization: "Bearer " + localToken }
                 })
             let posts: PostResponse[] = []
 
@@ -60,7 +61,7 @@ export class PostService extends AbstractService{
                 })
             }
             return {posts: posts} as PagePostResponse
-        })
+        }, jwtInfo)
     }
 
     async get(id: number, accessToken: string): Promise<PostResponse> {

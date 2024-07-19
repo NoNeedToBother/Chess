@@ -24,7 +24,7 @@ export function usePostPage() {
 
     const loadPage = (page: number) => {
         if (jwt !== null && page !== null) {
-            postService.getAll(page, PAGE_SIZE, jwt.accessToken).then(res =>
+            postService.getAll(page, PAGE_SIZE, jwt).then(res =>
                 setPosts(checkPosts(res))
                 )
         }

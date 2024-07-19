@@ -13,7 +13,7 @@ export function useChess() {
     const { user, get } = useUser()
 
     const [game, setGame] = useState<Chess>(new Chess())
-    const [result, setResult] = useState<string | null>(null)
+    const [result, setResult] = useState<string | undefined>(undefined)
 
     useEffect(() => {
         if (fen !== null) setGame(new Chess(fen))
@@ -45,8 +45,7 @@ export function useChess() {
         let resFen = game.fen()
         if (gameId !== null && color !== null && userContext.user !== null) {
             chessService.move({
-                color: color, fen: resFen, from: userContext.user.id,
-                gameId: gameId, moveFrom: move.from, moveTo: move.to, result: result
+                color: color, fen: resFen, from: userContext.user.id, gameId: gameId
             })
         }
     }
@@ -78,7 +77,7 @@ export function useChess() {
     const seek = (id: number) => {
         if (chessService !== null) chessService.seek(id,
             { onSeekEnd, onMove, onEnd })
-        setResult(null)
+        setResult(undefined)
         clearChess()
     }
 
