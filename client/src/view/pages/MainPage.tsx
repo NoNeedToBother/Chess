@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import {Chessboard} from "react-chessboard";
-import {PromotionPieceOption, Square} from "react-chessboard/dist/chessboard/types";
+import {Square} from "react-chessboard/dist/chessboard/types";
 import {useChess} from "../../hooks/UseChess";
 import {useChessContext} from "../../context/ChessContext";
 import {useUserContext} from "../../context/UserContext";
-import {useUser} from "../../hooks/UseUser";
 import {Link} from "react-router-dom";
 import {CircleImage} from "../components/base/CircleImage";
 
@@ -21,12 +20,14 @@ export function MainPage() {
             promotion: "q"
         });
 
-        return true;
+        return false;
     }
 
     const playHandler = (_: React.MouseEvent) => {
-        if (user !== null) seek(user.id)
-        setSearch(true)
+        if (user !== null) {
+            seek(user.id)
+            setSearch(true)
+        }
     }
 
     const getColor = (): "black" | "white" => {
@@ -41,7 +42,7 @@ export function MainPage() {
             <div className="py-32">
                 {fen !== null && color !== null &&
                     <span>
-                        <div className="block mx-auto w-[600px] h-[600px]">
+                        <div className="block mx-auto lg:w-[600px] lg:h-[600px] md:w-[400px] md:h-[400px]">
                         { opponent !== null &&
                             <span className="flex justify-center border-4 border-gray-400 shadow-md rounded-r">
                                 <CircleImage src={ opponent.profilePicture } className="h-20"/>
@@ -60,21 +61,7 @@ export function MainPage() {
                                             onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
                                 { result !== null &&
                                     <div>
-                                        { result === "win" &&
-                                            <div className="text-green-400 text-6xl text-center">You won!</div>
-                                        }
-                                        { result === "lose" &&
-                                            <div className="text-red-800 text-6xl text-center">You lost!</div>
-                                        }
-                                        { result === "draw" &&
-                                            <div className="text-green-400 text-6xl text-center">A draw!</div>
-                                        }
-                                        { result === "stalemate" &&
-                                            <div className="text-green-400 text-6xl text-center">A stalemate!</div>
-                                        }
-                                        { result === "insufficient" &&
-                                            <div className="text-green-400 text-6xl text-center">Insufficient material!</div>
-                                        }
+                                        <ResultFactory result={ result }/>
                                     </div>
                                 }
                             </>
@@ -97,6 +84,31 @@ export function MainPage() {
                 }
             </div>
         </>
-
     )
+}
+
+interface ResultFactoryProps {
+    result: string
+}
+
+function ResultFactory({ result }: ResultFactoryProps) {
+    const winColor = "text-green-400"
+    const loseColor = "text-red-800"
+    const drawColor = "text-gray-500"
+    const baseStyle = "text-6xl text-center"
+
+    switch (result) {
+        case "win":
+            return <div className={ baseStyle + " " + winColor}>You won!</div>
+        case "lose":
+            return <div className={ baseStyle + " " + loseColor}>You lost!</div>
+        case "draw":
+            return <div className={ baseStyle + " " + drawColor}>A draw!</div>
+        case "stalemate":
+            return <div className={ baseStyle + " " + drawColor}>A stalemate!</div>
+        case "insufficient":
+            return <div className={ baseStyle + " " + drawColor}>Insufficient material!</div>
+        default:
+            throw new Error(`Unknown result: ${result}`)
+    }
 }

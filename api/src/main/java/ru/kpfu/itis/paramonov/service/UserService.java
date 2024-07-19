@@ -1,8 +1,6 @@
 package ru.kpfu.itis.paramonov.service;
 
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
-import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
-import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 
 import java.util.List;
@@ -20,11 +18,11 @@ public interface UserService {
 
     boolean isBanned(Long userId);
 
-    void ban(BanUserRequestDto requestDto, Long fromId);
+    void ban(Long bannedId, String reason, Long fromId);
 
     void unban(Long bannedId, Long fromId);
 
-    void promote(PromoteUserRequestDto promoteUserRequestDto, Long fromId);
+    void promote(Long promotedId, String role, Long fromId);
 
     boolean checkLike(Long userId, Long fromId);
 

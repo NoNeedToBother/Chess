@@ -9,13 +9,12 @@ import ru.kpfu.itis.paramonov.dto.request.UploadCommentRequestDto;
 import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
 import ru.kpfu.itis.paramonov.dto.response.CommentResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.CommentDto;
-import ru.kpfu.itis.paramonov.exceptions.NoSufficientAuthorityException;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.CommentService;
 import ru.kpfu.itis.paramonov.service.UserService;
 
-import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
+import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -30,31 +29,20 @@ public class CommentController {
     public ResponseEntity<CommentResponseDto> upload(
             @RequestBody UploadCommentRequestDto uploadCommentRequestDto,
             JwtAuthentication authentication) {
-        try {
-            Long authorId = authentication.getId();
-            CommentDto commentDto = commentService.save(uploadCommentRequestDto, authorId);
-            UserDto userDto = userService.getById(authorId).get();
-            return new ResponseEntity<>(new CommentResponseDto(commentDto, userDto), HttpStatus.CREATED);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(new CommentResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new CommentResponseDto(UPLOAD_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long authorId = authentication.getId();
+        CommentDto commentDto = commentService.save(uploadCommentRequestDto.getPostId(),
+                uploadCommentRequestDto.getContent(), authorId);
+        UserDto userDto = userService.getById(authorId).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
+        return new ResponseEntity<>(new CommentResponseDto(commentDto, userDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/delete")
     public ResponseEntity<BaseResponseDto> delete(
             @RequestParam Long id, JwtAuthentication authentication) {
-        try {
-            Long from = authentication.getId();
-            commentService.deleteById(id, from);
-            return ResponseEntity.ok().build();
-        } catch (NoSufficientAuthorityException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.FORBIDDEN);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>(new BaseResponseDto(e.getMessage()), HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            return new ResponseEntity<>(new BaseResponseDto(DELETE_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        Long from = authentication.getId();
+        commentService.deleteById(id, from);
+        return ResponseEntity.ok().build();
     }
 }

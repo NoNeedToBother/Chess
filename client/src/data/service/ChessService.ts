@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
 import {CompatClient, Stomp} from "@stomp/stompjs";
 import {Message} from "stompjs";
-import {BeginResponse, EndResponse, MoveResponse, OmitResponse} from "../model/ChessResponse";
+import {BeginResponse, EndResponse, MoveResponse} from "../model/ChessResponse";
 
 const API_DOMAIN = "http://localhost:8080"
 
@@ -22,6 +22,14 @@ export interface EndRequest {
     from: number
     result: string
     fen: string
+}
+
+export interface GameHandler {
+    onSeekEnd?: (response: BeginResponse) => void
+    onSearchCancelled?: () => void
+    onOmit?: (error: string) => void
+    onMove?: (response: MoveResponse) => void
+    onEnd?: (response: EndResponse) => void
 }
 
 export class ChessService {
@@ -49,47 +57,35 @@ export class ChessService {
         let json = JSON.parse(response)
         switch (json.action) {
             case "BEGIN":
-                this.onSeekEnd?.(json as BeginResponse)
-                this.onSeekEnd = undefined
+                this.gameHandler?.onSeekEnd?.(json)
                 break
             case "CANCEL_SEARCH":
-                this.onSearchCancelled?.()
-                this.onSearchCancelled = undefined
+                this.gameHandler?.onSearchCancelled?.()
+                this.onGameEnd()
                 break
             case "OMIT":
-                this.onGameOmitted?.((json as OmitResponse).error)
+                this.gameHandler?.onOmit?.(json.error)
                 this.onGameEnd()
                 break
             case "MOVE":
-                this.onMove?.(json as MoveResponse)
+                this.gameHandler?.onMove?.(json)
                 break
             case "END":
-                this.onEnd?.(json as EndResponse)
+                this.gameHandler?.onEnd?.(json)
                 this.onGameEnd()
                 break
         }
     }
 
-    private onSeekEnd: ((response: BeginResponse) => void) | undefined
-    private onSearchCancelled: (() => void) | undefined
-    private onGameOmitted: ((error: string) => void) | undefined
-    private onMove: ((response: MoveResponse) => void) | undefined
-    private onEnd: ((response: EndResponse) => void) | undefined
+    private gameHandler: GameHandler | undefined
 
-    seek(id: number, onSeekEnd?: (response: BeginResponse) => void,
-         onSearchCancelled?: () => void, onOmit?: (error: string) => void,
-         onMove?: (response: MoveResponse) => void, onEnd?: (response: EndResponse) => void,
-         ) {
+    seek(id: number, gameHandler: GameHandler) {
         if (this.client !== undefined) {
-            this.onSeekEnd = onSeekEnd
-            this.onSearchCancelled = onSearchCancelled
-            this.onGameOmitted = onOmit
-            this.onMove = onMove
-            this.onEnd = onEnd
+            this.gameHandler = gameHandler
             this.client.send(
-                "/chess/game", {}, JSON.stringify(
+                "/chess/game/seek", {}, JSON.stringify(
                     {
-                        action: "SEEK", from: id
+                        from: id
                     }
                 )
             )
@@ -98,14 +94,11 @@ export class ChessService {
 
     move(request: MoveRequest) {
         this.client?.send(
-            "/chess/game", {}, JSON.stringify({
-                action: "MOVE",
+            "/chess/game/move", {}, JSON.stringify({
                 gameId: request.gameId,
                 color: request.color,
                 from: request.from,
                 fen: request.fen,
-                moveFrom: request.moveFrom,
-                moveTo: request.moveTo,
                 promotion: request.promotion,
             })
         )
@@ -113,8 +106,7 @@ export class ChessService {
 
     claimEnd(request: EndRequest) {
         this.client?.send(
-            "/chess/game", {}, JSON.stringify({
-                action: "END",
+            "/chess/game/end", {}, JSON.stringify({
                 gameId: request.gameId,
                 from: request.from,
                 fen: request.fen,
@@ -128,8 +120,6 @@ export class ChessService {
     }
 
     private onGameEnd() {
-        this.onGameOmitted = undefined
-        this.onMove = undefined
-        this.onEnd = undefined
+        this.gameHandler = undefined
     }
 }

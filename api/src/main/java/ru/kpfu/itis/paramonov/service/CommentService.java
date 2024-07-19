@@ -5,7 +5,7 @@ import ru.kpfu.itis.paramonov.dto.social.CommentDto;
 
 public interface CommentService {
 
-    CommentDto save(UploadCommentRequestDto uploadCommentRequestDto, Long authorId);
+    CommentDto save(Long postId, String content, Long authorId);
 
     void deleteById(Long commentId, Long fromId);
 

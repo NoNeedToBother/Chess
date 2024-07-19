@@ -3,11 +3,11 @@ package ru.kpfu.itis.paramonov.service.impl;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
 import ru.kpfu.itis.paramonov.service.AuthService;
-import ru.kpfu.itis.paramonov.dto.auth.JwtRequest;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtProvider;
 import ru.kpfu.itis.paramonov.model.Role;
@@ -20,23 +20,24 @@ import java.util.*;
 
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
 
     private final UserRepository userRepository;
-    private Map<String, String> refreshStorage = new HashMap<>();
+    private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
     private final BCryptPasswordEncoder passwordEncoder;
 
 
     @Override
-    public JwtResponse login(JwtRequest request) {
-        checkUsernameAndPassword(request.getUsername(), request.getPassword());
-        Optional<User> user = userRepository.findByUsername(request.getUsername());
+    public JwtResponse login(String username, String password) {
+        checkUsernameAndPassword(username, password);
+        Optional<User> user = userRepository.findByUsername(username);
         if (!user.isPresent()) throw new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR);
-        if (passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
+        if (passwordEncoder.matches(password, user.get().getPassword())) {
             String accessToken = jwtProvider.generateAccessToken(user.get());
             String refreshToken = jwtProvider.generateRefreshToken(user.get());
             refreshStorage.put(user.get().getUsername(), refreshToken);

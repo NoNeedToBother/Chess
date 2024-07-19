@@ -19,7 +19,7 @@ public interface PostService {
 
     Optional<PostDto> getByTitle(String title);
 
-    PostDto save(UploadPostRequestDto uploadPostRequestDto, MultipartFile image, Long authorId);
+    PostDto save(String title, String description, String content, MultipartFile image, Long authorId);
 
     boolean checkTitle(String title);
 
@@ -27,7 +27,7 @@ public interface PostService {
 
     void deleteById(Long postId, Long fromId);
 
-    PostDto updateRating(UpdatePostRatingRequestDto updatePostRatingRequestDto, Long fromId);
+    PostDto updateRating(Long postId, Integer rating, Long fromId);
 
     Double getAverageRating(Long postId);
 
