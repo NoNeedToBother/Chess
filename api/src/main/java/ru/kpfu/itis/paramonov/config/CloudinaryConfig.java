@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import ru.kpfu.itis.paramonov.properties.YamlPropertySourceFactory;
+import ru.kpfu.itis.paramonov.utils.YamlPropertySourceFactory;
 
 import java.util.HashMap;
 import java.util.Map;

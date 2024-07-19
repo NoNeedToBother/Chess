@@ -9,6 +9,8 @@ import {CommentService} from "../data/service/CommentService";
 import {PostMapper} from "../data/mapper/PostMapper";
 import {CommentMapper} from "../data/mapper/CommentMapper";
 import {UserService} from "../data/service/UserService";
+import {JwtInfo} from "../models/JwtInfo";
+import {useUserContext} from "./UserContext";
 
 interface IDataContext {
     authService: AuthService;
@@ -39,10 +41,21 @@ export const Data = ({ children }: {children: React.ReactNode}) => {
     const authService = new AuthService(userMapper)
     const urlFormatter = new UrlFormatter()
     const postService = new PostService(urlFormatter, postMapper, commentMapper)
+    const commentService = new CommentService(commentMapper)
+    const userService = new UserService(urlFormatter, postMapper, userMapper)
+
     const navigate = useNavigate()
     const navigator = new Navigator(navigate)
-    const commentService = new CommentService(urlFormatter, commentMapper)
-    const userService = new UserService(urlFormatter, postMapper, userMapper)
+
+    const { updateJwt } = useUserContext()
+    const onTokenRefreshed = (jwt: JwtInfo) => {
+        updateJwt(jwt)
+    }
+
+    postService.setOnTokenRefreshedListener(onTokenRefreshed)
+    commentService.setOnTokenRefreshedListener(onTokenRefreshed)
+    userService.setOnTokenRefreshedListener(onTokenRefreshed)
+
     return(
         <DataContextProvider value={{authService, postService, userService, commentService, navigator}}>
             { children }

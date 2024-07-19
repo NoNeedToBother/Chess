@@ -16,7 +16,7 @@ export function useUser() {
 
     const get = (id: number) => {
         if (jwt !== null) {
-            userService.get(id, jwt.accessToken).then((res) => {
+            userService.get(id, jwt).then((res) => {
                 if (res.user !== undefined && res.isLiked !== undefined) {
                     setUser(res.user)
                     setLiked(res.isLiked)
@@ -28,7 +28,7 @@ export function useUser() {
 
     const getPosts = (id: number, max: number = 5) => {
         if (jwt !== null) {
-            userService.getPosts(id, max, jwt.accessToken).then((res) => {
+            userService.getPosts(id, max, jwt).then((res) => {
                 if (res.posts !== undefined) {
                     setUsersPosts(res.posts)
                 }
@@ -38,7 +38,7 @@ export function useUser() {
 
     const updateLike = (id: number) => {
         if (jwt !== null) {
-            userService.updateLike(id, jwt.accessToken).then((res) => {
+            userService.updateLike(id, jwt).then((res) => {
                 if (res.user !== undefined && res.isLiked !== undefined) {
                     setUser(res.user)
                     setLiked(res.isLiked)

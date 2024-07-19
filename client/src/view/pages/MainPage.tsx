@@ -59,7 +59,7 @@ export function MainPage() {
                             <>
                                 <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
                                             onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
-                                { result !== null &&
+                                { result !== undefined &&
                                     <div>
                                         <ResultFactory result={ result }/>
                                     </div>
