@@ -15,7 +15,7 @@ export function usePostPage() {
 
     const getPageAmount = () => {
         if (jwt?.accessToken !== undefined) {
-            postService.getPageAmount(PAGE_SIZE, jwt.accessToken)
+            postService.getPageAmount(PAGE_SIZE, jwt)
                 .then(res =>
                     setPageAmount(res.pageAmount)
                 )
@@ -26,7 +26,7 @@ export function usePostPage() {
         if (jwt !== null && page !== null) {
             postService.getAll(page, PAGE_SIZE, jwt).then(res =>
                 setPosts(checkPosts(res))
-                )
+            )
         }
     }
 
@@ -38,12 +38,13 @@ export function usePostPage() {
                     res.push(post.post)
                 }
             }
-        } return res
+        }
+        return res
     }
 
     const deleteFromPosts = (id: number, onDeleted: () => void) => {
         if (jwt !== null) {
-            postService.delete(id, jwt.accessToken)
+            postService.delete(id, jwt)
                 .then((res) => {
                     if (res.error === undefined) onDeleted()
                 })

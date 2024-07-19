@@ -25,7 +25,7 @@ export function useUploadPost() {
                 title: postData.title,
                 content: postData.content,
                 description: postData.description,
-                token: jwt.accessToken,
+                jwt: jwt,
                 image: postData.image
             }
             ).then(res => {

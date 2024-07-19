@@ -24,7 +24,7 @@ export function useComment() {
             commentService.upload({
                 postId: commentData.postId,
                 content: commentData.content,
-                token: jwt.accessToken
+                jwt: jwt
             }).then(res => {
                 if (res.comment !== undefined) {
                     setComment(res.comment)

@@ -26,7 +26,7 @@ export function usePost(id: string | undefined) {
     }
     const deletePost = (onDeleted: () => void) => {
         if (jwt !== null && id !== undefined) {
-            postService.delete(parseInt(id), jwt.accessToken)
+            postService.delete(parseInt(id), jwt)
                 .then((res) => {
                     if (res.error === undefined) onDeleted()
             })
@@ -34,9 +34,8 @@ export function usePost(id: string | undefined) {
     }
 
     useEffect(() => {
-        let token = jwt?.accessToken
-        if (token !== undefined && id !== undefined) {
-            postService.get(parseInt(id), token).then(res => {
+        if (jwt !== null && id !== undefined) {
+            postService.get(parseInt(id), jwt).then(res => {
                     if (res.post !== undefined) setPost(res.post)
                 }
             )
@@ -45,7 +44,7 @@ export function usePost(id: string | undefined) {
 
     async function sendUpdateRatingRequest(rating: number) {
         if (jwt !== null && id !== undefined) {
-            let post = await postService.updateRating(parseInt(id), rating, jwt.accessToken)
+            let post = await postService.updateRating(parseInt(id), rating, jwt)
             if (post.post !== undefined) setPost(post.post)
         }
     }
@@ -58,7 +57,7 @@ export function usePost(id: string | undefined) {
 
     useEffect(() => {
         if (jwt !== null && id !== undefined) {
-            postService.getComments(parseInt(id), jwt.accessToken).then(res => {
+            postService.getComments(parseInt(id), jwt).then(res => {
                 if (res.comments !== undefined) setComments(res.comments)
             })
         }

@@ -41,15 +41,17 @@ export const Data = ({ children }: {children: React.ReactNode}) => {
     const authService = new AuthService(userMapper)
     const urlFormatter = new UrlFormatter()
     const postService = new PostService(urlFormatter, postMapper, commentMapper)
+    const commentService = new CommentService(commentMapper)
+    const userService = new UserService(urlFormatter, postMapper, userMapper)
+
     const navigate = useNavigate()
     const navigator = new Navigator(navigate)
-    const commentService = new CommentService(urlFormatter, commentMapper)
-    const userService = new UserService(urlFormatter, postMapper, userMapper)
 
     const { updateJwt } = useUserContext()
     const onTokenRefreshed = (jwt: JwtInfo) => {
         updateJwt(jwt)
     }
+
     postService.setOnTokenRefreshedListener(onTokenRefreshed)
     commentService.setOnTokenRefreshedListener(onTokenRefreshed)
     userService.setOnTokenRefreshedListener(onTokenRefreshed)
