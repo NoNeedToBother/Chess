@@ -76,8 +76,8 @@ export function useChess() {
     }
 
     const seek = (id: number) => {
-        if (chessService !== null) chessService.seek(id, onSeekEnd, undefined, undefined,
-            onMove, onEnd)
+        if (chessService !== null) chessService.seek(id,
+            { onSeekEnd, onMove, onEnd })
         setResult(null)
         clearChess()
     }

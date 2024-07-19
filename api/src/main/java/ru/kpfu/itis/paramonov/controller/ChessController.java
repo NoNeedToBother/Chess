@@ -6,6 +6,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import ru.kpfu.itis.paramonov.dto.chess.*;
+import ru.kpfu.itis.paramonov.dto.chess.request.EndGameRequestDto;
+import ru.kpfu.itis.paramonov.dto.chess.request.MoveRequestDto;
+import ru.kpfu.itis.paramonov.dto.chess.request.SeekGameRequestDto;
 
 import java.util.*;
 
@@ -20,39 +23,51 @@ public class ChessController {
 
     private final Random rand = new Random();
 
-    @MessageMapping("/game")
-    public void processRequest(ChessRequestDto requestData) {
-        switch (requestData.getAction()) {
-            case "SEEK":
-                onSeek(requestData.getFrom());
-                break;
-            case "MOVE":
-                onMove(requestData);
-                break;
-            case "END":
-                onEnd(requestData);
-                break;
+    @MessageMapping("/game/seek")
+    public void processSeekRequest(SeekGameRequestDto seekGameRequestDto) {
+        Integer id = seekGameRequestDto.getFrom();
+        if (queue.contains(id) || id == null) return;
+        queue.add(id);
+        seekGame(id);
+    }
+
+    @MessageMapping("/game/move")
+    public void processMoveRequest(MoveRequestDto moveRequestDto) {
+        ChessGame game = games.get(moveRequestDto.getGameId());
+        if (game == null) sendGameDataErrorAndOmitGame(moveRequestDto.getFrom());
+        else {
+            String fen = moveRequestDto.getFen();
+            game.setFen(fen);
+            if ("white".equals(moveRequestDto.getColor())) game.setTurn("black");
+            else game.setTurn("white");
+            sendMessageToUser(game.white, new ChessMoveResponseDto(
+                    "MOVE", game.turn, game.fen
+            ));
+            sendMessageToUser(game.black, new ChessMoveResponseDto(
+                    "MOVE", game.turn, game.fen
+            ));
         }
     }
 
-    private void onEnd(ChessRequestDto data) {
-        ChessGame game = games.get(data.getGameId());
-        if (game == null) sendGameDataErrorAndOmitGame(data.getFrom());
+    @MessageMapping("/game/end")
+    public void processEndGame(EndGameRequestDto endGameRequestDto) {
+        ChessGame game = games.get(endGameRequestDto.getGameId());
+        if (game == null) sendGameDataErrorAndOmitGame(endGameRequestDto.getFrom());
         else {
-            switch (data.getResult()) {
+            switch (endGameRequestDto.getResult()) {
                 case "win":
-                    onWin(game, data);
+                    onWin(game, endGameRequestDto);
                     break;
                 case "insufficient":
                 case "stalemate":
                 case "draw":
-                    onDraw(game, data);
+                    onDraw(game, endGameRequestDto);
                     break;
             }
         }
     }
 
-    private void onWin(ChessGame game, ChessRequestDto requestData) {
+    private void onWin(ChessGame game, EndGameRequestDto requestData) {
         sendMessageToUser(requestData.getFrom(), new ChessEndResponseDto(
                 "END", "win", requestData.getFen()
         ));
@@ -65,7 +80,7 @@ public class ChessController {
         ));
     }
 
-    private void onDraw(ChessGame game, ChessRequestDto requestData) {
+    private void onDraw(ChessGame game, EndGameRequestDto requestData) {
         sendMessageToUser(game.white, new ChessEndResponseDto(
                 "END", requestData.getResult(), requestData.getFen()
         ));
@@ -74,32 +89,9 @@ public class ChessController {
         ));
     }
 
-    private void onMove(ChessRequestDto data) {
-        ChessGame game = games.get(data.getGameId());
-        if (game == null) sendGameDataErrorAndOmitGame(data.getFrom());
-        else {
-            String fen = data.getFen();
-            game.setFen(fen);
-            if ("white".equals(data.getColor())) game.setTurn("black");
-            else game.setTurn("white");
-            sendMessageToUser(game.white, new ChessMoveResponseDto(
-                    "MOVE", game.turn, game.fen
-            ));
-            sendMessageToUser(game.black, new ChessMoveResponseDto(
-                    "MOVE", game.turn, game.fen
-            ));
-        }
-    }
-
     /*private void sendMoveErrorMessage(Integer playerId) {
         sendMessageToUser();
     }*/
-
-    private void onSeek(Integer id) {
-        if (queue.contains(id)) return;
-        queue.add(id);
-        seekGame(id);
-    }
 
     private static final long MAX_WAIT_TIME_MILLIS = 600 * 1000L;
 
