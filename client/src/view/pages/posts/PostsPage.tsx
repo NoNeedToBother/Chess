@@ -8,7 +8,6 @@ import {checkAuthorityToDeletePost} from "../../../utils/CheckAuthorities";
 
 export function PostsPage() {
     const { user } = useUserContext()
-    //const {  }
     const {posts, loadPage, pageAmount, getPageAmount, deleteFromPosts} = usePostPage()
     const [ currentPage, setCurrentPage ] = useState<number>(0)
 

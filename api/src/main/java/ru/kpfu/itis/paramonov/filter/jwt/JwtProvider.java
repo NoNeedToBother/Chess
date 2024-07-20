@@ -1,18 +1,14 @@
 package ru.kpfu.itis.paramonov.filter.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import ru.kpfu.itis.paramonov.model.User;
-import ru.kpfu.itis.paramonov.properties.YamlPropertySourceFactory;
+import ru.kpfu.itis.paramonov.utils.YamlPropertySourceFactory;
 
 import javax.crypto.SecretKey;
 
@@ -102,12 +98,8 @@ public class JwtProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (ExpiredJwtException e) {
-        } catch (UnsupportedJwtException e) {
-        } catch (MalformedJwtException e) {
-        } catch (SignatureException e) {
         } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 }

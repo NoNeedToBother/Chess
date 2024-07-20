@@ -18,12 +18,17 @@ function App() {
     const { user, clearUser } = useUserContext()
     const { navigator } = useDataContext()
 
-    const { chessService, clearChess } = useChessContext()
+    const { chessService, clearChess, gameId } = useChessContext()
 
     const onLogout = () => {
+        if (gameId !== null && user !== null) {
+            chessService.concede({
+                gameId: gameId, from: user.id, reason: "disconnect"
+            })
+        }
+        else chessService.disconnect()
         clearUser()
         clearChess()
-        chessService.disconnect()
     }
     useEffect(() => {
         if (user === null) {
@@ -32,6 +37,23 @@ function App() {
             chessService.connect(user.id)
         }
     }, [user]);
+
+    /*useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            if (gameId !== null && user !== null)
+                console.log("kinda should?..")
+                chessService.concede({
+                    gameId: gameId, from: user.id, reason: "disconnect"
+                })
+            }
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+        };
+    }, []);*/
+
     return (
         <>
             { user !== null &&
