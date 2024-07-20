@@ -1,13 +1,9 @@
 package ru.kpfu.itis.paramonov.filter.jwt;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
@@ -43,7 +39,7 @@ public class JwtProvider {
 
     public String generateAccessToken(User user) {
         LocalDateTime now = LocalDateTime.now();
-        Instant accessExpirationTime = now.plusSeconds(30L)
+        Instant accessExpirationTime = now.plusMinutes(JWT_TOKEN_EXPIRATION_TIME_MINUTES)
                 .atZone(ZoneId.systemDefault()).toInstant();
         Date accessExpiration = Date.from(accessExpirationTime);
         return Jwts.builder()
@@ -102,12 +98,8 @@ public class JwtProvider {
                     .build()
                     .parseSignedClaims(token);
             return true;
-        } catch (ExpiredJwtException e) {
-        } catch (UnsupportedJwtException e) {
-        } catch (MalformedJwtException e) {
-        } catch (SignatureException e) {
         } catch (Exception e) {
+            return false;
         }
-        return false;
     }
 }

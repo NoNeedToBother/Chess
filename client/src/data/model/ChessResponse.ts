@@ -22,3 +22,9 @@ export interface EndResponse {
     fen: string
     result: string
 }
+
+export interface ConcedeResponse {
+    action: string
+    reason: string
+    conceded: boolean
+}

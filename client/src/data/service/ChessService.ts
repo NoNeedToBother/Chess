@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
 import {CompatClient, Stomp} from "@stomp/stompjs";
 import {Message} from "stompjs";
-import {BeginResponse, EndResponse, MoveResponse} from "../model/ChessResponse";
+import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse} from "../model/ChessResponse";
 
 const API_DOMAIN = "http://localhost:8080"
 
@@ -21,12 +21,19 @@ export interface EndRequest {
     fen: string
 }
 
+export interface ConcedeRequest {
+    gameId: string
+    from: number
+    reason: string
+}
+
 export interface GameHandler {
     onSeekEnd?: (response: BeginResponse) => void
     onSearchCancelled?: () => void
     onOmit?: (error: string) => void
     onMove?: (response: MoveResponse) => void
     onEnd?: (response: EndResponse) => void
+    onConcede?: (response: ConcedeResponse) => void
 }
 
 export class ChessService {
@@ -36,9 +43,10 @@ export class ChessService {
     connect(id: number) {
         this.socket = new SockJS(API_DOMAIN + "/chess-websocket")
         this.client = Stomp.over(this.socket)
-        this.client.connect({}, () => {
+        this.client.activate()
+        this.client.onConnect = () => {
             this.subscribe(id)
-        })
+        }
     }
 
     private subscribe(id: number) {
@@ -47,7 +55,7 @@ export class ChessService {
             (message: Message) => {
                 this.onChessResponseReceived(message.body)
             }
-        );
+        )
     }
 
     private onChessResponseReceived(response: string) {
@@ -79,37 +87,55 @@ export class ChessService {
     seek(id: number, gameHandler: GameHandler) {
         if (this.client !== undefined) {
             this.gameHandler = gameHandler
-            this.client.send(
-                "/chess/game/seek", {}, JSON.stringify(
+            this.client.publish({
+                destination: "/chess/game/seek",
+                body: JSON.stringify(
                     {
                         from: id
-                    }
-                )
-            )
+                    })
+            })
         }
     }
 
     move(request: MoveRequest) {
-        this.client?.send(
-            "/chess/game/move", {}, JSON.stringify({
+        this.client?.publish({
+            destination: "/chess/game/move",
+            body: JSON.stringify({
                 gameId: request.gameId,
                 color: request.color,
                 from: request.from,
                 fen: request.fen,
                 promotion: request.promotion,
             })
-        )
+        })
     }
 
     claimEnd(request: EndRequest) {
-        this.client?.send(
-            "/chess/game/end", {}, JSON.stringify({
+        this.client?.publish({
+            destination: "/chess/game/end",
+            body: JSON.stringify({
                 gameId: request.gameId,
                 from: request.from,
                 fen: request.fen,
                 result: request.result
             })
-        )
+        })
+    }
+
+    concede(request: ConcedeRequest) {
+        console.log("concede")
+        if (this.client !== undefined) {
+            console.log("concede not undefined")
+            this.client.publish({
+                destination: "/chess/game/concede",
+                body: JSON.stringify({
+                    gameId: request.gameId,
+                    from: request.from,
+                    reason: request.reason,
+                })
+            })
+            //this.disconnect()
+        }
     }
 
     disconnect() {

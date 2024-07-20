@@ -2,16 +2,19 @@ package ru.kpfu.itis.paramonov.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import ru.kpfu.itis.paramonov.dto.chess.*;
+import ru.kpfu.itis.paramonov.dto.chess.request.ConcedeRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.request.EndGameRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.request.MoveRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.request.SeekGameRequestDto;
 
 import java.util.*;
 
+@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class ChessController {
@@ -65,6 +68,26 @@ public class ChessController {
                     break;
             }
         }
+    }
+
+    @MessageMapping("/game/concede")
+    public void processConcedeRequest(ConcedeRequestDto concedeRequestDto) {
+        ChessGame game = games.get(concedeRequestDto.getGameId());
+        if (game == null) sendGameDataErrorAndOmitGame(concedeRequestDto.getFrom());
+        switch (concedeRequestDto.getReason()) {
+            case "disconnect":
+                onPlayerDisconnected(game, concedeRequestDto);
+                break;
+        }
+    }
+
+    private void onPlayerDisconnected(ChessGame game, ConcedeRequestDto concedeRequestDto) {
+        Integer other;
+        if (concedeRequestDto.getFrom().equals(game.white)) other = game.black;
+        else other = game.white;
+        sendMessageToUser(other, new ChessConcedeResponseDto(
+                "CONCEDE", "conceded", false
+        ));
     }
 
     private void onWin(ChessGame game, EndGameRequestDto requestData) {

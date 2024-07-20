@@ -3,7 +3,7 @@ import {Chess} from "chess.js";
 import {Square} from "react-chessboard/dist/chessboard/types";
 import {useChessContext} from "../context/ChessContext";
 import {useUserContext} from "../context/UserContext";
-import {BeginResponse, EndResponse, MoveResponse} from "../data/model/ChessResponse";
+import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse} from "../data/model/ChessResponse";
 import {useUser} from "./UseUser";
 
 export function useChess() {
@@ -72,6 +72,10 @@ export function useChess() {
     const onEnd = (response: EndResponse) => {
         setResult(response.result)
         setFen(response.fen)
+    }
+
+    const onConcede = (response: ConcedeResponse) => {
+
     }
 
     const seek = (id: number) => {

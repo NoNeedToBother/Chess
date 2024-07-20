@@ -18,7 +18,7 @@ export abstract class AbstractService {
         } catch (e) {
             if (isAxiosError(e) && e.response !== undefined) {
                 if (e.response.data.error !== undefined &&
-                    e.response.data.error === "JWT token expired") {
+                    e.response.data.error === "JWT token invalid") {
                     if (jwt?.refreshToken !== undefined) {
                         return await this.refreshToken(block, jwt.refreshToken)
                     } else return {error: "JWT invalid"}
