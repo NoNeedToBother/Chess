@@ -74,11 +74,30 @@ public class ChessController {
     public void processConcedeRequest(ConcedeRequestDto concedeRequestDto) {
         ChessGame game = games.get(concedeRequestDto.getGameId());
         if (game == null) sendGameDataErrorAndOmitGame(concedeRequestDto.getFrom());
-        switch (concedeRequestDto.getReason()) {
-            case "disconnect":
-                onPlayerDisconnected(game, concedeRequestDto);
-                break;
+        else {
+            switch (concedeRequestDto.getReason()) {
+                case "disconnect":
+                    onPlayerDisconnected(game, concedeRequestDto);
+                    break;
+                case "concede":
+                    onPlayerConceded(game, concedeRequestDto);
+                    break;
+            }
         }
+    }
+
+    private void onPlayerConceded(ChessGame game, ConcedeRequestDto concedeRequestDto) {
+        Integer other;
+        if (concedeRequestDto.getFrom().equals(game.white)) other = game.black;
+        else other = game.white;
+
+
+        sendMessageToUser(concedeRequestDto.getFrom(), new ChessConcedeResponseDto(
+                "CONCEDE", "concede", true
+        ));
+        sendMessageToUser(other, new ChessConcedeResponseDto(
+                "CONCEDE", "concede", false
+        ));
     }
 
     private void onPlayerDisconnected(ChessGame game, ConcedeRequestDto concedeRequestDto) {
@@ -86,7 +105,7 @@ public class ChessController {
         if (concedeRequestDto.getFrom().equals(game.white)) other = game.black;
         else other = game.white;
         sendMessageToUser(other, new ChessConcedeResponseDto(
-                "CONCEDE", "conceded", false
+                "CONCEDE", "disconnect", false
         ));
     }
 

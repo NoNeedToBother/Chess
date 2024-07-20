@@ -2,7 +2,7 @@ import {useUser} from "../../../hooks/UseUser";
 import React, {useEffect, useState} from "react";
 import {useUserContext} from "../../../context/UserContext";
 import {ProfileInfo} from "../../components/other/ProfileInfo";
-import {Link, useParams} from "react-router-dom";
+import {useParams} from "react-router-dom";
 import {useDataContext} from "../../../context/DataContext";
 import {PostCard} from "../../components/post/PostCard";
 import {RoleLabel} from "../../components/profile/RoleLabel";
@@ -35,12 +35,12 @@ export function OtherUserProfilePage() {
             else return " text-black"
         } else return " text-black"
     }
-    const likeHandler = (event: React.MouseEvent) => {
+    const likeHandler = () => {
         if (id !== undefined) {
             updateLike(parseInt(id))
         }
     }
-    const infoHandler = (event: React.MouseEvent) => {
+    const infoHandler = () => {
         setShowModal(true)
     }
     const onModalClose = () => setShowModal(false)
@@ -126,7 +126,7 @@ export function OtherUserProfilePage() {
                 <div className="mx-auto w-1/2 gap-4 columns-1">
                     {userPosts !== null &&
                         userPosts.map((post, _) =>
-                            <PostCard post={post} onProfilePictureClick={(id: number) => {}}/>
+                            <PostCard post={post}/>
                         )
                     }
                 </div>

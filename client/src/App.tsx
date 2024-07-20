@@ -23,7 +23,7 @@ function App() {
     const onLogout = () => {
         if (gameId !== null && user !== null) {
             chessService.concede({
-                gameId: gameId, from: user?.id, reason: "disconnect"
+                gameId: gameId, from: user.id, reason: "disconnect"
             })
         }
         else chessService.disconnect()

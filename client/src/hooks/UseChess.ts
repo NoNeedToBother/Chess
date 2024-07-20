@@ -9,8 +9,8 @@ import {useUser} from "./UseUser";
 export function useChess() {
     const { chessService, fen, setFen, color, setColor,
         turn, setTurn, gameId, setGameId, setSearch, clearChess } = useChessContext()
-    const userContext = useUserContext()
-    const { user, get } = useUser()
+    const { user, setOpponent } = useUserContext()
+    const { user: other, get } = useUser()
 
     const [game, setGame] = useState<Chess>(new Chess())
     const [result, setResult] = useState<string | undefined>(undefined)
@@ -35,26 +35,26 @@ export function useChess() {
         else if (game.isInsufficientMaterial()) result = "insufficient"
         else if (game.isStalemate()) result = "stalemate"
         else if (game.isDraw()) result = "draw"
-        if (gameId !== null && result !== undefined && color !== null && userContext.user !== null) {
+        if (gameId !== null && result !== undefined && color !== null && user !== null) {
             chessService.claimEnd({
-                color: color, from: userContext.user.id, gameId: gameId, result: result, fen: game.fen()
+                color: color, from: user.id, gameId: gameId, result: result, fen: game.fen()
             })
             return;
         }
 
         let resFen = game.fen()
-        if (gameId !== null && color !== null && userContext.user !== null) {
+        if (gameId !== null && color !== null && user !== null) {
             chessService.move({
-                color: color, fen: resFen, from: userContext.user.id, gameId: gameId
+                color: color, fen: resFen, from: user.id, gameId: gameId
             })
         }
     }
 
     useEffect(() => {
-        if (user !== null) {
-            userContext.setOpponent(user)
+        if (other !== null) {
+            setOpponent(other)
         }
-    }, [user]);
+    }, [other]);
 
     const onSeekEnd = (response: BeginResponse) => {
         setColor(response.color)
@@ -75,15 +75,37 @@ export function useChess() {
     }
 
     const onConcede = (response: ConcedeResponse) => {
-
+        switch (response.reason) {
+            case "disconnect":
+                setResult("win_disconnect")
+                break
+            case "concede":
+                if (response.conceded) setResult("lose_concede")
+                else setResult("win_concede")
+                break
+        }
     }
 
     const seek = (id: number) => {
-        if (chessService !== null) chessService.seek(id,
-            { onSeekEnd, onMove, onEnd })
+        chessService.seek(id,
+            { onSeekEnd: onSeekEnd,
+                onMove: onMove,
+                onEnd: onEnd,
+                onConcede: onConcede
+            })
         setResult(undefined)
         clearChess()
     }
 
-    return { fen, game, move, seek, color, result }
+    const concede = () => {
+        if (gameId !== null && user !== null) {
+            chessService.concede({
+                gameId: gameId,
+                from: user.id,
+                reason: "concede"
+            })
+        }
+    }
+
+    return { fen, game, move, seek, color, result, concede }
 }

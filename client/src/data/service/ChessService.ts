@@ -79,6 +79,10 @@ export class ChessService {
                 this.gameHandler?.onEnd?.(json)
                 this.onGameEnd()
                 break
+            case "CONCEDE":
+                this.gameHandler?.onConcede?.(json)
+                this.onGameEnd()
+                break
         }
     }
 
@@ -123,9 +127,7 @@ export class ChessService {
     }
 
     concede(request: ConcedeRequest) {
-        console.log("concede")
         if (this.client !== undefined) {
-            console.log("concede not undefined")
             this.client.publish({
                 destination: "/chess/game/concede",
                 body: JSON.stringify({
@@ -134,7 +136,6 @@ export class ChessService {
                     reason: request.reason,
                 })
             })
-            //this.disconnect()
         }
     }
 

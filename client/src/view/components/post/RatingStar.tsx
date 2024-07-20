@@ -28,15 +28,9 @@ export function RatingStar({ value, onChosen, fill, onHover, onHoverEnd }: Ratin
             case Fill.FULL:
                 return FULL_SVG_PATH}
     }
-    const ratingChangedHandler = (_: React.MouseEvent) => {
-        onChosen(value);
-    }
-    const hoverHandler = (_: React.MouseEvent) => {
-        onHover(value)
-    }
-    const hoverEndHandler = (_: React.MouseEvent) => {
-        onHoverEnd()
-    }
+    const ratingChangedHandler = () => onChosen(value);
+    const hoverHandler = () => onHover(value)
+    const hoverEndHandler = () => onHoverEnd()
 
     return <svg xmlns="http://www.w3.org/2000/svg"
                 className="text-yellow-500 w-5 h-auto fill-current"

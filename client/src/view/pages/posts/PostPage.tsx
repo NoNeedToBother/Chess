@@ -5,7 +5,6 @@ import {RatingBar} from "../../components/post/RatingBar";
 import {usePost} from "../../../hooks/UsePost";
 import {useComment} from "../../../hooks/UseComment";
 import {useUserContext} from "../../../context/UserContext";
-import {Role} from "../../../models/Role";
 import {CommentForm} from "../../components/post/comment/CommentForm";
 import {CommentCard} from "../../components/post/comment/CommentCard";
 import {TrashIcon} from "@heroicons/react/16/solid";
@@ -36,7 +35,7 @@ export function PostPage() {
         }
     }, [comment]);
 
-    const deleteHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const deleteHandler = () => {
         deletePost(() => navigator.navigateToPosts())
     }
 

@@ -9,7 +9,7 @@ import {CircleImage} from "../components/base/CircleImage";
 
 
 export function MainPage() {
-    const {fen, move, seek, color, result} = useChess()
+    const {fen, move, seek, color, result, concede} = useChess()
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
@@ -23,11 +23,15 @@ export function MainPage() {
         return false;
     }
 
-    const playHandler = (_: React.MouseEvent) => {
+    const playHandler = () => {
         if (user !== null) {
             seek(user.id)
             setSearch(true)
         }
+    }
+
+    const concedeHandler = () => {
+        concede()
     }
 
     const getColor = (): "black" | "white" => {
@@ -56,16 +60,14 @@ export function MainPage() {
                             </span>
                         }
                         <div className="mt-6">
-                            <>
-                                <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
-                                            onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
-                                { result !== undefined &&
-                                    <div>
-                                        <ResultFactory result={ result }/>
-                                    </div>
-                                }
-                            </>
-
+                            <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
+                                        onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
+                            <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
+                                    onClick={ concedeHandler }
+                            >Concede</button>
+                            { result !== undefined &&
+                                <ResultFactory result={ result }/>
+                            }
                         </div>
                     </div>
                     </span>
@@ -99,15 +101,21 @@ function ResultFactory({ result }: ResultFactoryProps) {
 
     switch (result) {
         case "win":
-            return <div className={ baseStyle + " " + winColor}>You won!</div>
+            return <div className={baseStyle + " " + winColor}>Checkmate, you won!</div>
         case "lose":
-            return <div className={ baseStyle + " " + loseColor}>You lost!</div>
+            return <div className={baseStyle + " " + loseColor}>Checkmate, you lost!</div>
         case "draw":
-            return <div className={ baseStyle + " " + drawColor}>A draw!</div>
+            return <div className={baseStyle + " " + drawColor}>A draw!</div>
         case "stalemate":
-            return <div className={ baseStyle + " " + drawColor}>A stalemate!</div>
+            return <div className={baseStyle + " " + drawColor}>Draw, a stalemate!</div>
         case "insufficient":
-            return <div className={ baseStyle + " " + drawColor}>Insufficient material!</div>
+            return <div className={baseStyle + " " + drawColor}>Draw, insufficient material!</div>
+        case "win_disconnect":
+            return <div className={baseStyle + " " + winColor}>Opponent disconnected, you won!</div>
+        case "win_concede":
+            return <div className={baseStyle + " " + winColor}>Opponent conceded, you won!</div>
+        case "lose_concede":
+            return <div className={baseStyle + " " + loseColor}>You conceded!</div>
         default:
             throw new Error(`Unknown result: ${result}`)
     }
