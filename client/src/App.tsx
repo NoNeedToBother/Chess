@@ -36,23 +36,22 @@ function App() {
         } else {
             chessService.connect(user.id)
         }
-    }, [user]);
+    }, [user])
 
     /*useEffect(() => {
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            if (gameId !== null && user !== null)
-                console.log("kinda should?..")
+            if (gameId !== null && user !== null) {
                 chessService.concede({
                     gameId: gameId, from: user.id, reason: "disconnect"
                 })
             }
-        };
+        }
 
         window.addEventListener('beforeunload', handleBeforeUnload);
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload);
         };
-    }, []);*/
+    }, [])*/
 
     return (
         <>

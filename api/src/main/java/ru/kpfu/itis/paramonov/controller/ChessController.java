@@ -1,60 +1,60 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import ru.kpfu.itis.paramonov.dto.chess.*;
 import ru.kpfu.itis.paramonov.dto.chess.request.ConcedeRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.request.EndGameRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.request.MoveRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.request.SeekGameRequestDto;
+import ru.kpfu.itis.paramonov.utils.ChessGameStore;
 
 import java.util.*;
 
-@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class ChessController {
     private final SimpMessagingTemplate messagingTemplate;
 
-    private final Map<String, ChessGame> games = new HashMap<>();
+    private final ChessGameStore chessGameStore;
 
     private final List<Integer> queue = new ArrayList<>();
 
     private final Random rand = new Random();
 
     @MessageMapping("/game/seek")
-    public void processSeekRequest(SeekGameRequestDto seekGameRequestDto) {
+    public void processSeekRequest(SeekGameRequestDto seekGameRequestDto, StompHeaderAccessor headerAccessor) {
         Integer id = seekGameRequestDto.getFrom();
         if (queue.contains(id) || id == null) return;
+        headerAccessor.getSessionAttributes().put("id", id);
         queue.add(id);
         seekGame(id);
     }
 
     @MessageMapping("/game/move")
     public void processMoveRequest(MoveRequestDto moveRequestDto) {
-        ChessGame game = games.get(moveRequestDto.getGameId());
+        ChessGameStore.ChessGame game = chessGameStore.get(moveRequestDto.getGameId());
         if (game == null) sendGameDataErrorAndOmitGame(moveRequestDto.getFrom());
         else {
             String fen = moveRequestDto.getFen();
             game.setFen(fen);
             if ("white".equals(moveRequestDto.getColor())) game.setTurn("black");
             else game.setTurn("white");
-            sendMessageToUser(game.white, new ChessMoveResponseDto(
-                    "MOVE", game.turn, game.fen
+            sendMessageToUser(game.getWhite(), new ChessMoveResponseDto(
+                    "MOVE", game.getTurn(), game.getFen()
             ));
-            sendMessageToUser(game.black, new ChessMoveResponseDto(
-                    "MOVE", game.turn, game.fen
+            sendMessageToUser(game.getBlack(), new ChessMoveResponseDto(
+                    "MOVE", game.getTurn(), game.getFen()
             ));
         }
     }
 
     @MessageMapping("/game/end")
     public void processEndGame(EndGameRequestDto endGameRequestDto) {
-        ChessGame game = games.get(endGameRequestDto.getGameId());
+        ChessGameStore.ChessGame game = chessGameStore.get(endGameRequestDto.getGameId());
         if (game == null) sendGameDataErrorAndOmitGame(endGameRequestDto.getFrom());
         else {
             switch (endGameRequestDto.getResult()) {
@@ -72,7 +72,7 @@ public class ChessController {
 
     @MessageMapping("/game/concede")
     public void processConcedeRequest(ConcedeRequestDto concedeRequestDto) {
-        ChessGame game = games.get(concedeRequestDto.getGameId());
+        ChessGameStore.ChessGame game = chessGameStore.get(concedeRequestDto.getGameId());
         if (game == null) sendGameDataErrorAndOmitGame(concedeRequestDto.getFrom());
         else {
             switch (concedeRequestDto.getReason()) {
@@ -86,10 +86,10 @@ public class ChessController {
         }
     }
 
-    private void onPlayerConceded(ChessGame game, ConcedeRequestDto concedeRequestDto) {
+    private void onPlayerConceded(ChessGameStore.ChessGame game, ConcedeRequestDto concedeRequestDto) {
         Integer other;
-        if (concedeRequestDto.getFrom().equals(game.white)) other = game.black;
-        else other = game.white;
+        if (concedeRequestDto.getFrom().equals(game.getWhite())) other = game.getBlack();
+        else other = game.getWhite();
 
 
         sendMessageToUser(concedeRequestDto.getFrom(), new ChessConcedeResponseDto(
@@ -98,37 +98,41 @@ public class ChessController {
         sendMessageToUser(other, new ChessConcedeResponseDto(
                 "CONCEDE", "concede", false
         ));
+        chessGameStore.remove(game.getId());
     }
 
-    private void onPlayerDisconnected(ChessGame game, ConcedeRequestDto concedeRequestDto) {
+    private void onPlayerDisconnected(ChessGameStore.ChessGame game, ConcedeRequestDto concedeRequestDto) {
         Integer other;
-        if (concedeRequestDto.getFrom().equals(game.white)) other = game.black;
-        else other = game.white;
+        if (concedeRequestDto.getFrom().equals(game.getWhite())) other = game.getBlack();
+        else other = game.getWhite();
         sendMessageToUser(other, new ChessConcedeResponseDto(
                 "CONCEDE", "disconnect", false
         ));
+        chessGameStore.remove(game.getId());
     }
 
-    private void onWin(ChessGame game, EndGameRequestDto requestData) {
+    private void onWin(ChessGameStore.ChessGame game, EndGameRequestDto requestData) {
         sendMessageToUser(requestData.getFrom(), new ChessEndResponseDto(
                 "END", "win", requestData.getFen()
         ));
-        if (requestData.getFrom().equals(game.white)) {
-            sendMessageToUser(game.black, new ChessEndResponseDto(
+        if (requestData.getFrom().equals(game.getWhite())) {
+            sendMessageToUser(game.getBlack(), new ChessEndResponseDto(
                     "END", "lose", requestData.getFen()
             ));
-        } else sendMessageToUser(game.white, new ChessEndResponseDto(
+        } else sendMessageToUser(game.getWhite(), new ChessEndResponseDto(
                 "END", "lose", requestData.getFen()
         ));
+        chessGameStore.remove(game.getId());
     }
 
-    private void onDraw(ChessGame game, EndGameRequestDto requestData) {
-        sendMessageToUser(game.white, new ChessEndResponseDto(
+    private void onDraw(ChessGameStore.ChessGame game, EndGameRequestDto requestData) {
+        sendMessageToUser(game.getWhite(), new ChessEndResponseDto(
                 "END", requestData.getResult(), requestData.getFen()
         ));
-        sendMessageToUser(game.black, new ChessEndResponseDto(
+        sendMessageToUser(game.getBlack(), new ChessEndResponseDto(
                 "END", requestData.getResult(), requestData.getFen()
         ));
+        chessGameStore.remove(game.getId());
     }
 
     /*private void sendMoveErrorMessage(Integer playerId) {
@@ -186,13 +190,21 @@ public class ChessController {
             black = player1;
         }
         String gameId = player1 + "-" + player2;
-        games.put(gameId, new ChessGame(gameId, white, black));
+        chessGameStore.add(new ChessGameStore.ChessGame(gameId, white, black));
+        chessGameStore.addPlayerDisconnectedListener(white, blackId ->
+                sendMessageToUser(blackId, new ChessConcedeResponseDto(
+                "CONCEDE", "disconnect", false
+        )));
+        chessGameStore.addPlayerDisconnectedListener(black, whiteId ->
+                sendMessageToUser(whiteId, new ChessConcedeResponseDto(
+                        "CONCEDE", "disconnect", false
+                )));
 
         sendMessageToUser(player1, new ChessBeginResponseDto(
-                "BEGIN", player1Color, player2, gameId, ChessGame.INITIAL_FEN
+                "BEGIN", player1Color, player2, gameId, ChessGameStore.ChessGame.INITIAL_FEN
         ));
         sendMessageToUser(player2, new ChessBeginResponseDto(
-                "BEGIN", player2Color, player1, gameId, ChessGame.INITIAL_FEN
+                "BEGIN", player2Color, player1, gameId, ChessGameStore.ChessGame.INITIAL_FEN
         ));
     }
 
@@ -208,22 +220,6 @@ public class ChessController {
         messagingTemplate.convertAndSendToUser(
                 playerId.toString(), "/queue/messages", payload
         );
-    }
-
-    @RequiredArgsConstructor
-    @Setter
-    private static class ChessGame {
-        private final String id;
-
-        private final Integer white;
-
-        private final Integer black;
-
-        private String fen = INITIAL_FEN;
-
-        private String turn = "white";
-
-        private static final String INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     }
 
 }
