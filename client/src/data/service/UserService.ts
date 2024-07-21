@@ -29,12 +29,7 @@ export class UserService extends AbstractService{
                 this.urlFormatter.format(GET_USER_ENDPOINT, params),
                 {headers: { Authorization: "Bearer " + localToken }}
             )
-            if (resp.data.user !== undefined && resp.data.isLiked !== undefined) {
-                if (resp.data.ban !== undefined)
-                    return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked, ban: resp.data.ban}
-                else return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked}
-            }
-            else return {error: "Something went wrong, try again later"}
+            return this.extractUserData(resp.data)
         }, jwt)
     }
 
@@ -67,12 +62,16 @@ export class UserService extends AbstractService{
                 this.urlFormatter.format(UPDATE_LIKE_ENDPOINT, params),
                 {headers: { Authorization: "Bearer " + localToken }}
             )
-            if (resp.data.user !== undefined && resp.data.isLiked !== undefined) {
-                if (resp.data.ban !== undefined)
-                    return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked, ban: resp.data.ban}
-                else return {user: this.userMapper.map(resp.data.user), isLiked: resp.data.isLiked}
-            }
-            else return {error: "Something went wrong, try again later"}
+            return this.extractUserData(resp.data)
         }, jwt)
+    }
+
+    private extractUserData(data: UserDataResponse): UserResponse {
+        if (data.user !== undefined && data.isLiked !== undefined) {
+            if (data.ban !== undefined)
+                return {user: this.userMapper.map(data.user), isLiked: data.isLiked, ban: data.ban}
+            else return {user: this.userMapper.map(data.user), isLiked: data.isLiked}
+        }
+        else return {error: "Something went wrong, try again later"}
     }
 }

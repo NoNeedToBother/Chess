@@ -2,6 +2,7 @@ import {BaseResponse} from "../model/BaseResponse";
 import axios, {isAxiosError} from "axios";
 import {JwtInfo} from "../../models/JwtInfo";
 import {REFRESH_TOKEN_ENDPOINT} from "../../utils/Endpoints";
+import {JwtInfoDataResponse} from "../model/AuthResponse";
 
 export abstract class AbstractService {
 
@@ -31,11 +32,7 @@ export abstract class AbstractService {
 
     private async refreshToken<R extends BaseResponse>(block: (token?: string) => Promise<R>,
                                                        refreshToken: string): Promise<R | {error: string}> {
-        let resp = await axios.post<{
-            accessToken?: string;
-            refreshToken?: string;
-            error?: string
-        }>(
+        let resp = await axios.post<JwtInfoDataResponse>(
             REFRESH_TOKEN_ENDPOINT,
             {token: refreshToken}
         )
