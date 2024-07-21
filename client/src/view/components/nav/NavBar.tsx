@@ -14,13 +14,16 @@ interface NavBarProps {
 }
 
 export function NavBar({ children, user, navigator, onLogout }: NavBarProps) {
-    const profileClickedHandler = (_: React.MouseEvent) => {
+    const profileClickedHandler = () => {
         navigator.navigateToProfile()
     }
-    const logoutClickedHandler = (_: React.MouseEvent) => {
+    const logoutClickedHandler = () => {
         onLogout()
     }
     const onProfilePictureClicked = () => navigator.navigateToProfile()
+    const postsClickedHandler = () => navigator.navigateToPosts()
+    const uploadPostClickedHandler = () => navigator.navigateToUploadPost()
+
     return (
         <header
             className="fixed inset-x-2 top-0 z-30 mx-auto w-full max-w-screen-md border border-gray-100 bg-white/80 py-3 shadow backdrop-blur-lg md:top-6 md:rounded-3xl lg:max-w-screen-lg">
@@ -58,6 +61,18 @@ export function NavBar({ children, user, navigator, onLogout }: NavBarProps) {
                                         anchor="bottom end"
                                         className="w-52 origin-top-right rounded-xl border border-black/5 bg-white p-1 text-sm/6 text-white [--anchor-gap:var(--spacing-1)] focus:outline-none relative z-50"
                                     >
+                                        <MenuItem>
+                                            <button onClick={postsClickedHandler}
+                                                    className="md:hidden group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10 text-black">
+                                                All posts
+                                            </button>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <button onClick={uploadPostClickedHandler}
+                                                    className="md:hidden group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10 text-black">
+                                                Upload post
+                                            </button>
+                                        </MenuItem>
                                         <MenuItem>
                                             <button onClick={profileClickedHandler}
                                                     className="group flex w-full items-center gap-2 rounded-lg py-1.5 px-3 data-[focus]:bg-white/10 text-black">

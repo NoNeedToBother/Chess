@@ -38,13 +38,13 @@ export function PostCard({ post, onProfilePictureClick, onDelete, showDelete }: 
         <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
                 <CircleImage src={ post.author.profilePicture } className="h-8" onClick={ onProfilePictureClicked }/>
-                <span className="font-medium dark:text-white hover:text-blue-500">
+                <span className="font-medium dark:text-white hover:text-blue-500 hover:underline">
                     <Link to={"/profile/" + post.author.id}>{ post.author.username }</Link>
                 </span>
             </div>
             <div className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline">
                 <Link to={ "/post/" + post.id }>Read more</Link>
-                <ArrowRightCircleIcon/>
+                <ArrowRightCircleIcon className="hover:text-blue-500 hover:translate-x-1" />
             </div>
         </div>
     </article>
