@@ -40,7 +40,6 @@ export function MainPage() {
         else return "white";
     }
 
-    //customPieces = {{wK: () => <img className="w-[75px] h-[75px]" src="..."/>}
     return (
         <>
             <div className="py-32">
@@ -62,26 +61,39 @@ export function MainPage() {
                         <div className="mt-6">
                             <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
                                         onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
-                            <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
-                                    onClick={ concedeHandler }
-                            >Concede</button>
-                            { result !== undefined &&
-                                <ResultFactory result={ result }/>
+                            { result === undefined &&
+                                <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
+                                        onClick={ concedeHandler }
+                                >Concede</button>
+                            }
+                            {result !== undefined &&
+                                <>
+                                    <button className="w-[30%] mt-4 mx-[35%] border-2"
+                                            onClick={playHandler}
+                                    >Play again
+                                    </button>
+                                    <ResultFactory result={result}/>
+                                </>
                             }
                         </div>
                     </div>
                     </span>
                 }
                 {fen === null &&
-                    <div className="w-full flex items-start">
-                        <img alt="chessboard"
-                            src="https://hichess.ru/wa-data/public/shop/products/40/35/3540/images/17699/17699.970.jpg"/>
-                        <div className="flex-col">
-                        <button className="w-20 mx-20 my-20 border-2 border-blue-600 hover:bg-blue-100" onClick={playHandler}>PLAY</button>
+                    <div className="lg:grid lg:grid-cols-3">
+                        <div className="col-span-2">
+                            <img alt="chessboard"
+                                 src="https://hichess.ru/wa-data/public/shop/products/40/35/3540/images/17699/17699.970.jpg"
+                                className="w-full"/>
+                        </div>
+                        <div>
+                            <button className="w-[20%] mx-[40%] my-20 border-2 border-blue-600 hover:bg-blue-100"
+                                    onClick={playHandler}>PLAY</button>
                             { search &&
                                 <h1 className="mx-10">Searching...</h1>
                             }
                         </div>
+
                     </div>
                 }
             </div>

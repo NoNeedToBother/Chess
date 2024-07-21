@@ -26,4 +26,8 @@ export class Navigator {
     navigateToPosts() {
         this.navigation("/posts")
     }
+
+    navigateToUploadPost() {
+        this.navigation("/post/upload")
+    }
 }
