@@ -21,6 +21,7 @@ export function useUser() {
                     setUser(res.user)
                     setLiked(res.isLiked)
                     if (res.ban !== undefined) setBan(res.ban)
+                    else setBan(null)
                 }
             })
         }

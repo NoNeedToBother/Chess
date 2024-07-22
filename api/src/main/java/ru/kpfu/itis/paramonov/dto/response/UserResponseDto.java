@@ -25,7 +25,4 @@ public class UserResponseDto extends BaseResponseDto{
         this.isLiked = isLiked;
         this.ban = ban;
     }
-    public UserResponseDto(String error) {
-        super(error);
-    }
 }

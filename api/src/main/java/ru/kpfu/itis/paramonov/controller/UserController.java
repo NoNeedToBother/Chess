@@ -4,14 +4,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.kpfu.itis.paramonov.dto.response.*;
 import ru.kpfu.itis.paramonov.dto.users.BanDto;
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
-import ru.kpfu.itis.paramonov.dto.response.BaseResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.PostResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.PostsResponseDto;
-import ru.kpfu.itis.paramonov.dto.response.UserResponseDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
@@ -34,10 +31,13 @@ public class UserController {
     private BanService banService;
 
     @PostMapping("/moderator/ban")
-    public ResponseEntity<BaseResponseDto> ban(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
+    public ResponseEntity<BanUserResponseDto> ban(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
         Long fromId = authentication.getId();
         userService.ban(banUserRequestDto.getBannedId(), banUserRequestDto.getReason(), fromId);
-        return ResponseEntity.ok().build();
+        return new ResponseEntity<>(
+                new BanUserResponseDto(get(banUserRequestDto.getBannedId(), authentication).getBody()),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/moderator/unban")
@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @PostMapping("/admin/ban")
-    public ResponseEntity<BaseResponseDto> banAdmin(@RequestBody BanUserRequestDto banUserRequestDto,
+    public ResponseEntity<BanUserResponseDto> banAdmin(@RequestBody BanUserRequestDto banUserRequestDto,
                                                     JwtAuthentication authentication) {
         return ban(banUserRequestDto, authentication);
     }
@@ -84,6 +84,7 @@ public class UserController {
             else return new ResponseEntity<>(new UserResponseDto(user.get(), liked), HttpStatus.OK);
         } else throw new NotFoundException(NO_USER_FOUND_ERROR);
     }
+
     @GetMapping("/get/posts")
     public ResponseEntity<PostsResponseDto> getPosts(
             @RequestParam("id") Long userId, @RequestParam("amount") Integer maxAmount
@@ -97,6 +98,7 @@ public class UserController {
             return new ResponseEntity<>(new PostsResponseDto(responses), HttpStatus.OK);
         } else throw new NotFoundException(NO_USER_FOUND_ERROR);
     }
+
     @GetMapping("/update/like")
     public ResponseEntity<UserResponseDto> updateLike(
             @RequestParam("id") Long userId, JwtAuthentication authentication

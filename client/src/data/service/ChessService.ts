@@ -59,7 +59,7 @@ export class ChessService {
     }
 
     private onChessResponseReceived(response: string) {
-        let json = JSON.parse(response)
+        const json = JSON.parse(response)
         switch (json.action) {
             case "BEGIN":
                 this.gameHandler?.onSeekEnd?.(json)

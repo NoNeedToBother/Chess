@@ -43,4 +43,10 @@ public class ExceptionHandlerController {
     public BaseResponseDto onDeniedRequest(Exception e) {
         return new BaseResponseDto(e.getMessage());
     }
+
+    @ExceptionHandler(UserBannedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public BaseResponseDto onUserBanned(Exception e) {
+        return new BaseResponseDto(e.getMessage());
+    }
 }
