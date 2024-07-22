@@ -13,8 +13,4 @@ public class AuthenticateResponseDto extends BaseResponseDto{
 
     @JsonProperty("jwtInfo")
     private JwtResponse jwtInfo;
-
-    public AuthenticateResponseDto(String error) {
-        super(error);
-    }
 }

@@ -42,16 +42,16 @@ export class PostService extends AbstractService{
 
     async getAll(page: number, pageSize: number, jwt: JwtInfo): Promise<PagePostResponse> {
         return this.handleAxios(async (localToken = jwt.accessToken) => {
-            let params = new Map<string, string>()
+            const params = new Map<string, string>()
             params.set("page", page.toString())
                 .set("size", pageSize.toString())
-            let resp = await axios.get<PagePostDataResponse>(
+            const resp = await axios.get<PagePostDataResponse>(
                 this.urlFormatter.format(
                     GET_POSTS_ENDPOINT, params),
                 {
                     headers: { Authorization: "Bearer " + localToken }
                 })
-            let posts: PostResponse[] = []
+            const posts: PostResponse[] = []
 
             if (resp.data.content !== undefined) {
                 resp.data.content.forEach( post => {
@@ -67,9 +67,9 @@ export class PostService extends AbstractService{
 
     async get(id: number, jwt: JwtInfo): Promise<PostResponse> {
         return this.handleAxios(async (localToken = jwt.accessToken) => {
-            let params = new Map<string, string>()
+            const params = new Map<string, string>()
             params.set("id", id.toString())
-            let resp = await axios.get<PostDataResponse>(
+            const resp = await axios.get<PostDataResponse>(
                 this.urlFormatter.format(GET_POST_ENDPOINT, params),
                 { headers: {Authorization: "Bearer " + localToken}}
             )
@@ -81,9 +81,9 @@ export class PostService extends AbstractService{
 
     async getPageAmount(pageSize: number, jwt: JwtInfo): Promise<PageAmountResponse> {
         return this.handleAxios(async (localToken = jwt.accessToken) => {
-            let params = new Map<string, string>()
+            const params = new Map<string, string>()
             params.set("size", pageSize.toString())
-            let resp = await axios.get<PageAmountResponse>(
+            const resp = await axios.get<PageAmountResponse>(
                 this.urlFormatter.format(GET_POST_PAGE_AMOUNT_ENDPOINT, params),
                 { headers: {Authorization: "Bearer " + localToken}}
             )
@@ -93,7 +93,7 @@ export class PostService extends AbstractService{
 
     async updateRating(postId: number, rating: number, jwt: JwtInfo): Promise<PostResponse> {
         return this.handleAxios(async (localToken = jwt.accessToken) => {
-            let resp = await axios.post<PostDataResponse>(
+            const resp = await axios.post<PostDataResponse>(
                 UPDATE_POST_RATING_ENDPOINT,
                 {postId: postId, rating: rating},
                 { headers: {Authorization: "Bearer " + localToken}}
@@ -105,15 +105,15 @@ export class PostService extends AbstractService{
     }
 
     async getComments(postId: number, jwt: JwtInfo): Promise<CommentsResponse> {
-        let params = new Map<string, string>()
+        const params = new Map<string, string>()
         params.set("id", postId.toString())
         return this.handleAxios(async () => {
-            let resp = await axios.get<CommentsDataResponse>(
+            const resp = await axios.get<CommentsDataResponse>(
                 this.urlFormatter.format(GET_COMMENTS_ENDPOINT, params),
                 { headers: {Authorization: "Bearer " + jwt.accessToken}}
             )
             if (resp.data.comments !== undefined) {
-                let comments: Comment[] = []
+                const comments: Comment[] = []
                 resp.data.comments.forEach( (obj, _) => {
                     if (obj.comment !== undefined && obj.author !== undefined) {
                         comments.push(this.commentMapper.map(obj.author, obj.comment))
@@ -125,13 +125,13 @@ export class PostService extends AbstractService{
     }
 
     async upload({title, content, description, jwt, image}: UploadPostRequest): Promise<PostResponse> {
-        let formData = new FormData()
+        const formData = new FormData()
         formData.append("title", title.toString())
         formData.append("content", content.toString())
         formData.append("description", description.toString())
         formData.append("image", image)
         return this.handleAxios(async (localToken = jwt.accessToken) => {
-            let resp = await axios.post<PostDataResponse>(
+            const resp = await axios.post<PostDataResponse>(
                 UPLOAD_POST_ENDPOINT,
                 formData,
                 { "headers": {"Authorization": "Bearer " + localToken}}
@@ -143,10 +143,10 @@ export class PostService extends AbstractService{
     }
 
     async delete(id: number, jwt: JwtInfo): Promise<BaseResponse> {
-        let params = new Map<string, string>()
+        const params = new Map<string, string>()
         params.set("id", id.toString())
         return this.handleAxios(async (): Promise<BaseResponse> => {
-            let resp = await axios.post<BaseResponse>(
+            const resp = await axios.post<BaseResponse>(
                 this.urlFormatter.format(DELETE_POST_ENDPOINT, params),
                 {},
                 { "headers": {"Authorization": "Bearer " + jwt.accessToken}}

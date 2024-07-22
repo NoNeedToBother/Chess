@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select count(b) <> 0 from Ban b where b.bannedUser.id = :id and b.unbanned = false")
     boolean isBanned(@Param("id") Long userId);
 
-    @Query(value = "insert into bans(banned_id, from_id, reason) values (:banned, :from, :reason)",
+    @Query(value = "insert into bans(banned_id, date_banned, from_id, reason) values (:banned, now(), :from, :reason)",
             nativeQuery = true)
     @Modifying
     void ban(@Param("banned") Long bannedId, @Param("from") Long fromId, @Param("reason") String reason);

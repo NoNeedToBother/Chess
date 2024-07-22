@@ -32,7 +32,7 @@ export abstract class AbstractService {
 
     private async refreshToken<R extends BaseResponse>(block: (token?: string) => Promise<R>,
                                                        refreshToken: string): Promise<R | {error: string}> {
-        let resp = await axios.post<JwtInfoDataResponse>(
+        const resp = await axios.post<JwtInfoDataResponse>(
             REFRESH_TOKEN_ENDPOINT,
             {token: refreshToken}
         )

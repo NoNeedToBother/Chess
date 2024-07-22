@@ -25,16 +25,18 @@ export function useChess() {
             return;
         }
         try {
-            let moveResult = game.move(move)
+            const moveResult = game.move(move)
             if (moveResult === null) return
         } catch (e) {
             return;
         }
+
         let result: string | undefined
         if (game.isCheckmate()) result = "win"
         else if (game.isInsufficientMaterial()) result = "insufficient"
         else if (game.isStalemate()) result = "stalemate"
         else if (game.isDraw()) result = "draw"
+
         if (gameId !== null && result !== undefined && color !== null && user !== null) {
             chessService.claimEnd({
                 color: color, from: user.id, gameId: gameId, result: result, fen: game.fen()
@@ -42,7 +44,7 @@ export function useChess() {
             return;
         }
 
-        let resFen = game.fen()
+        const resFen = game.fen()
         if (gameId !== null && color !== null && user !== null) {
             chessService.move({
                 color: color, fen: resFen, from: user.id, gameId: gameId

@@ -12,8 +12,4 @@ public class CommentResponseDto extends BaseResponseDto {
 
     @JsonProperty("author")
     private UserDto user;
-
-    public CommentResponseDto(String error) {
-        super(error);
-    }
 }
