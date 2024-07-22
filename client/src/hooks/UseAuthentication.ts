@@ -8,7 +8,7 @@ export function useAuthentication() {
 
     const [ success , setSuccess] = useState<boolean | null>(null)
     const [ loginError, setLoginError ] = useState<string>("")
-    const [registerError, setRegisterError] = useState<string>("")
+    const [ registerError, setRegisterError ] = useState<string>("")
 
     const login = (username: string, password: string) => {
         authService.login(username, password).then((data) => {

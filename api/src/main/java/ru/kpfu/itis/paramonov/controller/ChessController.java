@@ -6,11 +6,9 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import ru.kpfu.itis.paramonov.dto.chess.*;
-import ru.kpfu.itis.paramonov.dto.chess.request.ConcedeRequestDto;
-import ru.kpfu.itis.paramonov.dto.chess.request.EndGameRequestDto;
-import ru.kpfu.itis.paramonov.dto.chess.request.MoveRequestDto;
-import ru.kpfu.itis.paramonov.dto.chess.request.SeekGameRequestDto;
-import ru.kpfu.itis.paramonov.utils.ChessGameStore;
+import ru.kpfu.itis.paramonov.dto.chess.request.*;
+import ru.kpfu.itis.paramonov.utils.chess.ChessGameStore;
+import ru.kpfu.itis.paramonov.utils.chess.ChessTimer;
 
 import java.util.*;
 
@@ -41,8 +39,17 @@ public class ChessController {
         else {
             String fen = moveRequestDto.getFen();
             game.setFen(fen);
-            if ("white".equals(moveRequestDto.getColor())) game.setTurn("black");
-            else game.setTurn("white");
+            if ("white".equals(moveRequestDto.getColor())) {
+                game.setTurn("black");
+                game.getWhiteTimer().stop();
+                if (!game.getBlackTimer().isRunning()) game.getBlackTimer().start();
+                else game.getBlackTimer().resume();
+            }
+            else {
+                game.setTurn("white");
+                game.getBlackTimer().stop();
+                game.getWhiteTimer().resume();
+            }
             sendMessageToUser(game.getWhite(), new ChessMoveResponseDto(
                     "MOVE", game.getTurn(), game.getFen()
             ));
@@ -98,7 +105,7 @@ public class ChessController {
         sendMessageToUser(other, new ChessConcedeResponseDto(
                 "CONCEDE", "concede", false
         ));
-        chessGameStore.remove(game.getId());
+        chessGameStore.endGame(game.getId());
     }
 
     private void onPlayerDisconnected(ChessGameStore.ChessGame game, ConcedeRequestDto concedeRequestDto) {
@@ -108,7 +115,7 @@ public class ChessController {
         sendMessageToUser(other, new ChessConcedeResponseDto(
                 "CONCEDE", "disconnect", false
         ));
-        chessGameStore.remove(game.getId());
+        chessGameStore.endGame(game.getId());
     }
 
     private void onWin(ChessGameStore.ChessGame game, EndGameRequestDto requestData) {
@@ -122,7 +129,7 @@ public class ChessController {
         } else sendMessageToUser(game.getWhite(), new ChessEndResponseDto(
                 "END", "lose", requestData.getFen()
         ));
-        chessGameStore.remove(game.getId());
+        chessGameStore.endGame(game.getId());
     }
 
     private void onDraw(ChessGameStore.ChessGame game, EndGameRequestDto requestData) {
@@ -132,12 +139,8 @@ public class ChessController {
         sendMessageToUser(game.getBlack(), new ChessEndResponseDto(
                 "END", requestData.getResult(), requestData.getFen()
         ));
-        chessGameStore.remove(game.getId());
+        chessGameStore.endGame(game.getId());
     }
-
-    /*private void sendMoveErrorMessage(Integer playerId) {
-        sendMessageToUser();
-    }*/
 
     private static final long MAX_WAIT_TIME_MILLIS = 600 * 1000L;
 
@@ -190,7 +193,8 @@ public class ChessController {
             black = player1;
         }
         String gameId = player1 + "-" + player2;
-        chessGameStore.add(new ChessGameStore.ChessGame(gameId, white, black));
+        ChessGameStore.ChessGame game = new ChessGameStore.ChessGame(gameId, white, black);
+        chessGameStore.add(game);
         chessGameStore.addPlayerDisconnectedListener(white, blackId ->
                 sendMessageToUser(blackId, new ChessConcedeResponseDto(
                 "CONCEDE", "disconnect", false
@@ -206,6 +210,42 @@ public class ChessController {
         sendMessageToUser(player2, new ChessBeginResponseDto(
                 "BEGIN", player2Color, player1, gameId, ChessGameStore.ChessGame.INITIAL_FEN
         ));
+
+        game.setWhiteTimer(new ChessTimer(() -> {
+            game.setWhiteTime(game.getWhiteTime() - 1000L);
+            if (game.getWhiteTime() < 0)
+                onTimeRanOut(game.getBlack(), game.getWhite(), game);
+            else sendTimeData(game);
+        }, 1000L));
+
+        game.setBlackTimer(new ChessTimer(() -> {
+            game.setBlackTime(game.getBlackTime() - 1000L);
+            if (game.getBlackTime() < 0)
+                onTimeRanOut(game.getWhite(), game.getBlack(), game);
+            else sendTimeData(game);
+        }, 1000L));
+        game.getWhiteTimer().start();
+    }
+
+    private void onTimeRanOut(Integer winner, Integer loser, ChessGameStore.ChessGame game) {
+        sendMessageToUser(loser, new ChessEndResponseDto(
+                "END", "lose_time", game.getFen()
+        ));
+        sendMessageToUser(winner, new ChessEndResponseDto(
+                "END", "win_time", game.getFen()
+        ));
+        chessGameStore.endGame(game.getId());
+    }
+
+    private void sendTimeData(ChessGameStore.ChessGame chessGame) {
+        sendMessageToUser(chessGame.getWhite(), new ChessTimeResponseDto(
+                "TIME",
+                chessGame.getWhiteTime().intValue() / 1000,
+                chessGame.getBlackTime().intValue() / 1000));
+        sendMessageToUser(chessGame.getBlack(), new ChessTimeResponseDto(
+                "TIME",
+                chessGame.getBlackTime().intValue() / 1000,
+                chessGame.getWhiteTime().intValue() / 1000));
     }
 
     private void sendGameDataErrorAndOmitGame(Integer playerId) {

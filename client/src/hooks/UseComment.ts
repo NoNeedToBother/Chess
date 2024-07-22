@@ -13,11 +13,9 @@ export function useComment() {
     const { jwt } = useUserContext()
 
     const [ commentData, setCommentData ] = useState<CommentUploadData | null>(null)
-    const [comment, setComment ] = useState<Comment | null>(null)
+    const [ comment, setComment ] = useState<Comment | null>(null)
 
-    const uploadComment = (data: CommentUploadData) => {
-        setCommentData(data)
-    }
+    const uploadComment = (data: CommentUploadData) => setCommentData(data)
 
     useEffect(() => {
         if (commentData !== null && jwt !== null) {

@@ -9,10 +9,10 @@ export function useUser() {
     const { userService } = useDataContext();
     const { jwt } = useUserContext()
 
-    const [user, setUser] = useState<User | null>(null);
-    const [liked, setLiked] = useState<boolean | null>(null);
-    const [ban, setBan] = useState<Ban | null>(null);
-    const [userPosts, setUsersPosts] = useState<Post[] | null>(null);
+    const [ user, setUser ] = useState<User | null>(null);
+    const [ liked, setLiked ] = useState<boolean | null>(null);
+    const [ ban, setBan ] = useState<Ban | null>(null);
+    const [ userPosts, setUsersPosts ] = useState<Post[] | null>(null);
 
     const get = (id: number) => {
         if (jwt !== null) {

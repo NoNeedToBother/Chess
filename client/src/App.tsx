@@ -18,12 +18,12 @@ function App() {
     const { user, clearUser } = useUserContext()
     const { navigator } = useDataContext()
 
-    const { chessService, clearChess, gameId } = useChessContext()
+    const { chessService, clearChess, gameInfo } = useChessContext()
 
     const onLogout = () => {
-        if (gameId !== null && user !== null) {
+        if (gameInfo.gameId !== null && user !== null) {
             chessService.concede({
-                gameId: gameId, from: user.id, reason: "disconnect"
+                gameId: gameInfo.gameId, from: user.id, reason: "disconnect"
             })
         }
         else chessService.disconnect()

@@ -14,8 +14,8 @@ export function usePost(id: string | undefined) {
     const { postService } = useDataContext()
     const { jwt } = useUserContext()
 
-    const [post, setPost ] = useState<Post | null>(null)
-    const [rating, setRating] = useState(-1)
+    const [ post, setPost ] = useState<Post | null>(null)
+    const [ rating, setRating ] = useState(-1)
     const [ comments, setComments ] = useState<Comment[]>([])
 
     const updateRating = (rating: number) => {

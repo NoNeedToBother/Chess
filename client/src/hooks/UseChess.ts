@@ -3,25 +3,23 @@ import {Chess} from "chess.js";
 import {Square} from "react-chessboard/dist/chessboard/types";
 import {useChessContext} from "../context/ChessContext";
 import {useUserContext} from "../context/UserContext";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse} from "../data/model/ChessResponse";
+import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../data/model/ChessResponse";
 import {useUser} from "./UseUser";
 
 export function useChess() {
-    const { chessService, fen, setFen, color, setColor,
-        turn, setTurn, gameId, setGameId, setSearch, clearChess } = useChessContext()
+    const { chessService, gameInfo, timeInfo, setSearch, clearChess } = useChessContext()
     const { user, setOpponent } = useUserContext()
     const { user: other, get } = useUser()
 
-    const [game, setGame] = useState<Chess>(new Chess())
-    const [result, setResult] = useState<string | undefined>(undefined)
+    const [ game, setGame ] = useState<Chess>(new Chess())
 
     useEffect(() => {
-        if (fen !== null) setGame(new Chess(fen))
+        if (gameInfo.fen !== null) setGame(new Chess(gameInfo.fen))
         else setGame(new Chess())
-    }, [fen])
+    }, [gameInfo.fen])
 
     function move(move: { from: Square, to: Square, promotion?: string }) {
-        if (turn !== color) {
+        if (gameInfo.turn !== gameInfo.color) {
             return;
         }
         try {
@@ -37,17 +35,17 @@ export function useChess() {
         else if (game.isStalemate()) result = "stalemate"
         else if (game.isDraw()) result = "draw"
 
-        if (gameId !== null && result !== undefined && color !== null && user !== null) {
+        if (gameInfo.gameId !== null && result !== undefined && gameInfo.color !== null && user !== null) {
             chessService.claimEnd({
-                color: color, from: user.id, gameId: gameId, result: result, fen: game.fen()
+                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: result, fen: game.fen()
             })
             return;
         }
 
         const resFen = game.fen()
-        if (gameId !== null && color !== null && user !== null) {
+        if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null) {
             chessService.move({
-                color: color, fen: resFen, from: user.id, gameId: gameId
+                color: gameInfo.color, fen: resFen, from: user.id, gameId: gameInfo.gameId
             })
         }
     }
@@ -59,33 +57,38 @@ export function useChess() {
     }, [other]);
 
     const onSeekEnd = (response: BeginResponse) => {
-        setColor(response.color)
-        setGameId(response.gameId)
-        setFen(response.fen)
+        gameInfo.setColor(response.color)
+        gameInfo.setGameId(response.gameId)
+        gameInfo.setFen(response.fen)
         setSearch(false)
         get(response.opponent)
     }
 
     const onMove = (response: MoveResponse) => {
-        setFen(response.fen)
-        setTurn(response.turn)
+        gameInfo.setFen(response.fen)
+        gameInfo.setTurn(response.turn)
     }
 
     const onEnd = (response: EndResponse) => {
-        setResult(response.result)
-        setFen(response.fen)
+        gameInfo.setResult(response.result)
+        gameInfo.setFen(response.fen)
     }
 
     const onConcede = (response: ConcedeResponse) => {
         switch (response.reason) {
             case "disconnect":
-                setResult("win_disconnect")
+                gameInfo.setResult("win_disconnect")
                 break
             case "concede":
-                if (response.conceded) setResult("lose_concede")
-                else setResult("win_concede")
+                if (response.conceded) gameInfo.setResult("lose_concede")
+                else gameInfo.setResult("win_concede")
                 break
         }
+    }
+
+    const updateTime = (response: TimeResponse) => {
+        timeInfo.updateTime(response.time)
+        timeInfo.updateOpponentTime(response.opponentTime)
     }
 
     const seek = (id: number) => {
@@ -93,21 +96,23 @@ export function useChess() {
             { onSeekEnd: onSeekEnd,
                 onMove: onMove,
                 onEnd: onEnd,
-                onConcede: onConcede
+                onConcede: onConcede,
+                updateTime: updateTime
             })
-        setResult(undefined)
+        gameInfo.setResult(undefined)
         clearChess()
     }
 
     const concede = () => {
-        if (gameId !== null && user !== null) {
+        if (gameInfo.gameId !== null && user !== null) {
             chessService.concede({
-                gameId: gameId,
+                gameId: gameInfo.gameId,
                 from: user.id,
                 reason: "concede"
             })
         }
     }
 
-    return { fen, game, move, seek, color, result, concede }
+    return { fen: gameInfo.fen, game, move, seek, color: gameInfo.color, result: gameInfo.result,
+        concede, time: timeInfo.time, opponentTime: timeInfo.opponentTime }
 }
