@@ -21,7 +21,7 @@ export class CommentService extends AbstractService{
 
     async upload({postId, content, jwt}: UploadCommentRequest): Promise<CommentResponse> {
         return this.handleAxios( async (localToken = jwt.accessToken) => {
-            let resp = await axios.post<CommentDataResponse>(
+            const resp = await axios.post<CommentDataResponse>(
                 UPLOAD_COMMENT_ENDPOINT,
                 {postId: postId, content: content},
                 {headers: { Authorization: "Bearer " + localToken }}

@@ -14,8 +14,8 @@ export function usePost(id: string | undefined) {
     const { postService } = useDataContext()
     const { jwt } = useUserContext()
 
-    const [post, setPost ] = useState<Post | null>(null)
-    const [rating, setRating] = useState(-1)
+    const [ post, setPost ] = useState<Post | null>(null)
+    const [ rating, setRating ] = useState(-1)
     const [ comments, setComments ] = useState<Comment[]>([])
 
     const updateRating = (rating: number) => {
@@ -44,7 +44,7 @@ export function usePost(id: string | undefined) {
 
     async function sendUpdateRatingRequest(rating: number) {
         if (jwt !== null && id !== undefined) {
-            let post = await postService.updateRating(parseInt(id), rating, jwt)
+            const post = await postService.updateRating(parseInt(id), rating, jwt)
             if (post.post !== undefined) setPost(post.post)
         }
     }

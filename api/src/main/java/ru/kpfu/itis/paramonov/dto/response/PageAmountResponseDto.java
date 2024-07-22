@@ -9,8 +9,4 @@ public class PageAmountResponseDto extends BaseResponseDto{
     public PageAmountResponseDto(Integer pageAmount) {
         this.pageAmount = pageAmount;
     }
-
-    public PageAmountResponseDto(String error) {
-        super(error);
-    }
 }

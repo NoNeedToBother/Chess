@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.utils;
+package ru.kpfu.itis.paramonov.utils.chess;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,10 @@ public class ChessGameStore {
         games.put(game.id, game);
     }
 
-    public void remove(String id) {
-        games.remove(id);
+    public void endGame(String id) {
+        ChessGame game = games.remove(id);
+        game.getWhiteTimer().shutdown();
+        game.getBlackTimer().shutdown();
     }
 
     public void notifyPlayerDisconnected(Integer disconnectedId) {
@@ -62,6 +64,13 @@ public class ChessGameStore {
 
         private String turn = "white";
 
+        private ChessTimer whiteTimer;
+        private Long whiteTime = PLAYER_TIME_MILLIS;
+
+        private ChessTimer blackTimer;
+        private Long blackTime = PLAYER_TIME_MILLIS;
+
         public static final String INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        public static final Long PLAYER_TIME_MILLIS = 1000L * 60 * 10;
     }
 }

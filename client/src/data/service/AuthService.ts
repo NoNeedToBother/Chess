@@ -15,7 +15,7 @@ export class AuthService extends AbstractService {
 
     async login(username: String, password: String): Promise<AuthResponse> {
         return this.handleAxios( async () => {
-            let resp = await axios.post<AuthDataResponse>(
+            const resp = await axios.post<AuthDataResponse>(
                 LOGIN_ENDPOINT,
                 {
                     "username": username,
@@ -27,7 +27,7 @@ export class AuthService extends AbstractService {
 
     async register(username: String, password: String): Promise<AuthResponse> {
         return this.handleAxios( async () => {
-            let resp = await axios.post<AuthDataResponse>(
+            const resp = await axios.post<AuthDataResponse>(
                 REGISTER_ENDPOINT,
                 {
                     "username": username,
