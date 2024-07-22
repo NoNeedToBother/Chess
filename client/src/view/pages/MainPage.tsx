@@ -6,10 +6,11 @@ import {useChessContext} from "../../context/ChessContext";
 import {useUserContext} from "../../context/UserContext";
 import {Link} from "react-router-dom";
 import {CircleImage} from "../components/base/CircleImage";
+import {Timer} from "../components/other/Timer";
 
 
 export function MainPage() {
-    const {fen, move, seek, color, result, concede} = useChess()
+    const {fen, move, seek, color, result, concede } = useChess()
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
@@ -44,40 +45,46 @@ export function MainPage() {
         <>
             <div className="py-32">
                 {fen !== null && color !== null &&
-                    <span>
-                        <div className="block mx-auto lg:w-[600px] lg:h-[600px] md:w-[400px] md:h-[400px]">
-                        { opponent !== null &&
-                            <span className="flex justify-center border-4 border-gray-400 shadow-md rounded-r">
-                                <CircleImage src={ opponent.profilePicture } className="h-20"/>
-                                <Link to={"/profile/" + opponent.id}>
-                                    <div className="w-full h-full">
-                                        <h2 className="ml-2 h-1/2 my-6">
-                                            {opponent.username}
-                                        </h2>
+                    <div>
+                        <div className="block mx-auto lg:w-[800px] lg:h-[800px] md:w-[600px] md:h-[600px] xs:w-[300px] xs:h-[300px]">
+                            { opponent !== null &&
+                                <span className="flex justify-center border-4 border-gray-400 shadow-md rounded-r">
+                                    <CircleImage src={ opponent.profilePicture } className="h-20"/>
+                                    <Link to={"/profile/" + opponent.id}>
+                                        <div className="w-full h-full">
+                                            <h2 className="ml-2 h-1/2 my-6">
+                                                {opponent.username}
+                                            </h2>
+                                        </div>
+                                    </Link>
+                                </span>
+                            }
+                            <div className="mt-6">
+                                <div className="lg:flex lg:flex-row gap-4">
+                                    <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
+                                                    onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
+
+                                    <div className="mx-auto md:my-auto w-[400px] h-[200px]">
+                                        <Timer time={ 180 } opponentTime={ 30 }></Timer>
                                     </div>
-                                </Link>
-                            </span>
-                        }
-                        <div className="mt-6">
-                            <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
-                                        onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
-                            { result === undefined &&
-                                <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
-                                        onClick={ concedeHandler }
-                                >Concede</button>
-                            }
-                            {result !== undefined &&
-                                <>
-                                    <button className="w-[30%] mt-4 mx-[35%] border-2"
-                                            onClick={playHandler}
-                                    >Play again
-                                    </button>
-                                    <ResultFactory result={result}/>
-                                </>
-                            }
+                                </div>
+                                { result === undefined &&
+                                    <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
+                                            onClick={ concedeHandler }
+                                    >Concede</button>
+                                }
+                                {result !== undefined &&
+                                    <>
+                                        <button className="w-[30%] mt-4 mx-[35%] border-2"
+                                              onClick={playHandler}
+                                        >Play again
+                                        </button>
+                                        <ResultFactory result={result}/>
+                                    </>
+                                }
+                            </div>
                         </div>
                     </div>
-                    </span>
                 }
                 {fen === null &&
                     <div className="lg:grid lg:grid-cols-3">

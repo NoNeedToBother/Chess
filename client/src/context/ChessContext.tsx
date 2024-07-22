@@ -4,19 +4,25 @@ import {useUserContext} from "./UserContext";
 
 interface IChessContext {
     chessService: ChessService;
-    fen: string | null;
-    setFen: (fen: string | null) => void;
+    gameInfo: GameInfo
     search: boolean;
     setSearch: (search: boolean) => void;
-    turn: string;
-    setTurn: (value: string) => void;
     clearChess: () => void;
-    color: string | null;
-    setColor: (color: string | null) => void;
-    gameId: string | null;
-    setGameId: (id: string | null) => void;
-    opponent: number | null;
+}
+
+export interface GameInfo {
+    fen: string | null
+    setFen: (fen: string | null) => void
+    turn: string
+    setTurn: (value: string) => void
+    color: string | null
+    setColor: (color: string | null) => void
+    gameId: string | null
+    setGameId: (id: string | null) => void
+    opponent: number | null
     setOpponent: (id: number | null) => void
+    result: string | undefined
+    setResult: (result: string | undefined) => void
 }
 
 const ChessContext = createContext<IChessContext | null>(null)
@@ -43,6 +49,9 @@ export const ChessState = ({children, chess}: ChessStateProps) => {
     const [color, setColor] = useState<string | null>(null)
     const [gameId, setGameId] = useState<string | null>(null)
     const [ opponent, setOpponent ] = useState<number | null>(null)
+    const [time, setTime] = useState<number | null>(0)
+    const [result, setResult] = useState<string | undefined>(undefined)
+
     const opponentContext = useUserContext()
     const chessService = chess
 
@@ -54,11 +63,15 @@ export const ChessState = ({children, chess}: ChessStateProps) => {
         setGameId(null)
         opponentContext.setOpponent(null)
         setColor(null)
-
+        setTime(0)
     }
+
+    const gameInfo = {
+        fen, setFen, turn, setTurn, color, setColor, gameId, setGameId, opponent, setOpponent, result, setResult
+    }
+
     return(
-        <ChessContextProvider value={ {chessService, fen, setFen, search, setSearch,
-            turn, setTurn, clearChess, color, setColor, gameId, setGameId, opponent, setOpponent }}>
+        <ChessContextProvider value={ {chessService, gameInfo, search, setSearch, clearChess }}>
             { children }
         </ChessContextProvider>
     )

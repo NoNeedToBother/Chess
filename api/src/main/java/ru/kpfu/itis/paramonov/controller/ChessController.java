@@ -6,10 +6,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import ru.kpfu.itis.paramonov.dto.chess.*;
-import ru.kpfu.itis.paramonov.dto.chess.request.ConcedeRequestDto;
-import ru.kpfu.itis.paramonov.dto.chess.request.EndGameRequestDto;
-import ru.kpfu.itis.paramonov.dto.chess.request.MoveRequestDto;
-import ru.kpfu.itis.paramonov.dto.chess.request.SeekGameRequestDto;
+import ru.kpfu.itis.paramonov.dto.chess.request.*;
 import ru.kpfu.itis.paramonov.utils.ChessGameStore;
 
 import java.util.*;
@@ -83,6 +80,16 @@ public class ChessController {
                     onPlayerConceded(game, concedeRequestDto);
                     break;
             }
+        }
+    }
+
+    @MessageMapping("game/time")
+    public void processTimeRequest(UpdateTimeRequestDto updateTimeRequestDto) {
+        ChessGameStore.ChessGame game = chessGameStore.get(updateTimeRequestDto.getGameId());
+        if (game == null) sendGameDataErrorAndOmitGame(updateTimeRequestDto.getFrom());
+        else {
+            if (updateTimeRequestDto.getFrom().equals(game.getWhite()))
+                sendMessageToUser(game.getBlack(), new ChessTimeResponseDto(updateTimeRequestDto.getTime()));
         }
     }
 
