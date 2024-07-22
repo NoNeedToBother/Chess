@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
 import {CompatClient, Stomp} from "@stomp/stompjs";
 import {Message} from "stompjs";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse} from "../model/ChessResponse";
+import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../model/ChessResponse";
 
 const API_DOMAIN = "http://localhost:8080"
 
@@ -34,6 +34,7 @@ export interface GameHandler {
     onMove?: (response: MoveResponse) => void
     onEnd?: (response: EndResponse) => void
     onConcede?: (response: ConcedeResponse) => void
+    updateTime?: (response: TimeResponse) => void
 }
 
 export class ChessService {
@@ -59,7 +60,7 @@ export class ChessService {
     }
 
     private onChessResponseReceived(response: string) {
-        let json = JSON.parse(response)
+        const json = JSON.parse(response)
         switch (json.action) {
             case "BEGIN":
                 this.gameHandler?.onSeekEnd?.(json)
@@ -82,6 +83,9 @@ export class ChessService {
             case "CONCEDE":
                 this.gameHandler?.onConcede?.(json)
                 this.onGameEnd()
+                break
+            case "TIME":
+                this.gameHandler?.updateTime?.(json)
                 break
         }
     }

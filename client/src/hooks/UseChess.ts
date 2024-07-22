@@ -3,11 +3,11 @@ import {Chess} from "chess.js";
 import {Square} from "react-chessboard/dist/chessboard/types";
 import {useChessContext} from "../context/ChessContext";
 import {useUserContext} from "../context/UserContext";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse} from "../data/model/ChessResponse";
+import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../data/model/ChessResponse";
 import {useUser} from "./UseUser";
 
 export function useChess() {
-    const { chessService, gameInfo, setSearch, clearChess } = useChessContext()
+    const { chessService, gameInfo, timeInfo, setSearch, clearChess } = useChessContext()
     const { user, setOpponent } = useUserContext()
     const { user: other, get } = useUser()
 
@@ -84,12 +84,18 @@ export function useChess() {
         }
     }
 
+    const updateTime = (response: TimeResponse) => {
+        timeInfo.updateTime(response.time)
+        timeInfo.updateOpponentTime(response.opponentTime)
+    }
+
     const seek = (id: number) => {
         chessService.seek(id,
             { onSeekEnd: onSeekEnd,
                 onMove: onMove,
                 onEnd: onEnd,
-                onConcede: onConcede
+                onConcede: onConcede,
+                updateTime: updateTime
             })
         gameInfo.setResult(undefined)
         clearChess()
@@ -105,5 +111,6 @@ export function useChess() {
         }
     }
 
-    return { fen: gameInfo.fen, game, move, seek, color: gameInfo.color, result: gameInfo.result, concede }
+    return { fen: gameInfo.fen, game, move, seek, color: gameInfo.color, result: gameInfo.result,
+        concede, time: timeInfo.time, opponentTime: timeInfo.opponentTime }
 }

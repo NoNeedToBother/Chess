@@ -9,5 +9,9 @@ import lombok.Setter;
 @Setter
 public class ChessTimeResponseDto {
 
+    private String action;
+
     private Integer time;
+
+    private Integer opponentTime;
 }

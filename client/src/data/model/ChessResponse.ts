@@ -28,3 +28,9 @@ export interface ConcedeResponse {
     reason: string
     conceded: boolean
 }
+
+export interface TimeResponse {
+    action: string
+    time: number
+    opponentTime: number
+}

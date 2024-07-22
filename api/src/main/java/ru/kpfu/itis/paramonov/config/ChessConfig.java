@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 import org.springframework.web.socket.handler.WebSocketHandlerDecorator;
 import org.springframework.web.socket.handler.WebSocketHandlerDecoratorFactory;
-import ru.kpfu.itis.paramonov.utils.ChessGameStore;
+import ru.kpfu.itis.paramonov.utils.chess.ChessGameStore;
 
 @Configuration
 @EnableWebSocketMessageBroker

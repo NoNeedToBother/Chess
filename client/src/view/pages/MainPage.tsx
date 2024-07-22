@@ -10,7 +10,8 @@ import {Timer} from "../components/other/Timer";
 
 
 export function MainPage() {
-    const {fen, move, seek, color, result, concede } = useChess()
+    const {fen, move, seek, color, result, concede,
+        time, opponentTime} = useChess()
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
@@ -63,10 +64,11 @@ export function MainPage() {
                                 <div className="lg:flex lg:flex-row gap-4">
                                     <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
                                                     onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
-
-                                    <div className="mx-auto md:my-auto w-[400px] h-[200px]">
-                                        <Timer time={ 180 } opponentTime={ 30 }></Timer>
-                                    </div>
+                                    { time !== null && opponentTime !== null &&
+                                        <div className="mx-auto md:my-auto w-[400px] h-[200px]">
+                                            <Timer time={ time } opponentTime={ opponentTime }></Timer>
+                                        </div>
+                                    }
                                 </div>
                                 { result === undefined &&
                                     <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
