@@ -117,8 +117,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void unban(Long bannedId, Long fromId) {
-        userRepository.unban(bannedId, fromId);
+        if (isChiefAdmin(fromId) && !isChiefAdmin(bannedId)) userRepository.unban(bannedId, fromId);
+        else if (isAdmin(fromId) && !hasAdminAuthority(bannedId)) userRepository.unban(bannedId, fromId);
+        else if (isModerator(fromId) && !hasModeratorAuthority(bannedId)) userRepository.unban(bannedId, fromId);
+        else throw new NoSufficientAuthorityException(NO_SUFFICIENT_AUTHORITY_ERROR);
     }
 
     @Override

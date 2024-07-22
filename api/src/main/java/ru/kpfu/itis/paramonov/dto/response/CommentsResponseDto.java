@@ -12,8 +12,4 @@ public class CommentsResponseDto extends BaseResponseDto {
     public CommentsResponseDto(List<CommentResponseDto> comments) {
         this.comments = comments;
     }
-
-    public CommentsResponseDto(String error) {
-        this.error = error;
-    }
 }

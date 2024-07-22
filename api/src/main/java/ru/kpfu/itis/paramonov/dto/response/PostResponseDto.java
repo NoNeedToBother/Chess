@@ -16,8 +16,4 @@ public class PostResponseDto extends BaseResponseDto {
         this.user = user;
         this.post = post;
     }
-
-    public PostResponseDto(String error) {
-        super(error);
-    }
 }

@@ -3,10 +3,10 @@ package ru.kpfu.itis.paramonov.service.impl;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kpfu.itis.paramonov.exceptions.InvalidCredentialsException;
+import ru.kpfu.itis.paramonov.exceptions.UserBannedException;
 import ru.kpfu.itis.paramonov.service.AuthService;
 import ru.kpfu.itis.paramonov.dto.auth.JwtResponse;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtProvider;
@@ -20,7 +20,6 @@ import java.util.*;
 
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -37,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
         checkUsernameAndPassword(username, password);
         Optional<User> user = userRepository.findByUsername(username);
         if (!user.isPresent()) throw new InvalidCredentialsException(INCORRECT_CREDENTIALS_ERROR);
+        if (userRepository.isBanned(user.get().getId())) throw new UserBannedException(USER_BANNED_ERROR);
         if (passwordEncoder.matches(password, user.get().getPassword())) {
             String accessToken = jwtProvider.generateAccessToken(user.get());
             String refreshToken = jwtProvider.generateRefreshToken(user.get());

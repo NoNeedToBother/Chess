@@ -11,8 +11,4 @@ public class PostsResponseDto extends BaseResponseDto{
     public PostsResponseDto(List<PostResponseDto> posts) {
         this.posts = posts;
     }
-
-    public PostsResponseDto(String error) {
-        super(error);
-    }
 }

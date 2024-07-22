@@ -43,4 +43,6 @@ public class ExceptionMessages {
 
     public final static String INVALID_PARAMETER_SIZE = "Invalid parameter of size";
 
+    public final static String USER_BANNED_ERROR = "Account is banned";
+
 }

@@ -28,6 +28,7 @@ export function useChess() {
         } catch (e) {
             return;
         }
+
         let result: string | undefined
         if (game.isCheckmate()) result = "win"
         else if (game.isInsufficientMaterial()) result = "insufficient"
