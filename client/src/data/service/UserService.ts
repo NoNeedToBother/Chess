@@ -7,7 +7,7 @@ import axios from "axios";
 import {
     BAN_USER_ADMIN_ENDPOINT, BAN_USER_MODERATOR_ENDPOINT,
     GET_USER_ENDPOINT,
-    GET_USER_POSTS_ENDPOINT,
+    GET_USER_POSTS_ENDPOINT, UNBAN_USER_ADMIN_ENDPOINT, UNBAN_USER_MODERATOR_ENDPOINT,
     UPDATE_LIKE_ENDPOINT
 } from "../../utils/Endpoints";
 import {PostsDataResponse, PostsResponse} from "../model/PostResponse";
@@ -16,6 +16,7 @@ import {JwtInfo} from "../../models/JwtInfo";
 import {BanDataResponse, BanResponse} from "../model/BanResponse";
 import {User} from "../../models/User";
 import {Role} from "../../models/Role";
+import {BaseResponse} from "../model/BaseResponse";
 
 export interface BanRequest {
     from: User
@@ -96,6 +97,26 @@ export class UserService extends AbstractService{
             if (resp.data.userData !== undefined) return { user: this.extractUserData(resp.data) }
             else if (resp.data.error !== undefined) return { error: resp.data.error }
             else return { error: "Something went wrong, try again later"}
+        }, jwt)
+    }
+
+    async unban(from: User, bannedId: number, jwt: JwtInfo): Promise<BanResponse> {
+        let url: string
+        if (from.roles.includes(Role.CHIEF_ADMIN) || from.roles.includes(Role.ADMIN))
+            url = UNBAN_USER_ADMIN_ENDPOINT
+        else if (from.roles.includes(Role.MODERATOR))
+            url = UNBAN_USER_MODERATOR_ENDPOINT
+        else return { error: "Not enough authorities" }
+
+
+        return this.handleAxios(async (localToken = jwt.accessToken): Promise<BaseResponse> => {
+            const params = new Map<string, string>()
+            params.set("id", bannedId.toString())
+            const resp = await axios.get<BaseResponse>(
+                this.urlFormatter.format(url, params),
+                { headers: { Authorization: "Bearer " + localToken } }
+            )
+            return resp.data
         }, jwt)
     }
 

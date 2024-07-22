@@ -8,8 +8,9 @@ import {PostCard} from "../../components/post/PostCard";
 import {RoleLabel} from "../../components/profile/RoleLabel";
 import {HandThumbUpIcon, NoSymbolIcon, InformationCircleIcon} from "@heroicons/react/16/solid";
 import {Modal} from "../../components/base/Modal";
-import {checkAuthorityToBan} from "../../../utils/CheckAuthorities";
+import {checkAuthorityToBanAndUnban} from "../../../utils/CheckAuthorities";
 import {useBan} from "../../../hooks/UseBan";
+import {BanForm} from "../../components/form/BanForm";
 
 export function OtherUserProfilePage() {
     const { id } = useParams()
@@ -17,9 +18,10 @@ export function OtherUserProfilePage() {
     const { navigator } = useDataContext()
 
     const { user: other, liked, ban, get, userPosts, getPosts, updateLike } = useUser()
-    const { result: banResult, ban: banByUser } = useBan()
+    const { banResult, unbanResult, ban: banByUser, unban: unbanByUser } = useBan()
 
-    const [ showModal, setShowModal ] = useState(false)
+    const [ showBanInfoModal, setShowBanInfoModal ] = useState(false)
+    const [ showBanModal, setShowBanModal ] = useState(false)
 
     useEffect(() => {
         if (banResult !== undefined) {
@@ -30,6 +32,16 @@ export function OtherUserProfilePage() {
             }
         }
     }, [banResult]);
+
+    useEffect(() => {
+        if (unbanResult !== undefined) {
+            if (unbanResult.error !== undefined) {}
+            else if (id !== undefined) {
+                get(parseInt(id))
+                getPosts(parseInt(id))
+            }
+        }
+    }, [unbanResult]);
 
     useEffect(() => {
         if (user !== null && id !== undefined) {
@@ -58,24 +70,39 @@ export function OtherUserProfilePage() {
     }
 
     const infoHandler = () => {
-        setShowModal(true)
+        setShowBanInfoModal(true)
     }
 
-    const banHandler = () => {
+    const banHandler = () => setShowBanModal(true)
+    const unbanHandler = () => {
         if (id !== undefined) {
-            banByUser("lmao", parseInt(id))
+            unbanByUser(parseInt(id))
         }
     }
 
-    const onModalClose = () => setShowModal(false)
+    const onBanInfoModalClose = () => setShowBanInfoModal(false)
+    const onBanModalClose = () => setShowBanModal(false)
+
+    const onBanFormSubmit = (reason: string) => {
+        if (id !== undefined) {
+            setShowBanModal(false)
+            banByUser(reason, parseInt(id))
+        }
+    }
 
     return <div>
         <section className="w-full overflow-hidden dark:bg-gray-900">
-            { showModal && ban !== null && <Modal title="Ban info" onClose={onModalClose}>
-                <h1 className="text-gray-700"> {"Given by " + ban.givenFromUsername}</h1>
-                <h1 className="text-gray-700"> {"Given at " + ban.givenAt}</h1>
-                <h1 className="text-xl">{"Reason: " + ban.reason}</h1>
-            </Modal>
+            { showBanInfoModal && ban !== null &&
+                <Modal title="Ban info" onClose={onBanInfoModalClose}>
+                    <h1 className="text-gray-700"> {"Given by " + ban.givenFromUsername}</h1>
+                    <h1 className="text-gray-700"> {"Given at " + ban.givenAt}</h1>
+                    <h1 className="text-xl">{"Reason: " + ban.reason}</h1>
+                </Modal>
+            }
+            { showBanModal &&
+                <Modal title="Ban user" onClose={onBanModalClose}>
+                    <BanForm onSubmit={ onBanFormSubmit }/>
+                </Modal>
             }
             <div className="flex flex-col">
             <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
@@ -92,8 +119,11 @@ export function OtherUserProfilePage() {
                                     <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{ other.likes + " likes" }</p>
                                     <HandThumbUpIcon className={"h-10 hover:text-green-800" + getLikeColor()} onClick={ likeHandler }/>
                                 </div>
-                                { user !== null && checkAuthorityToBan(other, user) &&
+                                { user !== null && checkAuthorityToBanAndUnban(other, user) && ban === null &&
                                     <button className="mx-[25%] w-1/2 border-2 border-red-600 hover:bg-red-100" onClick={ banHandler }>Ban</button>
+                                }
+                                { user !== null && checkAuthorityToBanAndUnban(other, user) && ban !== null &&
+                                    <button className="mx-[25%] w-1/2 border-2 border-green-600 hover:bg-green-100" onClick={ unbanHandler }>Unban</button>
                                 }
                             </div>
                             <h1
