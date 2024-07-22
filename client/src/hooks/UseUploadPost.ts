@@ -15,7 +15,7 @@ export function useUploadPost() {
     const { jwt } = useUserContext()
 
     const [ postData, setPostData ] = useState<PostUploadData | null>(null)
-    const [uploadedPost, setUploadedPost] = useState<Post | null>(null)
+    const [ uploadedPost, setUploadedPost ] = useState<Post | null>(null)
 
     const upload = (request: PostUploadData) => setPostData(request)
 

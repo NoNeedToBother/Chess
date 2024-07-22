@@ -11,7 +11,7 @@ export function useChess() {
     const { user, setOpponent } = useUserContext()
     const { user: other, get } = useUser()
 
-    const [game, setGame] = useState<Chess>(new Chess())
+    const [ game, setGame ] = useState<Chess>(new Chess())
 
     useEffect(() => {
         if (gameInfo.fen !== null) setGame(new Chess(gameInfo.fen))
@@ -23,7 +23,7 @@ export function useChess() {
             return;
         }
         try {
-            let moveResult = game.move(move)
+            const moveResult = game.move(move)
             if (moveResult === null) return
         } catch (e) {
             return;
@@ -33,6 +33,7 @@ export function useChess() {
         else if (game.isInsufficientMaterial()) result = "insufficient"
         else if (game.isStalemate()) result = "stalemate"
         else if (game.isDraw()) result = "draw"
+
         if (gameInfo.gameId !== null && result !== undefined && gameInfo.color !== null && user !== null) {
             chessService.claimEnd({
                 color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: result, fen: game.fen()
@@ -40,7 +41,7 @@ export function useChess() {
             return;
         }
 
-        let resFen = game.fen()
+        const resFen = game.fen()
         if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null) {
             chessService.move({
                 color: gameInfo.color, fen: resFen, from: user.id, gameId: gameInfo.gameId

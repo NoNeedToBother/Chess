@@ -1,7 +1,6 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -13,7 +12,6 @@ import ru.kpfu.itis.paramonov.utils.chess.ChessTimer;
 
 import java.util.*;
 
-@Slf4j
 @RequiredArgsConstructor
 @Controller
 public class ChessController {

@@ -122,21 +122,25 @@ function ResultFactory({ result }: ResultFactoryProps) {
 
     switch (result) {
         case "win":
-            return <div className={baseStyle + " " + winColor}>Checkmate, you won!</div>
+            return <div className={ baseStyle + " " + winColor }>Checkmate, you won!</div>
         case "lose":
-            return <div className={baseStyle + " " + loseColor}>Checkmate, you lost!</div>
+            return <div className={ baseStyle + " " + loseColor }>Checkmate, you lost!</div>
         case "draw":
-            return <div className={baseStyle + " " + drawColor}>A draw!</div>
+            return <div className={ baseStyle + " " + drawColor }>A draw!</div>
         case "stalemate":
-            return <div className={baseStyle + " " + drawColor}>Draw, a stalemate!</div>
+            return <div className={ baseStyle + " " + drawColor }>Draw, a stalemate!</div>
         case "insufficient":
-            return <div className={baseStyle + " " + drawColor}>Draw, insufficient material!</div>
+            return <div className={ baseStyle + " " + drawColor }>Draw, insufficient material!</div>
         case "win_disconnect":
-            return <div className={baseStyle + " " + winColor}>Opponent disconnected, you won!</div>
+            return <div className={ baseStyle + " " + winColor }>Opponent disconnected, you won!</div>
         case "win_concede":
-            return <div className={baseStyle + " " + winColor}>Opponent conceded, you won!</div>
+            return <div className={ baseStyle + " " + winColor }>Opponent conceded, you won!</div>
         case "lose_concede":
-            return <div className={baseStyle + " " + loseColor}>You conceded!</div>
+            return <div className={ baseStyle + " " + loseColor }>You conceded!</div>
+        case "win_time":
+            return <div className={ baseStyle + " " + winColor }>Opponent's time ran out, you won!</div>
+        case "lose_time":
+            return <div className={ baseStyle + " " + loseColor }>Your time ran out!</div>
         default:
             throw new Error(`Unknown result: ${result}`)
     }

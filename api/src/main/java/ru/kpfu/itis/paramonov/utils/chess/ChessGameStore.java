@@ -71,6 +71,6 @@ public class ChessGameStore {
         private Long blackTime = PLAYER_TIME_MILLIS;
 
         public static final String INITIAL_FEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-        public static final Long PLAYER_TIME_MILLIS = 1000L * 60 * 1;
+        public static final Long PLAYER_TIME_MILLIS = 1000L * 60 * 10;
     }
 }
