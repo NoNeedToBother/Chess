@@ -1,15 +1,15 @@
-import React, {useEffect} from "react";
-import {useParams} from "react-router-dom";
-import {CircleImage} from "../../components/base/CircleImage";
-import {RatingBar} from "../../components/post/RatingBar";
-import {usePost} from "../../../hooks/UsePost";
-import {useComment} from "../../../hooks/UseComment";
-import {useUserContext} from "../../../context/UserContext";
-import {CommentForm} from "../../components/post/comment/CommentForm";
-import {CommentCard} from "../../components/post/comment/CommentCard";
-import {TrashIcon} from "@heroicons/react/16/solid";
-import {useDataContext} from "../../../context/DataContext";
-import {checkAuthorityToDeletePost} from "../../../utils/CheckAuthorities";
+import React, { useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { CircleImage } from "../../components/base/CircleImage";
+import { RatingBar } from "../../components/post/RatingBar";
+import { usePost } from "../../../hooks/UsePost";
+import { useComment } from "../../../hooks/UseComment";
+import { useUserContext } from "../../../context/UserContext";
+import { CommentForm } from "../../components/post/comment/CommentForm";
+import { CommentCard } from "../../components/post/comment/CommentCard";
+import { TrashIcon } from "@heroicons/react/16/solid";
+import { useDataContext } from "../../../context/DataContext";
+import { checkAuthorityToDeletePost } from "../../../utils/CheckAuthorities";
 
 
 export function PostPage() {
@@ -20,9 +20,8 @@ export function PostPage() {
     const { post, comments, updateRating, addComment, deletePost } = usePost(id)
     const { comment, uploadComment } = useComment()
 
-    const onRatingChosen = (rating: number) => {
-        updateRating(rating)
-    }
+    const onRatingChosen = (rating: number) => updateRating(rating)
+
     const onCommentSubmit = (content: string) => {
         if (post !== null) {
             uploadComment({postId: post.id, content: content})
@@ -39,9 +38,11 @@ export function PostPage() {
         deletePost(() => navigator.navigateToPosts())
     }
 
+    const onCommentUserClick = (id: number) => navigator.navigateToUser(id)
+
     return (
         <>
-            {post !== null &&
+            { post !== null &&
                 <div className="w-full h-full bg-white dark:bg-gray-800">
                     <div className="w-full mx-auto py-32 bg-white dark:bg-gray-800">
                         <h1 className="w-[92%] mx-auto lg:text-4xl md:text-3xl xs:text-2xl text-center font-serif font-semibold pb-4 pt-8 dark:text-white">
@@ -60,14 +61,16 @@ export function PostPage() {
 
                             <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400">{ post.datePosted }</h3>
                         </div>
+                        <div className="mx-auto xl:w-[80%] xs:w-[96%] h-0.5 my-4 bg-gray-200"/>
+
                         <div className="w-full justify-center items-center mx-auto">
                             <RatingBar rating={ post.rating } onRatingChosen={ onRatingChosen }/>
                         </div>
-                        { user !== null && checkAuthorityToDeletePost(user, post)
-                            &&
-                            <div className="md:w-[10%] sm:w-[20%] w-[30%] items-center mx-auto">
-                                <button className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 justify-center"
-                                onClick={deleteHandler}>
+                        { user !== null && checkAuthorityToDeletePost(user, post) &&
+                            <div className="md:w-[10%] sm:w-[20%] w-[30%] items-center mx-auto mt-4">
+                                <button
+                                    className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 justify-center"
+                                    onClick={ deleteHandler }>
                                     Delete
                                     <TrashIcon className="h-4 pt-0.5"/>
                                 </button>
@@ -76,19 +79,21 @@ export function PostPage() {
 
                         <div className="py-6 bg-white dark:bg-gray-800">
                             <div className="md:w-[80%] w-[90%] mx-auto pt-4">
-                            <p className="mt-2 text-2xl dark:text-gray-300">
+                                <p className="mt-2 text-2xl dark:text-gray-300">
                                     { post.content }
                                 </p>
                             </div>
                         </div>
-                        <div className="w-[40%] my-4 mx-auto block md:gap-16 xs:gap-8">
+                        <div className="w-[40%] my-4 mx-auto block">
                             { comments !== null &&
-                                <CommentForm onSubmit={ onCommentSubmit }/>
+                                <CommentForm onSubmit={onCommentSubmit}/>
                             }
                         </div>
-                        <div className="w-[60%] my-4 mx-auto block md:gap-16 xs:gap-8">
+                        <div className="w-[60%] my-4 mx-auto grid md:gap-2 gap-1">
                             { comments !== null && comments.map((comment, _) => (
-                                <CommentCard comment={ comment } key={ comment.id } />
+                                <CommentCard comment={ comment } key={ comment.id }
+                                             onUserClick={ onCommentUserClick }
+                                />
                             ))
                             }
                         </div>

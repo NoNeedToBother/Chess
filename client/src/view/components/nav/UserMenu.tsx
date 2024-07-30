@@ -5,12 +5,12 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
 interface UserMenuProps {
     navigator: Navigator;
-    onLogout: () => void;
+    onLogout?: () => void;
 }
 
 export function UserMenu({ navigator, onLogout }: UserMenuProps) {
     const profileClickedHandler = () => navigator.navigateToProfile()
-    const logoutClickedHandler = () => onLogout()
+    const logoutClickedHandler = () => onLogout?.()
     const postsClickedHandler = () => navigator.navigateToPosts()
     const uploadPostClickedHandler = () => navigator.navigateToUploadPost()
 

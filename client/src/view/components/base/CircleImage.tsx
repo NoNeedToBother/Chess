@@ -15,7 +15,7 @@ export function CircleImage( {src, className, onClick}: CircleImageProps) {
     if (onClick !== undefined) {
         resultClassName += " cursor-pointer"
     }
-    const clickHandler = (event: React.MouseEvent<HTMLImageElement>) => {
+    const clickHandler = () => {
         if (onClick !== undefined) { onClick() }
     }
     return (

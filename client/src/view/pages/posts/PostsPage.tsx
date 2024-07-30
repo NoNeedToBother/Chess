@@ -5,11 +5,13 @@ import { PaginationBar } from "../../components/other/PaginationBar";
 import { usePostPage } from "../../../hooks/UsePostPage";
 import { useUserContext } from "../../../context/UserContext";
 import { checkAuthorityToDeletePost } from "../../../utils/CheckAuthorities";
+import { useDataContext } from "../../../context/DataContext";
 
 export function PostsPage() {
     const { user } = useUserContext()
     const { posts, loadPage, pageAmount, getPageAmount, deleteFromPosts } = usePostPage()
     const [ currentPage, setCurrentPage ] = useState<number>(0)
+    const { navigator } = useDataContext()
 
     useEffect(() => {
         loadPage(0)
@@ -29,15 +31,24 @@ export function PostsPage() {
         setCurrentPage(page)
         loadPage(page)
     }
+
+    const onUserClick = (id: number) => navigator.navigateToUser(id)
+    const onReadMoreClick = (id: number) => navigator.navigateToPost(id)
+
     const getPost = (post: Post) => {
         if (user !== null) {
             if (checkAuthorityToDeletePost(user, post)) {
-                return <PostCard post={ post } onProfilePictureClick={ () => {
-                } } key={ post.id } showDelete={ true } onDelete={ onPostDelete }/>
+                return <PostCard post={ post } key={ post.id }
+                                 showDelete={ true } onDelete={ onPostDelete }
+                                 onUserClick={ onUserClick }
+                                 onReadMoreClick={ onReadMoreClick }
+                />
             }
         }
-        return <PostCard post={ post } onProfilePictureClick={ () => {
-        } } key={ post.id }/>
+        return <PostCard post={ post } key = { post.id }
+                         onUserClick={ onUserClick }
+                         onReadMoreClick={ onReadMoreClick }
+        />
     }
     const onPostDelete = (id: number) => {
         deleteFromPosts(id, () => {

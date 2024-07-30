@@ -7,8 +7,21 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .lift:hover {
-        transform: translateY(-4px);
+        transform: translateY(var(--lift-value, 0px));
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .hover-slide {
+        transition: transform 0.3s ease-in-out;
+    }
+    .hover-slide:hover {
+        transform: translate(var(--slide-x, 0px), var(--slide-y, 0px));
+    }
+
+    .gradient-text {
+        background: linear-gradient(to right, var(--color-start, red), var(--color-end, blue));
+        background-clip: text;
+        color: transparent;
     }
 }
 

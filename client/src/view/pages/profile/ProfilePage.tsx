@@ -46,10 +46,7 @@ export function ProfilePage() {
                 <div
                     className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
                     {user !== null &&
-                        <>
-                            <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{ user.bio }
-                            </p>
-                        </>
+                        <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{ user.bio }</p>
                     }
                     <InfoSection user={ user }/>
                 </div>

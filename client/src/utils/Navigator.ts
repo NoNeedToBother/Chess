@@ -1,4 +1,4 @@
-import {NavigateFunction} from "react-router-dom";
+import { NavigateFunction } from "react-router-dom";
 
 export class Navigator {
     private readonly navigation: NavigateFunction
@@ -33,5 +33,9 @@ export class Navigator {
 
     navigateToUploadPost() {
         this.navigation("/post/upload")
+    }
+
+    navigateToUser(id: number) {
+        this.navigation(`/profile/${id}`)
     }
 }

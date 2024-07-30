@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {FormElement} from "./FormElement";
+import React, { useState } from "react";
+import { FormElement } from "./FormElement";
 
 interface LoginFormProps {
     onSubmit: (username: string, password: string) => void

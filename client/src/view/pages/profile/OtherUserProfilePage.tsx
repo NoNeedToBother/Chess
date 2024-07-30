@@ -58,9 +58,9 @@ export function OtherUserProfilePage() {
 
     const getLikeColor = () => {
         if (other !== null && liked !== null) {
-            if (liked) return " text-green-800"
-            else return " text-black"
-        } else return " text-black"
+            if (liked) return "text-green-800"
+            else return "text-black"
+        } else return "text-black"
     }
 
     const likeHandler = () => {
@@ -69,9 +69,7 @@ export function OtherUserProfilePage() {
         }
     }
 
-    const infoHandler = () => {
-        setShowBanInfoModal(true)
-    }
+    const infoHandler = () => setShowBanInfoModal(true)
 
     const banHandler = () => setShowBanModal(true)
     const unbanHandler = () => {
@@ -117,7 +115,7 @@ export function OtherUserProfilePage() {
                                 />
                                 <div className="lg:w-[6rem] md:w-[5rem] sm:w-[4rem] mx-auto">
                                     <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{ other.likes + " likes" }</p>
-                                    <HandThumbUpIcon className={"h-10 hover:text-green-800" + getLikeColor()} onClick={ likeHandler }/>
+                                    <HandThumbUpIcon className={"h-10 hover:text-green-800 " + getLikeColor()} onClick={ likeHandler }/>
                                 </div>
                                 { user !== null && checkAuthorityToBanAndUnban(other, user) && ban === null &&
                                     <button className="mx-[25%] w-1/2 border-2 border-red-600 hover:bg-red-100" onClick={ banHandler }>Ban</button>
@@ -128,11 +126,10 @@ export function OtherUserProfilePage() {
                             </div>
                             <h1
                                 className="w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif">
-                                {other.username}</h1>
-                            <RoleLabel roles={other.roles}/>
+                                { other.username }</h1>
+                            <RoleLabel roles={ other.roles }/>
                         </>
                     }
-
                 </div>
 
                 <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
@@ -152,6 +149,5 @@ export function OtherUserProfilePage() {
                 <PostSection posts={ userPosts }/>
             </div>
         </section>
-
     </div>
 }
