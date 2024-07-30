@@ -65,7 +65,7 @@ export function PostPage() {
                         </div>
                         { user !== null && checkAuthorityToDeletePost(user, post)
                             &&
-                            <div className="md:w-[10%] sm:w-[20%] items-center mx-auto">
+                            <div className="md:w-[10%] sm:w-[20%] w-[30%] items-center mx-auto">
                                 <button className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 justify-center"
                                 onClick={deleteHandler}>
                                     Delete
@@ -75,7 +75,7 @@ export function PostPage() {
                         }
 
                         <div className="py-6 bg-white dark:bg-gray-800">
-                            <div className="md:w-[80%] xs:w-[90%] mx-auto pt-4">
+                            <div className="md:w-[80%] w-[90%] mx-auto pt-4">
                             <p className="mt-2 text-2xl dark:text-gray-300">
                                     { post.content }
                                 </p>

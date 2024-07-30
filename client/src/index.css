@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+    .lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .lift:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+}
+
 @font-face {
     font-family: "ChessLogo";
     src: url("/public/Danfo-Regular-VariableFont_ELSH.ttf");

@@ -19,6 +19,10 @@ export class Navigator {
         this.navigation("/login")
     }
 
+    navigateToRegister() {
+        this.navigation("/register")
+    }
+
     navigateToProfile() {
         this.navigation("/profile")
     }

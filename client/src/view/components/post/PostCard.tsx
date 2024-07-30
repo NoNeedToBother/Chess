@@ -1,7 +1,7 @@
 import { Post} from "../../../models/Post";
-import {Link} from "react-router-dom";
-import {CircleImage} from "../base/CircleImage";
-import {ArrowRightCircleIcon, TrashIcon} from '@heroicons/react/16/solid'
+import { Link } from "react-router-dom";
+import { CircleImage } from "../base/CircleImage";
+import { ArrowRightCircleIcon, TrashIcon } from '@heroicons/react/16/solid'
 
 export interface PostProps {
     post: Post;
@@ -22,14 +22,13 @@ export function PostCard({ post, onProfilePictureClick, onDelete, showDelete }: 
         }
     }
     return <article
-        className="p-6 bg-gray-50 rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-        <span className="flex mb-5 text-gray-500 justify-between items-center">
+        className="p-6 bg-gray-50 lift rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+        <div className="flex mb-5 text-gray-500 justify-between items-center">
             { showDelete !== undefined &&
                 <TrashIcon className="h-8 text-gray-200 hover:text-red-400" onClick={ deleteHandler }/>
             }
-            {showDelete === undefined && <div/>}
-            <span className="text-sm"> { post.datePosted }</span>
-        </span>
+            <div className="text-sm"> { post.datePosted }</div>
+        </div>
         <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
             { post.title }
         </h2>

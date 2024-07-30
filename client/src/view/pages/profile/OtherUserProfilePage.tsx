@@ -1,16 +1,16 @@
-import {useUser} from "../../../hooks/UseUser";
-import React, {useEffect, useState} from "react";
-import {useUserContext} from "../../../context/UserContext";
-import {ProfileInfo} from "../../components/other/ProfileInfo";
-import {useParams} from "react-router-dom";
-import {useDataContext} from "../../../context/DataContext";
-import {PostCard} from "../../components/post/PostCard";
-import {RoleLabel} from "../../components/profile/RoleLabel";
-import {HandThumbUpIcon, NoSymbolIcon, InformationCircleIcon} from "@heroicons/react/16/solid";
-import {Modal} from "../../components/base/Modal";
-import {checkAuthorityToBanAndUnban} from "../../../utils/CheckAuthorities";
-import {useBan} from "../../../hooks/UseBan";
-import {BanForm} from "../../components/form/BanForm";
+import { useUser } from "../../../hooks/UseUser";
+import React, { useEffect, useState } from "react";
+import { useUserContext } from "../../../context/UserContext";
+import { useParams } from "react-router-dom";
+import { useDataContext } from "../../../context/DataContext";
+import { RoleLabel } from "../../components/profile/RoleLabel";
+import { HandThumbUpIcon, NoSymbolIcon, InformationCircleIcon } from "@heroicons/react/16/solid";
+import { Modal } from "../../components/base/Modal";
+import { checkAuthorityToBanAndUnban } from "../../../utils/CheckAuthorities";
+import { useBan } from "../../../hooks/UseBan";
+import { BanForm } from "../../components/form/BanForm";
+import { PostSection } from "./PostSection";
+import { InfoSection } from "./InfoSection";
 
 export function OtherUserProfilePage() {
     const { id } = useParams()
@@ -105,13 +105,13 @@ export function OtherUserProfilePage() {
                 </Modal>
             }
             <div className="flex flex-col">
-            <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
+                <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
                 <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
-                    {other !== null &&
+                    { other !== null &&
                         <>
                             <div className="block w-full items-center">
                                 <img
-                                    src={other.profilePicture}
+                                    src={ other.profilePicture }
                                     alt="User Profile"
                                     className="rounded-md mx-auto lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-blue-500 lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
                                 />
@@ -135,8 +135,7 @@ export function OtherUserProfilePage() {
 
                 </div>
 
-                <div
-                    className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
+                <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
                     { ban !== null &&
                         <span className="flex">
                             <NoSymbolIcon className="md:h-12 sm:h-8 my-auto text-red-500"/>
@@ -145,46 +144,12 @@ export function OtherUserProfilePage() {
                             <InformationCircleIcon className="md:h-12 sm:h-8 my-auto" onClick={ infoHandler }/>
                         </span>
                     }
-                    {other !== null &&
-                        <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{ other.bio }
-                        </p>
+                    { other !== null &&
+                        <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{ other.bio }</p>
                     }
-
-
-                    <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
-                        <div className="w-full flex sm:flex-row xs:flex-col gap-2 justify-center">
-                            <div className="w-full">
-                                <dl className="text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
-                                    {other !== null &&
-                                        <>
-                                            <ProfileInfo label="Name" info={ other.name }/>
-                                        </>
-                                    }
-                                </dl>
-                            </div>
-                            <div className="w-full">
-                                <dl className="text-gray-900 divide-y divide-gray-200 dark:text-white dark:divide-gray-700">
-                                    {other !== null &&
-                                        <>
-                                            <ProfileInfo label="Last name" info={ other.lastname }/>
-                                        </>
-                                    }
-                                </dl>
-                            </div>
-                        </div>
-
-                    </div>
+                    <InfoSection user={ other }/>
                 </div>
-                <h1 className="w-full text-center my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif">
-                    Last posts
-                </h1>
-                <div className="mx-auto w-1/2 gap-4 columns-1">
-                    {userPosts !== null &&
-                        userPosts.map((post, _) =>
-                            <PostCard post={post}/>
-                        )
-                    }
-                </div>
+                <PostSection posts={ userPosts }/>
             </div>
         </section>
 
