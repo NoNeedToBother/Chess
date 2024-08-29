@@ -8,8 +8,11 @@ const API_DOMAIN = "http://localhost:8080"
 export interface MoveRequest {
     gameId: string
     color: string
-    from: number
+    turn: string
+    fromUser: number
     fen: string
+    from: string
+    to: string
     promotion?: string
 }
 
@@ -111,8 +114,11 @@ export class ChessService {
             body: JSON.stringify({
                 gameId: request.gameId,
                 color: request.color,
-                from: request.from,
+                turn: request.turn,
+                fromUser: request.fromUser,
                 fen: request.fen,
+                from: request.from,
+                to: request.to,
                 promotion: request.promotion,
             })
         })

@@ -13,8 +13,10 @@ export interface OmitResponse {
 
 export interface MoveResponse {
     action: string
-    turn: string
-    fen: string
+    status: boolean
+    turn?: string
+    fen?: string
+    result?: string
 }
 
 export interface EndResponse {
