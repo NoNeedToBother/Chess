@@ -21,8 +21,6 @@ public class ChessMoveResponseDto {
 
     private String fen;
 
-    private String result;
-
     private String error;
 
 }

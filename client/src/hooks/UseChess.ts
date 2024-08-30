@@ -18,15 +18,6 @@ export function useChess() {
         else setGame(new Chess())
     }, [gameInfo.fen])
 
-    useEffect(() => {
-        if (gameInfo.result !== undefined && gameInfo.gameId !== null && gameInfo.color !== null &&
-            gameInfo.fen !== null && user !== null) {
-            chessService.claimEnd({
-                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: gameInfo.result, fen: gameInfo.fen
-            })
-        }
-    }, [gameInfo.result]);
-
     function move(move: { from: Square, to: Square, promotion?: string }) {
         if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null && gameInfo.fen !== null) {
             chessService.move({
@@ -63,15 +54,10 @@ export function useChess() {
             gameInfo.setFen(response.fen)
             gameInfo.setTurn(response.turn)
         }
-
-        if (response.result !== undefined) {
-            gameInfo.setResult(response.result)
-        }
     }
 
     const onEnd = (response: EndResponse) => {
         gameInfo.setResult(response.result)
-        gameInfo.setFen(response.fen)
     }
 
     const onConcede = (response: ConcedeResponse) => {

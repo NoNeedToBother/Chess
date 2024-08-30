@@ -1,14 +1,14 @@
-import {useUserContext} from "../context/UserContext";
-import {useDataContext} from "../context/DataContext";
-import {useState} from "react";
+import { useUserContext } from "../context/UserContext";
+import { useDataContext } from "../context/DataContext";
+import { useState } from "react";
 
 export function useBan() {
 
     const { user, jwt } = useUserContext()
     const { userService } = useDataContext()
 
-    const [banResult, setBanResult] = useState<BanResult | undefined>(undefined)
-    const [unbanResult, setUnbanResult] = useState<BanResult | undefined>(undefined)
+    const [ banResult, setBanResult ] = useState<BanResult | undefined>(undefined)
+    const [ unbanResult, setUnbanResult ] = useState<BanResult | undefined>(undefined)
 
     const ban = (reason: string, bannedId: number) => {
         if (user !== null && jwt !== null) {

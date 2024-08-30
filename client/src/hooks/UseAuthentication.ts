@@ -1,12 +1,12 @@
-import {useState} from "react";
-import {useUserContext} from "../context/UserContext";
-import {useDataContext} from "../context/DataContext";
+import { useState } from "react";
+import { useUserContext } from "../context/UserContext";
+import { useDataContext } from "../context/DataContext";
 
 export function useAuthentication() {
     const { updateUser, updateJwt } = useUserContext()
     const { authService } = useDataContext()
 
-    const [ success , setSuccess] = useState<boolean | null>(null)
+    const [ success , setSuccess ] = useState<boolean | null>(null)
     const [ loginError, setLoginError ] = useState<string>("")
     const [ registerError, setRegisterError ] = useState<string>("")
 

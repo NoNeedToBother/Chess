@@ -13,5 +13,4 @@ public class ChessEndResponseDto {
 
     private String result;
 
-    private String fen;
 }

@@ -72,10 +72,6 @@ export class ChessService {
                 this.gameHandler?.onSearchCancelled?.()
                 this.onGameEnd()
                 break
-            case "OMIT":
-                this.gameHandler?.onOmit?.(json.error)
-                this.onGameEnd()
-                break
             case "MOVE":
                 this.gameHandler?.onMove?.(json)
                 break
