@@ -1,9 +1,9 @@
-import {AbstractService} from "./AbstractService";
+import { AbstractService } from "./AbstractService";
 import axios from "axios";
-import {CommentDataResponse, CommentResponse} from "../model/CommentResponse";
-import {UPLOAD_COMMENT_ENDPOINT} from "../../utils/Endpoints";
-import {CommentMapper} from "../mapper/CommentMapper";
-import {JwtInfo} from "../../models/JwtInfo";
+import { CommentDataResponse, CommentResponse } from "../model/CommentResponse";
+import { UPLOAD_COMMENT_ENDPOINT } from "../../utils/Endpoints";
+import { CommentMapper } from "../mapper/CommentMapper";
+import { JwtInfo } from "../../models/JwtInfo";
 
 export interface UploadCommentRequest {
     postId: number;

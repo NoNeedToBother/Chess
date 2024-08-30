@@ -55,16 +55,26 @@ public class ChessController {
                     game.getBlackTimer().stop();
                     game.getWhiteTimer().resume();
                 }
-                sendMessageToUser(game.getWhite(), ChessMoveResponseDto.builder()
-                        .action("MOVE").valid(true).turn(game.getTurn()).fen(game.getFen()).build()
+                ChessMoveResponseDto userMoveResponse = new ChessMoveResponseDto(
+                        "MOVE", true, response.getTurn(),
+                        response.getFen(), response.getResult(), response.getError()
                 );
-                sendMessageToUser(game.getBlack(), ChessMoveResponseDto.builder()
-                        .action("MOVE").valid(true).turn(game.getTurn()).fen(game.getFen()).build()
+                ChessMoveResponseDto otherMoveResponse = new ChessMoveResponseDto(
+                        "MOVE", true, response.getTurn(),
+                        response.getFen(), null, response.getError()
                 );
+
+                sendMessageToUser(moveRequestDto.getFromUser(), userMoveResponse);
+                if (moveRequestDto.getFromUser().equals(game.getWhite()))
+                    sendMessageToUser(game.getBlack(), otherMoveResponse);
+                else sendMessageToUser(game.getWhite(), otherMoveResponse);
+
             } else {
                  if (!response.isValid()) {
-                     sendMessageToUser(moveRequestDto.getFromUser(), ChessMoveResponseDto.builder()
-                             .action("MOVE").valid(false).error(response.getError()).build());
+                     sendMessageToUser(
+                             moveRequestDto.getFromUser(),
+                             new ChessMoveResponseDto("MOVE", false, null, null, null, response.getError())
+                     );
                  }
             }
         }).subscribe();
@@ -272,5 +282,4 @@ public class ChessController {
                 playerId.toString(), "/queue/messages", payload
         );
     }
-
 }

@@ -17,6 +17,7 @@ export interface MoveResponse {
     turn?: string
     fen?: string
     result?: string
+    error?: string
 }
 
 export interface EndResponse {

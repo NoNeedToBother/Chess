@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
-import {Chess} from "chess.js";
-import {Square} from "react-chessboard/dist/chessboard/types";
-import {useChessContext} from "../context/ChessContext";
-import {useUserContext} from "../context/UserContext";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../data/model/ChessResponse";
-import {useUser} from "./UseUser";
+import { useEffect, useState } from "react";
+import { Chess } from "chess.js";
+import { Square } from "react-chessboard/dist/chessboard/types";
+import { useChessContext } from "../context/ChessContext";
+import { useUserContext } from "../context/UserContext";
+import { BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse } from "../data/model/ChessResponse";
+import { useUser } from "./UseUser";
 
 export function useChess() {
     const { chessService, gameInfo, timeInfo, setSearch, clearChess } = useChessContext()
@@ -17,6 +17,15 @@ export function useChess() {
         if (gameInfo.fen !== null) setGame(new Chess(gameInfo.fen))
         else setGame(new Chess())
     }, [gameInfo.fen])
+
+    useEffect(() => {
+        if (gameInfo.result !== undefined && gameInfo.gameId !== null && gameInfo.color !== null &&
+            gameInfo.fen !== null && user !== null) {
+            chessService.claimEnd({
+                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: gameInfo.result, fen: gameInfo.fen
+            })
+        }
+    }, [gameInfo.result]);
 
     function move(move: { from: Square, to: Square, promotion?: string }) {
         if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null && gameInfo.fen !== null) {
@@ -55,11 +64,8 @@ export function useChess() {
             gameInfo.setTurn(response.turn)
         }
 
-        if (response.result !== undefined && gameInfo.gameId !== null && gameInfo.color !== null && user !== null) {
-            chessService.claimEnd({
-                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: response.result, fen: game.fen()
-            })
-            return;
+        if (response.result !== undefined) {
+            gameInfo.setResult(response.result)
         }
     }
 

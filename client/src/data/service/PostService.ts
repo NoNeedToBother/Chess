@@ -8,17 +8,16 @@ import {
     UPDATE_POST_RATING_ENDPOINT,
     UPLOAD_POST_ENDPOINT
 } from "../../utils/Endpoints";
-import {UrlFormatter} from "../../utils/UrlFormatter";
-import {PageAmountResponse, PagePostDataResponse, PagePostResponse} from "../model/PagePostResponse";
-import {PostDataResponse, PostResponse} from "../model/PostResponse";
-import {AbstractService} from "./AbstractService";
-import {CommentsDataResponse, CommentsResponse} from "../model/CommentResponse";
-import {Comment} from "../../models/Comment";
-import {PostMapper} from "../mapper/PostMapper";
-import {CommentMapper} from "../mapper/CommentMapper";
-import {BaseResponse} from "../model/BaseResponse";
-import {JwtInfo} from "../../models/JwtInfo";
-
+import { UrlFormatter } from "../../utils/UrlFormatter";
+import { PageAmountResponse, PagePostDataResponse, PagePostResponse } from "../model/PagePostResponse";
+import { PostDataResponse, PostResponse } from "../model/PostResponse";
+import { AbstractService } from "./AbstractService";
+import { CommentsDataResponse, CommentsResponse } from "../model/CommentResponse";
+import { Comment } from "../../models/Comment";
+import { PostMapper } from "../mapper/PostMapper";
+import { CommentMapper } from "../mapper/CommentMapper";
+import { BaseResponse } from "../model/BaseResponse";
+import { JwtInfo } from "../../models/JwtInfo";
 
 export interface UploadPostRequest {
     title: string

@@ -1,12 +1,16 @@
 package ru.kpfu.itis.paramonov.dto.chess.response;
 
-import lombok.Builder;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
-@Builder
+@AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@ToString
 public class ChessMoveResponseDto {
 
     private String action;
@@ -16,6 +20,8 @@ public class ChessMoveResponseDto {
     private String turn;
 
     private String fen;
+
+    private String result;
 
     private String error;
 

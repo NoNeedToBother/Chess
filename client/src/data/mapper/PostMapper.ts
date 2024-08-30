@@ -1,7 +1,7 @@
-import {UserMapper} from "./UserMapper";
-import {UserModelResponse} from "../model/UserResponse";
-import {PostModelResponse} from "../model/PostResponse";
-import {Post} from "../../models/Post";
+import { UserMapper } from "./UserMapper";
+import { UserModelResponse } from "../model/UserResponse";
+import { PostModelResponse } from "../model/PostResponse";
+import { Post } from "../../models/Post";
 
 export class PostMapper {
     private userMapper: UserMapper;
