@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class MoveRequestDto {
 
-    private Integer from;
+    private Integer fromUser;
 
     private String gameId;
 
@@ -13,6 +13,12 @@ public class MoveRequestDto {
 
     private String color;
 
+    private String turn;
+
     private String fen;
+
+    private String from;
+
+    private String to;
 
 }

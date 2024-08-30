@@ -5,8 +5,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
-import ru.kpfu.itis.paramonov.dto.chess.*;
 import ru.kpfu.itis.paramonov.dto.chess.request.*;
+import ru.kpfu.itis.paramonov.dto.chess.response.*;
+import ru.kpfu.itis.paramonov.service.ChessService;
 import ru.kpfu.itis.paramonov.utils.chess.ChessGameStore;
 import ru.kpfu.itis.paramonov.utils.chess.ChessTimer;
 
@@ -23,6 +24,8 @@ public class ChessController {
 
     private final Random rand = new Random();
 
+    private final ChessService chessService;
+
     @MessageMapping("/game/seek")
     public void processSeekRequest(SeekGameRequestDto seekGameRequestDto, StompHeaderAccessor headerAccessor) {
         Integer id = seekGameRequestDto.getFrom();
@@ -35,34 +38,42 @@ public class ChessController {
     @MessageMapping("/game/move")
     public void processMoveRequest(MoveRequestDto moveRequestDto) {
         ChessGameStore.ChessGame game = chessGameStore.get(moveRequestDto.getGameId());
-        if (game == null) sendGameDataErrorAndOmitGame(moveRequestDto.getFrom());
-        else {
-            String fen = moveRequestDto.getFen();
-            game.setFen(fen);
-            if ("white".equals(moveRequestDto.getColor())) {
-                game.setTurn("black");
-                game.getWhiteTimer().stop();
-                if (!game.getBlackTimer().isRunning()) game.getBlackTimer().start();
-                else game.getBlackTimer().resume();
+        if (game == null) cancelGame(moveRequestDto.getFromUser());
+
+        chessService.validateMove(
+                moveRequestDto.getFrom(), moveRequestDto.getTo(), moveRequestDto.getColor(),
+                moveRequestDto.getTurn(), moveRequestDto.getFen(), moveRequestDto.getPromotion()
+        ).doOnNext(response -> {
+            if (response.isValid() && game != null) {
+                game.setFen(response.getFen());
+                game.setTurn(response.getTurn());
+                if ("white".equals(moveRequestDto.getColor())) {
+                    game.getWhiteTimer().stop();
+                    if (!game.getBlackTimer().isRunning()) game.getBlackTimer().start();
+                    else game.getBlackTimer().resume();
+                } else {
+                    game.getBlackTimer().stop();
+                    game.getWhiteTimer().resume();
+                }
+                sendMessageToUser(game.getWhite(), ChessMoveResponseDto.builder()
+                        .action("MOVE").valid(true).turn(game.getTurn()).fen(game.getFen()).build()
+                );
+                sendMessageToUser(game.getBlack(), ChessMoveResponseDto.builder()
+                        .action("MOVE").valid(true).turn(game.getTurn()).fen(game.getFen()).build()
+                );
+            } else {
+                 if (!response.isValid()) {
+                     sendMessageToUser(moveRequestDto.getFromUser(), ChessMoveResponseDto.builder()
+                             .action("MOVE").valid(false).error(response.getError()).build());
+                 }
             }
-            else {
-                game.setTurn("white");
-                game.getBlackTimer().stop();
-                game.getWhiteTimer().resume();
-            }
-            sendMessageToUser(game.getWhite(), new ChessMoveResponseDto(
-                    "MOVE", game.getTurn(), game.getFen()
-            ));
-            sendMessageToUser(game.getBlack(), new ChessMoveResponseDto(
-                    "MOVE", game.getTurn(), game.getFen()
-            ));
-        }
+        }).subscribe();
     }
 
     @MessageMapping("/game/end")
     public void processEndGame(EndGameRequestDto endGameRequestDto) {
         ChessGameStore.ChessGame game = chessGameStore.get(endGameRequestDto.getGameId());
-        if (game == null) sendGameDataErrorAndOmitGame(endGameRequestDto.getFrom());
+        if (game == null) cancelGame(endGameRequestDto.getFrom());
         else {
             switch (endGameRequestDto.getResult()) {
                 case "win":
@@ -80,7 +91,7 @@ public class ChessController {
     @MessageMapping("/game/concede")
     public void processConcedeRequest(ConcedeRequestDto concedeRequestDto) {
         ChessGameStore.ChessGame game = chessGameStore.get(concedeRequestDto.getGameId());
-        if (game == null) sendGameDataErrorAndOmitGame(concedeRequestDto.getFrom());
+        if (game == null) cancelGame(concedeRequestDto.getFrom());
         else {
             switch (concedeRequestDto.getReason()) {
                 case "disconnect":
@@ -248,8 +259,8 @@ public class ChessController {
                 chessGame.getWhiteTime().intValue() / 1000));
     }
 
-    private void sendGameDataErrorAndOmitGame(Integer playerId) {
-        sendMessageToUser(playerId, new ChessOmitGameResponseDto("OMIT", "The game does not exist"));
+    private void cancelGame(Integer playerId) {
+        sendMessageToUser(playerId, new ChessCancelGameResponseDto("OMIT", "The game does not exist"));
     }
 
     private void sendCancelGame(Integer playerId) {

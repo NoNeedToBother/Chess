@@ -48,7 +48,7 @@ export function useChess() {
     }
 
     const onMove = (response: MoveResponse) => {
-        if (!response.status) return;
+        if (!response.valid) return;
 
         if (response.fen !== undefined && response.turn !== undefined) {
             gameInfo.setFen(response.fen)

@@ -20,6 +20,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:${properties["hibernateVersion"]}")
     implementation("org.postgresql:postgresql:42.7.2")
 

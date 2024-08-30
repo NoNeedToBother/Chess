@@ -3,14 +3,14 @@ const { Chess } = require("chess.js");
 class MoveValidationService {
 
     validateMove(req) {
-        if (req.turn !== req.color) return { status: false, error: "Not your turn" }
+        if (req.turn !== req.color) return { valid: false, error: "Not your turn" }
         const chess = new Chess(req.fen)
         const move = { from: req.from, to: req.to, promotion: req.promotion }
         try {
             const moveResult = chess.move(move)
-            if (moveResult === null) return { status: false, error: "Invalid move" }
+            if (moveResult === null) return { valid: false, error: "Invalid move" }
         } catch (e) {
-            return { status: false, error: "Invalid move" }
+            return { valid: false, error: "Invalid move" }
         }
 
         let result
@@ -23,7 +23,7 @@ class MoveValidationService {
         if (chess.turn() === "w") turn = "white"
         else turn = "black"
 
-        return { status: true, fen: chess.fen(), turn: turn, result: result }
+        return { valid: true, fen: chess.fen(), turn: turn, result: result }
     }
 }
 
