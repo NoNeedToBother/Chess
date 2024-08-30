@@ -1,9 +1,9 @@
-import {useState} from "react";
-import {User} from "../models/User";
-import {useUserContext} from "../context/UserContext";
-import {useDataContext} from "../context/DataContext";
-import {Post} from "../models/Post";
-import {Ban} from "../models/Ban";
+import { useState } from "react";
+import { User } from "../models/User";
+import { useUserContext } from "../context/UserContext";
+import { useDataContext } from "../context/DataContext";
+import { Post } from "../models/Post";
+import { Ban } from "../models/Ban";
 
 export function useUser() {
     const { userService } = useDataContext();

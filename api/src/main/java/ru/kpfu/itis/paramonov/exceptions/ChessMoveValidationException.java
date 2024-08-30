@@ -3,9 +3,9 @@ package ru.kpfu.itis.paramonov.exceptions;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
 @Getter
-public class NotFoundException extends RuntimeException {
+@AllArgsConstructor
+public class ChessMoveValidationException extends RuntimeException {
 
     private String message;
 }

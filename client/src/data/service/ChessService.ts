@@ -1,15 +1,18 @@
 import SockJS from 'sockjs-client';
-import {CompatClient, Stomp} from "@stomp/stompjs";
-import {Message} from "stompjs";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../model/ChessResponse";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import { Message } from "stompjs";
+import { BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse } from "../model/ChessResponse";
 
 const API_DOMAIN = "http://localhost:8080"
 
 export interface MoveRequest {
     gameId: string
     color: string
-    from: number
+    turn: string
+    fromUser: number
     fen: string
+    from: string
+    to: string
     promotion?: string
 }
 
@@ -69,10 +72,6 @@ export class ChessService {
                 this.gameHandler?.onSearchCancelled?.()
                 this.onGameEnd()
                 break
-            case "OMIT":
-                this.gameHandler?.onOmit?.(json.error)
-                this.onGameEnd()
-                break
             case "MOVE":
                 this.gameHandler?.onMove?.(json)
                 break
@@ -111,8 +110,11 @@ export class ChessService {
             body: JSON.stringify({
                 gameId: request.gameId,
                 color: request.color,
-                from: request.from,
+                turn: request.turn,
+                fromUser: request.fromUser,
                 fen: request.fen,
+                from: request.from,
+                to: request.to,
                 promotion: request.promotion,
             })
         })

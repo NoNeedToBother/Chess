@@ -1,8 +1,8 @@
-import {AbstractService} from "./AbstractService";
-import {UrlFormatter} from "../../utils/UrlFormatter";
-import {PostMapper} from "../mapper/PostMapper";
-import {UserMapper} from "../mapper/UserMapper";
-import {UserDataResponse, UserResponse} from "../model/UserResponse";
+import { AbstractService } from "./AbstractService";
+import { UrlFormatter } from "../../utils/UrlFormatter";
+import { PostMapper } from "../mapper/PostMapper";
+import { UserMapper } from "../mapper/UserMapper";
+import { UserDataResponse, UserResponse } from "../model/UserResponse";
 import axios from "axios";
 import {
     BAN_USER_ADMIN_ENDPOINT, BAN_USER_MODERATOR_ENDPOINT,
@@ -10,13 +10,13 @@ import {
     GET_USER_POSTS_ENDPOINT, UNBAN_USER_ADMIN_ENDPOINT, UNBAN_USER_MODERATOR_ENDPOINT,
     UPDATE_LIKE_ENDPOINT
 } from "../../utils/Endpoints";
-import {PostsDataResponse, PostsResponse} from "../model/PostResponse";
-import {Post} from "../../models/Post";
-import {JwtInfo} from "../../models/JwtInfo";
-import {BanDataResponse, BanResponse} from "../model/BanResponse";
-import {User} from "../../models/User";
-import {Role} from "../../models/Role";
-import {BaseResponse} from "../model/BaseResponse";
+import { PostsDataResponse, PostsResponse } from "../model/PostResponse";
+import { Post } from "../../models/Post";
+import { JwtInfo } from "../../models/JwtInfo";
+import { BanDataResponse, BanResponse } from "../model/BanResponse";
+import { User } from "../../models/User";
+import { Role } from "../../models/Role";
+import { BaseResponse } from "../model/BaseResponse";
 
 export interface BanRequest {
     from: User

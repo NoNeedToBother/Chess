@@ -1,9 +1,9 @@
-import {Mapper} from "./Mapper";
-import {User} from "../../models/User";
-import {UserModelResponse} from "../model/UserResponse";
-import {Role} from "../../models/Role";
+import { SimpleMapper } from "./SimpleMapper";
+import { User } from "../../models/User";
+import { UserModelResponse } from "../model/UserResponse";
+import { Role } from "../../models/Role";
 
-export class UserMapper implements Mapper<UserModelResponse, User> {
+export class UserMapper implements SimpleMapper<UserModelResponse, User> {
     private roleMapper: RoleMapper
 
     constructor(roleMapper: RoleMapper) {
@@ -26,7 +26,7 @@ export class UserMapper implements Mapper<UserModelResponse, User> {
 
 }
 
-export class RoleMapper implements Mapper<string, Role> {
+export class RoleMapper implements SimpleMapper<string, Role> {
     map(response: string): Role {
         return Role[response as keyof typeof Role];
     }

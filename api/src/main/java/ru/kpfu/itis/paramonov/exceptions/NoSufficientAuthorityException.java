@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @AllArgsConstructor
 @Getter
-public class NoSufficientAuthorityException extends RuntimeException{
+public class NoSufficientAuthorityException extends RuntimeException {
 
     private String message;
 }

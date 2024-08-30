@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {Post} from "../models/Post";
-import {useDataContext} from "../context/DataContext";
-import {useUserContext} from "../context/UserContext";
+import { useEffect, useState } from "react";
+import { Post } from "../models/Post";
+import { useDataContext } from "../context/DataContext";
+import { useUserContext } from "../context/UserContext";
 
 export interface PostUploadData {
     title: string;

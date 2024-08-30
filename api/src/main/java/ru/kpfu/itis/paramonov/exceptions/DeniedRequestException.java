@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class DeniedRequestException extends RuntimeException{
+public class DeniedRequestException extends RuntimeException {
 
     private String message;
 }

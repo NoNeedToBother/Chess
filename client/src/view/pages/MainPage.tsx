@@ -1,12 +1,12 @@
 import React from "react";
-import {Chessboard} from "react-chessboard";
-import {Square} from "react-chessboard/dist/chessboard/types";
-import {useChess} from "../../hooks/UseChess";
-import {useChessContext} from "../../context/ChessContext";
-import {useUserContext} from "../../context/UserContext";
-import {Link} from "react-router-dom";
-import {CircleImage} from "../components/base/CircleImage";
-import {Timer} from "../components/other/Timer";
+import { Chessboard } from "react-chessboard";
+import { Square, Piece } from "react-chessboard/dist/chessboard/types";
+import { useChess } from "../../hooks/UseChess";
+import { useChessContext } from "../../context/ChessContext";
+import { useUserContext } from "../../context/UserContext";
+import { Link } from "react-router-dom";
+import { CircleImage } from "../components/base/CircleImage";
+import { Timer } from "../components/other/Timer";
 
 
 export function MainPage() {
@@ -15,11 +15,17 @@ export function MainPage() {
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
-    const onDrop = (sourceSquare: Square, targetSquare: Square) => {
+    const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+        let promotion: string | undefined = undefined
+        if (piece.charAt(1) === "P") {
+            if (piece.charAt(0) === "w" && targetSquare.charAt(1) === "8") promotion = "q"
+            else if (piece.charAt(1) === "b" && targetSquare.charAt(1) === "1") promotion = "q"
+        }
+
         move({
             from: sourceSquare,
             to: targetSquare,
-            promotion: "q"
+            promotion: promotion
         });
 
         return false;
@@ -62,8 +68,8 @@ export function MainPage() {
                             }
                             <div className="mt-6">
                                 <div className="lg:flex lg:flex-row gap-4">
-                                    <Chessboard position={fen} autoPromoteToQueen={true} boardOrientation={getColor()}
-                                                    onPieceDrop={onDrop} customBoardStyle={{borderRadius: "5px"}}/>
+                                    <Chessboard position={ fen } autoPromoteToQueen={ true } boardOrientation={ getColor() }
+                                                    onPieceDrop={ onDrop } customBoardStyle={ {borderRadius: "5px"} }/>
                                     { time !== null && opponentTime !== null &&
                                         <div className="mx-auto md:my-auto w-[400px] h-[200px]">
                                             <Timer time={ time } opponentTime={ opponentTime }></Timer>

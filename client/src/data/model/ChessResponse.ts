@@ -6,15 +6,18 @@ export interface BeginResponse {
     fen: string
 }
 
-export interface OmitResponse {
+export interface CancelResponse {
     action: string
     error: string
 }
 
 export interface MoveResponse {
     action: string
-    turn: string
-    fen: string
+    valid: boolean
+    turn?: string
+    fen?: string
+    result?: string
+    error?: string
 }
 
 export interface EndResponse {

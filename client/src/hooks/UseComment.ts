@@ -1,7 +1,7 @@
-import {useEffect, useState} from "react";
-import {useDataContext} from "../context/DataContext";
-import {useUserContext} from "../context/UserContext";
-import {Comment} from "../models/Comment";
+import { useEffect, useState } from "react";
+import { useDataContext } from "../context/DataContext";
+import { useUserContext } from "../context/UserContext";
+import { Comment } from "../models/Comment";
 
 export interface CommentUploadData {
     postId: number;
