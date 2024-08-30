@@ -1,15 +1,17 @@
-import React, {createContext, useContext, useState} from "react";
-import {User} from "../models/User";
-import {JwtInfo} from "../models/JwtInfo";
+import React, { createContext, useContext, useState } from "react";
+import { User } from "../models/User";
+import { JwtInfo } from "../models/JwtInfo";
 
 interface IUserContext {
-    user: User | null;
-    updateUser: (u: User) => void;
-    clearUser: () => void;
-    jwt: JwtInfo | null;
-    updateJwt: (jwt: JwtInfo) => void;
-    opponent: User | null;
-    setOpponent: (u: User | null) => void;
+    user: User | null
+    updateUser: (u: User) => void
+    clearUser: () => void
+    jwt: JwtInfo | null
+    updateJwt: (jwt: JwtInfo) => void
+    opponent: User | null
+    setOpponent: (u: User | null) => void
+    justBannedInfo: boolean | undefined
+    setJustBannedInfo: (info: (boolean | undefined)) => void
 }
 
 const UserContext = createContext<IUserContext | null>(null)
@@ -25,12 +27,15 @@ export const useUserContext = () => {
 }
 
 export const UserState = ({ children }: {children: React.ReactNode}) => {
-    const [user, setUser] = useState<User | null>(null)
+    const [ user, setUser ] = useState<User | null>(null)
     const [ opponent, setOpponent ] = useState<User | null>(null)
-    const [jwt, setJwt] = useState<JwtInfo | null>(null)
+    const [ jwt, setJwt ] = useState<JwtInfo | null>(null)
+    const [ banInfo, setBanInfo ] = useState<boolean | undefined>(undefined)
+
     const clearUser = () => { setUser(null) }
     return(
-        <UserContextProvider value={{user, updateUser: setUser, clearUser, jwt, updateJwt: setJwt, opponent, setOpponent}}>
+        <UserContextProvider value={ {user, updateUser: setUser, clearUser, jwt, updateJwt: setJwt,
+            opponent, setOpponent, justBannedInfo: banInfo, setJustBannedInfo: setBanInfo} }>
             { children }
         </UserContextProvider>
     )

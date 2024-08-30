@@ -2,8 +2,10 @@ package ru.kpfu.itis.paramonov.config;
 
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
@@ -54,5 +56,10 @@ public class ChessConfig implements WebSocketMessageBrokerConfigurer {
                 };
             }
         });
+    }
+
+    @Bean
+    public WebClient webClient() {
+        return WebClient.builder().build();
     }
 }

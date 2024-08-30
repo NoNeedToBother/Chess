@@ -1,21 +1,31 @@
-import {BaseResponse} from "../model/BaseResponse";
-import axios, {isAxiosError} from "axios";
-import {JwtInfo} from "../../models/JwtInfo";
-import {REFRESH_TOKEN_ENDPOINT} from "../../utils/Endpoints";
-import {JwtInfoDataResponse} from "../model/AuthResponse";
+import { BaseResponse } from "../model/BaseResponse";
+import axios, { isAxiosError } from "axios";
+import { JwtInfo } from "../../models/JwtInfo";
+import { REFRESH_TOKEN_ENDPOINT } from "../../utils/Endpoints";
+import { JwtInfoDataResponse } from "../model/AuthResponse";
 
 export abstract class AbstractService {
 
-    private onTokenRefreshed: ((jwt: JwtInfo) => void) | undefined = undefined;
+    private onTokenRefreshed: ((jwt: JwtInfo) => void) | undefined = undefined
 
     public setOnTokenRefreshedListener(onTokenRefreshed: (jwt: JwtInfo) => void) {
         this.onTokenRefreshed = onTokenRefreshed
     }
 
+    private onUserBanned: ((response: BaseResponse) => void) | undefined = undefined
+
+    public setOnUserBannedListener(onUserBanned: (response: BaseResponse) => void) {
+        this.onUserBanned = onUserBanned
+    }
+
     protected async handleAxios<R extends BaseResponse>(block: (token?: string) => Promise<R>,
                                                         jwt?: JwtInfo): Promise<R | {error: string}> {
         try {
-            return await block(jwt?.accessToken);
+            const result = await block(jwt?.accessToken);
+            if (result.error !== undefined) {
+                if (result.error === "Account is banned") this.onUserBanned?.(result)
+            }
+            return result
         } catch (e) {
             if (isAxiosError(e) && e.response !== undefined) {
                 if (e.response.data.error !== undefined &&

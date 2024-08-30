@@ -1,18 +1,22 @@
-package ru.kpfu.itis.paramonov.dto.chess;
+package ru.kpfu.itis.paramonov.dto.chess.response;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 public class ChessMoveResponseDto {
 
     private String action;
 
+    private boolean valid;
+
     private String turn;
 
     private String fen;
+
+    private String error;
 
 }

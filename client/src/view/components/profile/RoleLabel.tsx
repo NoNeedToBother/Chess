@@ -12,7 +12,7 @@ export function RoleLabel({ roles }: RoleLabelProps) {
         return ""
     }
     const getUserRoleText = () => {
-        if (roles.includes(Role.CHIEF_ADMIN)) return "text-purple-700"
+        if (roles.includes(Role.CHIEF_ADMIN)) return "text-purple-700 gradient-text"
         if (roles.includes(Role.ADMIN)) return "text-red-400"
         if (roles.includes(Role.MODERATOR)) return "text-green-300"
         return ""

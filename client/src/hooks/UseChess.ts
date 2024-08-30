@@ -19,33 +19,16 @@ export function useChess() {
     }, [gameInfo.fen])
 
     function move(move: { from: Square, to: Square, promotion?: string }) {
-        if (gameInfo.turn !== gameInfo.color) {
-            return;
-        }
-        try {
-            const moveResult = game.move(move)
-            if (moveResult === null) return
-        } catch (e) {
-            return;
-        }
-
-        let result: string | undefined
-        if (game.isCheckmate()) result = "win"
-        else if (game.isInsufficientMaterial()) result = "insufficient"
-        else if (game.isStalemate()) result = "stalemate"
-        else if (game.isDraw()) result = "draw"
-
-        if (gameInfo.gameId !== null && result !== undefined && gameInfo.color !== null && user !== null) {
-            chessService.claimEnd({
-                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: result, fen: game.fen()
-            })
-            return;
-        }
-
-        const resFen = game.fen()
-        if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null) {
+        if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null && gameInfo.fen !== null) {
             chessService.move({
-                color: gameInfo.color, fen: resFen, from: user.id, gameId: gameInfo.gameId
+                color: gameInfo.color,
+                turn: gameInfo.turn,
+                fen: gameInfo.fen,
+                fromUser: user.id,
+                gameId: gameInfo.gameId,
+                from: move.from,
+                to: move.to,
+                promotion: move.promotion
             })
         }
     }
@@ -65,8 +48,19 @@ export function useChess() {
     }
 
     const onMove = (response: MoveResponse) => {
-        gameInfo.setFen(response.fen)
-        gameInfo.setTurn(response.turn)
+        if (!response.valid) return;
+
+        if (response.fen !== undefined && response.turn !== undefined) {
+            gameInfo.setFen(response.fen)
+            gameInfo.setTurn(response.turn)
+        }
+
+        if (response.result !== undefined && gameInfo.gameId !== null && gameInfo.color !== null && user !== null) {
+            chessService.claimEnd({
+                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: response.result, fen: game.fen()
+            })
+            return;
+        }
     }
 
     const onEnd = (response: EndResponse) => {

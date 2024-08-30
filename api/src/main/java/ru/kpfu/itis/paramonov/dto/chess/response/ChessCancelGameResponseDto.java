@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.dto.chess;
+package ru.kpfu.itis.paramonov.dto.chess.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,11 +7,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChessTimeResponseDto {
+public class ChessCancelGameResponseDto {
 
     private String action;
 
-    private Integer time;
+    private String error;
 
-    private Integer opponentTime;
 }

@@ -12,14 +12,6 @@ public class ExceptionMessages {
 
     public static final String NO_SUFFICIENT_AUTHORITY_ERROR = "No sufficient authority to perform this action";
 
-    public final static String UPLOAD_ERROR = "Failed to upload";
-
-    public final static String DELETE_ERROR = "Failed to delete";
-
-    public final static String GET_ERROR = "Failed to get";
-
-    public final static String UPDATE_ERROR = "Failed to update";
-
     public final static String INCORRECT_ROLE_ERROR = "Incorrect role";
 
     public final static String UPDATE_OWN_POST_DENIED_ERROR = "Cannot perform for your own post";

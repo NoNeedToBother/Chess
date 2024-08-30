@@ -37,7 +37,7 @@ export function RatingStar({ value, onChosen, fill, onHover, onHoverEnd }: Ratin
                 viewBox="0 0 16 16"
                 onClick={ ratingChangedHandler }
                 onMouseEnter={ hoverHandler }
-                onMouseLeave={hoverEndHandler }>
+                onMouseLeave={ hoverEndHandler }>
         <path
             d={ getSvgPath(fill) }/>
     </svg>
