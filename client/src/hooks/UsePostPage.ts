@@ -1,8 +1,8 @@
-import {useState} from "react";
-import {Post} from "../models/Post";
-import {useDataContext} from "../context/DataContext";
-import {PagePostResponse} from "../data/model/PagePostResponse";
-import {useUserContext} from "../context/UserContext";
+import { useState } from "react";
+import { Post } from "../models/Post";
+import { useDataContext } from "../context/DataContext";
+import { PagePostResponse } from "../data/model/PagePostResponse";
+import { useUserContext } from "../context/UserContext";
 
 const PAGE_SIZE = 10
 
@@ -11,7 +11,7 @@ export function usePostPage() {
     const { jwt } = useUserContext()
 
     const [ posts, setPosts ] = useState<Post[] | null>(null)
-    const [ pageAmount, setPageAmount] = useState<number | undefined>(undefined)
+    const [ pageAmount, setPageAmount ] = useState<number | undefined>(undefined)
 
     const getPageAmount = () => {
         if (jwt?.accessToken !== undefined) {

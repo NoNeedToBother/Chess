@@ -1,14 +1,8 @@
-import {useUserContext} from "../context/UserContext";
-import {useEffect, useState} from "react";
-import {Post} from "../models/Post";
-import {useDataContext} from "../context/DataContext";
-import {Comment} from "../models/Comment";
-
-export interface PostUploadData {
-    title: string;
-    content: string;
-    description: string;
-}
+import { useUserContext } from "../context/UserContext";
+import { useEffect, useState } from "react";
+import { Post } from "../models/Post";
+import { useDataContext } from "../context/DataContext";
+import { Comment } from "../models/Comment";
 
 export function usePost(id: string | undefined) {
     const { postService } = useDataContext()

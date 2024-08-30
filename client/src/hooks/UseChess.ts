@@ -1,10 +1,10 @@
-import {useEffect, useState} from "react";
-import {Chess} from "chess.js";
-import {Square} from "react-chessboard/dist/chessboard/types";
-import {useChessContext} from "../context/ChessContext";
-import {useUserContext} from "../context/UserContext";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../data/model/ChessResponse";
-import {useUser} from "./UseUser";
+import { useEffect, useState } from "react";
+import { Chess } from "chess.js";
+import { Square } from "react-chessboard/dist/chessboard/types";
+import { useChessContext } from "../context/ChessContext";
+import { useUserContext } from "../context/UserContext";
+import { BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse } from "../data/model/ChessResponse";
+import { useUser } from "./UseUser";
 
 export function useChess() {
     const { chessService, gameInfo, timeInfo, setSearch, clearChess } = useChessContext()
@@ -54,18 +54,10 @@ export function useChess() {
             gameInfo.setFen(response.fen)
             gameInfo.setTurn(response.turn)
         }
-
-        if (response.result !== undefined && gameInfo.gameId !== null && gameInfo.color !== null && user !== null) {
-            chessService.claimEnd({
-                color: gameInfo.color, from: user.id, gameId: gameInfo.gameId, result: response.result, fen: game.fen()
-            })
-            return;
-        }
     }
 
     const onEnd = (response: EndResponse) => {
         gameInfo.setResult(response.result)
-        gameInfo.setFen(response.fen)
     }
 
     const onConcede = (response: ConcedeResponse) => {

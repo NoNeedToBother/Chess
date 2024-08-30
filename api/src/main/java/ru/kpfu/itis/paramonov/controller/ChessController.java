@@ -55,37 +55,35 @@ public class ChessController {
                     game.getBlackTimer().stop();
                     game.getWhiteTimer().resume();
                 }
-                sendMessageToUser(game.getWhite(), ChessMoveResponseDto.builder()
-                        .action("MOVE").valid(true).turn(game.getTurn()).fen(game.getFen()).build()
+                ChessMoveResponseDto moveResponse = new ChessMoveResponseDto(
+                        "MOVE", true, response.getTurn(),
+                        response.getFen(), response.getError()
                 );
-                sendMessageToUser(game.getBlack(), ChessMoveResponseDto.builder()
-                        .action("MOVE").valid(true).turn(game.getTurn()).fen(game.getFen()).build()
-                );
+                sendMessageToUser(game.getBlack(), moveResponse);
+                sendMessageToUser(game.getWhite(), moveResponse);
+
+                if (response.getResult() != null) {
+                    switch (response.getResult()) {
+                        case "win":
+                            onWin(game, moveRequestDto.getFromUser());
+                            break;
+                        case "insufficient":
+                        case "stalemate":
+                        case "draw":
+                            onDraw(game, response.getResult());
+                            break;
+                    }
+                }
+
             } else {
                  if (!response.isValid()) {
-                     sendMessageToUser(moveRequestDto.getFromUser(), ChessMoveResponseDto.builder()
-                             .action("MOVE").valid(false).error(response.getError()).build());
+                     sendMessageToUser(
+                             moveRequestDto.getFromUser(),
+                             new ChessMoveResponseDto("MOVE", false, null, null, response.getError())
+                     );
                  }
             }
         }).subscribe();
-    }
-
-    @MessageMapping("/game/end")
-    public void processEndGame(EndGameRequestDto endGameRequestDto) {
-        ChessGameStore.ChessGame game = chessGameStore.get(endGameRequestDto.getGameId());
-        if (game == null) cancelGame(endGameRequestDto.getFrom());
-        else {
-            switch (endGameRequestDto.getResult()) {
-                case "win":
-                    onWin(game, endGameRequestDto);
-                    break;
-                case "insufficient":
-                case "stalemate":
-                case "draw":
-                    onDraw(game, endGameRequestDto);
-                    break;
-            }
-        }
     }
 
     @MessageMapping("/game/concede")
@@ -129,27 +127,20 @@ public class ChessController {
         chessGameStore.endGame(game.getId());
     }
 
-    private void onWin(ChessGameStore.ChessGame game, EndGameRequestDto requestData) {
-        sendMessageToUser(requestData.getFrom(), new ChessEndResponseDto(
-                "END", "win", requestData.getFen()
-        ));
-        if (requestData.getFrom().equals(game.getWhite())) {
-            sendMessageToUser(game.getBlack(), new ChessEndResponseDto(
-                    "END", "lose", requestData.getFen()
-            ));
-        } else sendMessageToUser(game.getWhite(), new ChessEndResponseDto(
-                "END", "lose", requestData.getFen()
-        ));
+    private void onWin(ChessGameStore.ChessGame game, Integer from) {
+        sendMessageToUser(from, new ChessEndResponseDto("END", "win"));
+
+        if (from.equals(game.getWhite()))
+            sendMessageToUser(game.getBlack(), new ChessEndResponseDto("END", "lose"));
+        else sendMessageToUser(game.getWhite(), new ChessEndResponseDto("END", "lose"));
+
         chessGameStore.endGame(game.getId());
     }
 
-    private void onDraw(ChessGameStore.ChessGame game, EndGameRequestDto requestData) {
-        sendMessageToUser(game.getWhite(), new ChessEndResponseDto(
-                "END", requestData.getResult(), requestData.getFen()
-        ));
-        sendMessageToUser(game.getBlack(), new ChessEndResponseDto(
-                "END", requestData.getResult(), requestData.getFen()
-        ));
+    private void onDraw(ChessGameStore.ChessGame game, String result) {
+        sendMessageToUser(game.getWhite(), new ChessEndResponseDto("END", result));
+        sendMessageToUser(game.getBlack(), new ChessEndResponseDto("END", result));
+
         chessGameStore.endGame(game.getId());
     }
 
@@ -239,12 +230,9 @@ public class ChessController {
     }
 
     private void onTimeRanOut(Integer winner, Integer loser, ChessGameStore.ChessGame game) {
-        sendMessageToUser(loser, new ChessEndResponseDto(
-                "END", "lose_time", game.getFen()
-        ));
-        sendMessageToUser(winner, new ChessEndResponseDto(
-                "END", "win_time", game.getFen()
-        ));
+        sendMessageToUser(loser, new ChessEndResponseDto("END", "lose_time"));
+        sendMessageToUser(winner, new ChessEndResponseDto("END", "win_time"));
+
         chessGameStore.endGame(game.getId());
     }
 
@@ -272,5 +260,4 @@ public class ChessController {
                 playerId.toString(), "/queue/messages", payload
         );
     }
-
 }

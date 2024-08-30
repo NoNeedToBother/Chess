@@ -1,7 +1,7 @@
 import SockJS from 'sockjs-client';
-import {CompatClient, Stomp} from "@stomp/stompjs";
-import {Message} from "stompjs";
-import {BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse} from "../model/ChessResponse";
+import { CompatClient, Stomp } from "@stomp/stompjs";
+import { Message } from "stompjs";
+import { BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse } from "../model/ChessResponse";
 
 const API_DOMAIN = "http://localhost:8080"
 
@@ -70,10 +70,6 @@ export class ChessService {
                 break
             case "CANCEL_SEARCH":
                 this.gameHandler?.onSearchCancelled?.()
-                this.onGameEnd()
-                break
-            case "OMIT":
-                this.gameHandler?.onOmit?.(json.error)
                 this.onGameEnd()
                 break
             case "MOVE":
