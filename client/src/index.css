@@ -23,6 +23,31 @@
         background-clip: text;
         color: transparent;
     }
+
+    @keyframes slideLeft {
+        from {
+            transform: translateX(100%);
+        }
+        to {
+            transform: translateX(0%);
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0%);
+        }
+    }
+
+    .slide-left {
+        animation: slideLeft 300ms ease-in-out;
+    }
+    .slide-up {
+        animation: slideUp 300ms ease-in-out;
+    }
 }
 
 @font-face {

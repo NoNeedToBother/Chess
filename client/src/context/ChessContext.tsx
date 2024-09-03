@@ -9,6 +9,8 @@ interface IChessContext {
     search: boolean
     setSearch: (search: boolean) => void
     clearChess: () => void
+    moveError: string | null
+    setMoveError: (error: string | null) => void
 }
 
 export interface GameInfo {
@@ -57,6 +59,7 @@ export const ChessState = ({children, chess}: ChessStateProps) => {
     const [ gameId, setGameId ] = useState<string | null>(null)
     const [ opponent, setOpponent ] = useState<number | null>(null)
     const [ result, setResult ] = useState<string | undefined>(undefined)
+    const [ moveError, setMoveError ] = useState<string | null>(null)
 
     const [ time, setTime ] = useState<number | null>(null)
     const [ opponentTime, setOpponentTime ] = useState<number | null>(null)
@@ -80,12 +83,13 @@ export const ChessState = ({children, chess}: ChessStateProps) => {
     const gameInfo = {
         fen, setFen, turn, setTurn, color, setColor, gameId, setGameId, opponent, setOpponent, result, setResult
     }
+
     const updateTime = (time: number) => { setTime(time) }
     const updateOpponentTime = (time: number) => { setOpponentTime(time) }
     const timeInfo = { time, updateTime, opponentTime, updateOpponentTime }
 
     return(
-        <ChessContextProvider value={ {chessService, gameInfo, timeInfo, search, setSearch, clearChess} }>
+        <ChessContextProvider value={ {chessService, gameInfo, timeInfo, search, setSearch, clearChess, moveError, setMoveError} }>
             { children }
         </ChessContextProvider>
     )
