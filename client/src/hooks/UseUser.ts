@@ -7,7 +7,7 @@ import { Ban } from "../models/Ban";
 
 export function useUser() {
     const { userService } = useDataContext();
-    const { jwt } = useUserContext()
+    const { updateUser, jwt } = useUserContext()
 
     const [ user, setUser ] = useState<User | null>(null);
     const [ liked, setLiked ] = useState<boolean | null>(null);
@@ -49,5 +49,28 @@ export function useUser() {
         }
     }
 
-    return { user, liked, ban, get, getPosts, userPosts, updateLike }
+    const updateProfilePicture = (image: File) => {
+        if (jwt !== null) {
+            userService.updateProfilePicture(image, jwt).then((res) => {
+                if (res.url !== undefined && user !== null) {
+                    const userCopy: User = {
+                        bio: user.bio,
+                        dateRegistered: user.dateRegistered,
+                        id: user.id,
+                        lastname: user.lastname,
+                        likes: user.likes,
+                        name: user.name,
+                        profilePicture: user.profilePicture,
+                        roles: user.roles,
+                        username: user.username
+                    }
+                    userCopy.profilePicture = res.url
+                    setUser(userCopy)
+                    updateUser(userCopy)
+                }
+            })
+        }
+    }
+
+    return { user, liked, ban, get, getPosts, userPosts, updateLike, updateProfilePicture }
 }

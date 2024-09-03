@@ -56,6 +56,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     void removeLike(@Param("id") Long id, @Param("from") Long fromId);
 
     @Modifying
-    @Query(value = "update User u set u.profilePicture = :url")
-    void updateUserProfilePictureUrl(String url);
+    @Query(value = "update User u set u.profilePicture = :url where u.id = :id")
+    void updateUserProfilePictureUrl(@Param("id") Long id, @Param("url") String url);
 }

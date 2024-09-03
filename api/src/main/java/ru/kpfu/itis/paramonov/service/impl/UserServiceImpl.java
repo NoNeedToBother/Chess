@@ -2,6 +2,7 @@ package ru.kpfu.itis.paramonov.service.impl;
 
 import com.cloudinary.Cloudinary;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -178,13 +180,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public String updateProfilePicture(Long userId, MultipartFile image) {
         try {
             File file = FileUtil.uploadPartImage(image);
             String url = cloudinary.uploader().upload(file, new HashMap<>()).get("secure_url").toString();
-            userRepository.updateUserProfilePictureUrl(url);
+            userRepository.updateUserProfilePictureUrl(userId, url);
             return url;
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

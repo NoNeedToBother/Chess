@@ -1,6 +1,6 @@
-import {BaseResponse} from "./BaseResponse";
-import {User} from "../../models/User";
-import {Ban} from "../../models/Ban";
+import { BaseResponse } from "./BaseResponse";
+import { User } from "../../models/User";
+import { Ban } from "../../models/Ban";
 
 export interface UserModelResponse {
     id: number;
@@ -14,14 +14,18 @@ export interface UserModelResponse {
     roles: string[]
 }
 
-export interface UserDataResponse extends BaseResponse{
+export interface UserDataResponse extends BaseResponse {
     user?: UserModelResponse;
     isLiked?: boolean;
     ban?: Ban;
 }
 
-export interface UserResponse extends BaseResponse{
+export interface UserResponse extends BaseResponse {
     user?: User;
     isLiked?: boolean;
     ban?: Ban;
+}
+
+export interface UpdateProfilePictureResponse extends BaseResponse {
+    url?: string
 }

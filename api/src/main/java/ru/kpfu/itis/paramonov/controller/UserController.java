@@ -3,6 +3,7 @@ package ru.kpfu.itis.paramonov.controller;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -115,7 +116,7 @@ public class UserController {
         } else throw new NotFoundException(NO_USER_FOUND_ERROR);
     }
 
-    @PostMapping("/update/profile/picture")
+    @PostMapping(value = "/update/profile/picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UpdateProfilePictureResponseDto> updateProfilePicture(
             @RequestPart("image") MultipartFile image,
             JwtAuthentication jwtAuthentication

@@ -2,13 +2,13 @@ import { AbstractService } from "./AbstractService";
 import { UrlFormatter } from "../../utils/UrlFormatter";
 import { PostMapper } from "../mapper/PostMapper";
 import { UserMapper } from "../mapper/UserMapper";
-import { UserDataResponse, UserResponse } from "../model/UserResponse";
+import { UpdateProfilePictureResponse, UserDataResponse, UserResponse } from "../model/UserResponse";
 import axios from "axios";
 import {
     BAN_USER_ADMIN_ENDPOINT, BAN_USER_MODERATOR_ENDPOINT,
     GET_USER_ENDPOINT,
     GET_USER_POSTS_ENDPOINT, UNBAN_USER_ADMIN_ENDPOINT, UNBAN_USER_MODERATOR_ENDPOINT,
-    UPDATE_LIKE_ENDPOINT
+    UPDATE_LIKE_ENDPOINT, UPDATE_PROFILE_PICTURE_ENDPOINT
 } from "../../utils/Endpoints";
 import { PostsDataResponse, PostsResponse } from "../model/PostResponse";
 import { Post } from "../../models/Post";
@@ -42,7 +42,7 @@ export class UserService extends AbstractService{
             params.set("id", id.toString())
             const resp = await axios.get<UserDataResponse>(
                 this.urlFormatter.format(GET_USER_ENDPOINT, params),
-                {headers: { Authorization: "Bearer " + localToken }}
+                { headers: { Authorization: "Bearer " + localToken } }
             )
             return this.extractUserData(resp.data)
         }, jwt)
@@ -100,7 +100,7 @@ export class UserService extends AbstractService{
         }, jwt)
     }
 
-    async unban(from: User, bannedId: number, jwt: JwtInfo): Promise<BanResponse> {
+    async unban(from: User, bannedId: number, jwt: JwtInfo): Promise<BaseResponse> {
         let url: string
         if (from.roles.includes(Role.CHIEF_ADMIN) || from.roles.includes(Role.ADMIN))
             url = UNBAN_USER_ADMIN_ENDPOINT
@@ -120,12 +120,25 @@ export class UserService extends AbstractService{
         }, jwt)
     }
 
+    async updateProfilePicture(image: File, jwt: JwtInfo): Promise<UpdateProfilePictureResponse> {
+        const formData = new FormData()
+        formData.append("image", image)
+        return this.handleAxios(async (localToken = jwt.accessToken): Promise<UpdateProfilePictureResponse> => {
+            const resp = await axios.post<UpdateProfilePictureResponse>(
+                UPDATE_PROFILE_PICTURE_ENDPOINT,
+                formData,
+                { headers: { Authorization: "Bearer " + localToken } }
+            )
+            return resp.data
+        }, jwt)
+    }
+
     private extractUserData(data: UserDataResponse): UserResponse {
         if (data.user !== undefined && data.isLiked !== undefined) {
             if (data.ban !== undefined)
-                return {user: this.userMapper.map(data.user), isLiked: data.isLiked, ban: data.ban}
-            else return {user: this.userMapper.map(data.user), isLiked: data.isLiked}
+                return { user: this.userMapper.map(data.user), isLiked: data.isLiked, ban: data.ban }
+            else return { user: this.userMapper.map(data.user), isLiked: data.isLiked }
         }
-        else return {error: "Something went wrong, try again later"}
+        else return { error: "Something went wrong, try again later" }
     }
 }
