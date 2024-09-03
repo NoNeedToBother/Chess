@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.dto.response.*;
 import ru.kpfu.itis.paramonov.dto.users.BanDto;
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
@@ -109,5 +110,15 @@ public class UserController {
             userService.updateLike(userId, fromId);
             return get(userId, authentication);
         } else throw new NotFoundException(NO_USER_FOUND_ERROR);
+    }
+
+    @PostMapping("/update/profile/picture")
+    public ResponseEntity<UpdateProfilePictureResponseDto> updateAvatar(
+            @RequestPart("image") MultipartFile image,
+            JwtAuthentication jwtAuthentication
+    ) {
+        Long userId = jwtAuthentication.getId();
+        String url = userService.updateProfilePicture(userId, image);
+        return new ResponseEntity<>(new UpdateProfilePictureResponseDto(url), HttpStatus.OK);
     }
 }

@@ -1,9 +1,11 @@
 package ru.kpfu.itis.paramonov.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AllArgsConstructor;
 import ru.kpfu.itis.paramonov.dto.users.BanDto;
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
 
+@AllArgsConstructor
 public class UserResponseDto extends BaseResponseDto{
 
     @JsonProperty("user")
@@ -18,11 +20,5 @@ public class UserResponseDto extends BaseResponseDto{
     public UserResponseDto(UserDto user, boolean isLiked) {
         this.user = user;
         this.isLiked = isLiked;
-    }
-
-    public UserResponseDto(UserDto user, boolean isLiked, BanDto ban) {
-        this.user = user;
-        this.isLiked = isLiked;
-        this.ban = ban;
     }
 }
