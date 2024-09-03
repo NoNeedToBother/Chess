@@ -5,12 +5,15 @@ import { RoleLabel } from "../../components/profile/RoleLabel";
 import { ArrowUpTrayIcon, HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { PostSection } from "./PostSection";
 import { InfoSection } from "./InfoSection";
+import { UpdateProfileInfoForm } from "../../components/form/UpdateProfileInfoForm";
+import {Modal} from "../../components/base/Modal";
 
 export function ProfilePage() {
     const userContext = useUserContext()
-    const { user, get, userPosts, getPosts, updateProfilePicture } = useUser()
+    const { user, get, userPosts, getPosts, updateProfilePicture, updateProfileInfo } = useUser()
 
     const [ image, setImage ] = useState<File | null>(null)
+    const [ showModal, setShowModal ] = useState(false)
 
     useEffect(() => {
         if (userContext.user !== null) {
@@ -28,9 +31,21 @@ export function ProfilePage() {
         if (files && files.length > 0) {
             setImage(files[0]);
         }
-    };
+    }
+
+    const onUpdateProfileInfoFormSubmit = (name: string | undefined,
+                                           lastname: string | undefined,
+                                           bio: string | undefined) => {
+        updateProfileInfo(name, lastname, bio)
+        setShowModal(false)
+    }
 
     return <section className="w-full overflow-hidden dark:bg-gray-900">
+        { showModal &&
+            <Modal title="Input info to update" onClose={ () => setShowModal(false) }>
+                <UpdateProfileInfoForm onSubmit={ onUpdateProfileInfoFormSubmit }/>
+            </Modal>
+        }
         <div className="flex flex-col">
             <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
             <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
@@ -68,6 +83,11 @@ export function ProfilePage() {
 
             <div
                 className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
+                <button
+                    className="flex w-1/2 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    onClick={ () => setShowModal(true) }
+                >Update profile info
+                </button>
                 { user !== null &&
                     <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{ user.bio }</p>
                 }

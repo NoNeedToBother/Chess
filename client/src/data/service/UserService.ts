@@ -8,7 +8,7 @@ import {
     BAN_USER_ADMIN_ENDPOINT, BAN_USER_MODERATOR_ENDPOINT,
     GET_USER_ENDPOINT,
     GET_USER_POSTS_ENDPOINT, UNBAN_USER_ADMIN_ENDPOINT, UNBAN_USER_MODERATOR_ENDPOINT,
-    UPDATE_LIKE_ENDPOINT, UPDATE_PROFILE_PICTURE_ENDPOINT
+    UPDATE_LIKE_ENDPOINT, UPDATE_PROFILE_INFO_ENDPOINT, UPDATE_PROFILE_PICTURE_ENDPOINT
 } from "../../utils/Endpoints";
 import { PostsDataResponse, PostsResponse } from "../model/PostResponse";
 import { Post } from "../../models/Post";
@@ -91,7 +91,7 @@ export class UserService extends AbstractService{
         return this.handleAxios(async (localToken = jwt.accessToken): Promise<BanResponse> => {
             const resp = await axios.post<BanDataResponse>(
                 url,
-                { bannedId: request.bannedId, reason: request.reason},
+                { bannedId: request.bannedId, reason: request.reason },
                 { headers: { Authorization: "Bearer " + localToken } }
             )
             if (resp.data.userData !== undefined) return { user: this.extractUserData(resp.data) }
@@ -127,6 +127,18 @@ export class UserService extends AbstractService{
             const resp = await axios.post<UpdateProfilePictureResponse>(
                 UPDATE_PROFILE_PICTURE_ENDPOINT,
                 formData,
+                { headers: { Authorization: "Bearer " + localToken } }
+            )
+            return resp.data
+        }, jwt)
+    }
+
+    async updateProfileInfo(name: string | undefined, lastname: string | undefined, bio: string | undefined,
+                            jwt: JwtInfo): Promise<UserResponse> {
+        return this.handleAxios(async (localToken = jwt.accessToken): Promise<UserResponse> => {
+            const resp = await axios.post<UserResponse>(
+                UPDATE_PROFILE_INFO_ENDPOINT,
+                { name, lastname, bio },
                 { headers: { Authorization: "Bearer " + localToken } }
             )
             return resp.data

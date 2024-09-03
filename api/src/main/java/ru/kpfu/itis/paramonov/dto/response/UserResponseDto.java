@@ -6,7 +6,7 @@ import ru.kpfu.itis.paramonov.dto.users.BanDto;
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
 
 @AllArgsConstructor
-public class UserResponseDto extends BaseResponseDto{
+public class UserResponseDto extends BaseResponseDto {
 
     @JsonProperty("user")
     private UserDto user;

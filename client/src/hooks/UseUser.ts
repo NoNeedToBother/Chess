@@ -72,5 +72,18 @@ export function useUser() {
         }
     }
 
-    return { user, liked, ban, get, getPosts, userPosts, updateLike, updateProfilePicture }
+    const updateProfileInfo = (name: string | undefined, lastname: string | undefined, bio: string | undefined) => {
+        if (jwt !== null) {
+            userService.updateProfileInfo(
+                name, lastname, bio, jwt
+            ).then((res) => {
+                if (res.user !== undefined) {
+                    setUser(res.user)
+                    updateUser(res.user)
+                }
+            })
+        }
+    }
+
+    return { user, liked, ban, get, getPosts, userPosts, updateLike, updateProfilePicture, updateProfileInfo }
 }

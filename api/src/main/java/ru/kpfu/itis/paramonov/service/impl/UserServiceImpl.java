@@ -202,7 +202,11 @@ public class UserServiceImpl implements UserService {
         if (lastname != null) user.setLastname(lastname);
         if (bio != null) user.setBio(bio);
         User resultUser = userRepository.save(user);
-        return userConverter.convert(resultUser);
+
+        UserDto userDto = userConverter.convert(resultUser);
+        int likeAmount = userRepository.getLikeAmount(userId);
+        userDto.setLikes(likeAmount);
+        return userDto;
     }
 
     public void checkAuthoritiesAndPromoteIfSatisfy(Long promotedId, Long fromId, Role role) {
