@@ -1,10 +1,12 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.kpfu.itis.paramonov.dto.request.UpdateUserInfoRequest;
 import ru.kpfu.itis.paramonov.dto.response.*;
 import ru.kpfu.itis.paramonov.dto.users.BanDto;
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
@@ -113,12 +116,26 @@ public class UserController {
     }
 
     @PostMapping("/update/profile/picture")
-    public ResponseEntity<UpdateProfilePictureResponseDto> updateAvatar(
+    public ResponseEntity<UpdateProfilePictureResponseDto> updateProfilePicture(
             @RequestPart("image") MultipartFile image,
             JwtAuthentication jwtAuthentication
     ) {
         Long userId = jwtAuthentication.getId();
         String url = userService.updateProfilePicture(userId, image);
         return new ResponseEntity<>(new UpdateProfilePictureResponseDto(url), HttpStatus.OK);
+    }
+
+    @PostMapping("/update/profile/info")
+    public ResponseEntity<UserResponseDto> updateProfileInfo(
+            @RequestBody UpdateUserInfoRequest updateUserInfoRequest,
+            JwtAuthentication jwtAuthentication
+    ) {
+        Long userId = jwtAuthentication.getId();
+        UserDto userDto = userService.updateUserInfo(userId,
+                updateUserInfoRequest.getName(),
+                updateUserInfoRequest.getLastname(),
+                updateUserInfoRequest.getBio());
+
+        return new ResponseEntity<>(new UserResponseDto(userDto), HttpStatus.OK);
     }
 }

@@ -54,4 +54,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query(value = "delete from user_likes l where l.sender_id = :from and l.receiver_id = :id", nativeQuery = true)
     void removeLike(@Param("id") Long id, @Param("from") Long fromId);
+
+    @Modifying
+    @Query(value = "update User u set u.profilePicture = :url")
+    void updateUserProfilePictureUrl(String url);
 }

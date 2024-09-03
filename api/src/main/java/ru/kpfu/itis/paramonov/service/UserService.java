@@ -32,4 +32,6 @@ public interface UserService {
     boolean updateLike(Long userId, Long fromId);
 
     String updateProfilePicture(Long userId, MultipartFile image);
+
+    UserDto updateUserInfo(Long userId, String name, String lastname, String bio);
 }

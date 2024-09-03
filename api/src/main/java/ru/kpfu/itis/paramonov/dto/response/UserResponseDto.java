@@ -17,6 +17,10 @@ public class UserResponseDto extends BaseResponseDto{
     @JsonProperty("ban")
     private BanDto ban;
 
+    public UserResponseDto(UserDto user) {
+        this.user = user;
+    }
+
     public UserResponseDto(UserDto user, boolean isLiked) {
         this.user = user;
         this.isLiked = isLiked;

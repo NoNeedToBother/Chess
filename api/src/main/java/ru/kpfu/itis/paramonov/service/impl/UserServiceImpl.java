@@ -181,10 +181,25 @@ public class UserServiceImpl implements UserService {
     public String updateProfilePicture(Long userId, MultipartFile image) {
         try {
             File file = FileUtil.uploadPartImage(image);
-            return cloudinary.uploader().upload(file, new HashMap<>()).get("secure_url").toString();
+            String url = cloudinary.uploader().upload(file, new HashMap<>()).get("secure_url").toString();
+            userRepository.updateUserProfilePictureUrl(url);
+            return url;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public UserDto updateUserInfo(Long userId, String name, String lastname, String bio) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent()) throw new NotFoundException(NO_USER_FOUND_ERROR);
+
+        User user = userOptional.get();
+        if (name != null) user.setName(name);
+        if (lastname != null) user.setLastname(lastname);
+        if (bio != null) user.setBio(bio);
+        User resultUser = userRepository.save(user);
+        return userConverter.convert(resultUser);
     }
 
     public void checkAuthoritiesAndPromoteIfSatisfy(Long promotedId, Long fromId, Role role) {
