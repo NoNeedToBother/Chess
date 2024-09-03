@@ -21,13 +21,11 @@ import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.PostRepository;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
+import ru.kpfu.itis.paramonov.utils.FileUtil;
 
 import javax.transaction.Transactional;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
@@ -106,24 +104,8 @@ public class PostServiceImpl implements PostService {
         }
     }
 
-    public static final String FILE_PATH_PREFIX = "/tmp";
-    public static final int DIRECTORIES_COUNT = 100;
-
     private String uploadPostImage(MultipartFile image) throws IOException {
-        String filename = Paths.get(image.getOriginalFilename()).getFileName().toString();
-
-        File file = new File(FILE_PATH_PREFIX + File.separator + filename.hashCode() % DIRECTORIES_COUNT +
-                File.separator + filename);
-
-        InputStream content = image.getInputStream();
-        file.getParentFile().mkdirs();
-        file.createNewFile();
-
-        FileOutputStream out = new FileOutputStream(file);
-        byte[] buffer = new byte[content.available()];
-        content.read(buffer);
-        out.write(buffer);
-        out.close();
+        File file = FileUtil.uploadPartImage(image);
 
         return cloudinary.uploader().upload(file, new HashMap<>()).get("secure_url").toString();
     }
@@ -205,5 +187,4 @@ public class PostServiceImpl implements PostService {
         author.getPosts().removeIf(p -> p.getId().equals(post.getId()));
         userRepository.save(author);
     }
-
 }
