@@ -26,9 +26,7 @@ export function UploadPostPage() {
     };
 
     useEffect(() => {
-        if (uploadedPost !== null) {
-            navigator.navigateToPost(uploadedPost.id)
-        }
+        if (uploadedPost !== null) navigator.navigateToPost(uploadedPost.id)
     }, [uploadedPost]);
 
     const formSubmitHandler = (event: React.FormEvent<HTMLFormElement>) => {
@@ -54,11 +52,14 @@ export function UploadPostPage() {
                          className="xl:w-[60%] xs:w-[76%] mx-auto lg:h-[480px] md:h-[360px] rounded-lg"/>
                 }
 
-                <div className="flex mx-auto w-[20%] mt-4">
+                <div className="relative flex mx-auto w-[20%] mt-4">
                     <input type="file" accept="image/*"
-                           className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                           className="absolute flex w-full justify-center opacity-0 cursor-pointer"
                            onChange={ imageChangeHandler }
                     />
+                    <div className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                        Browse images
+                    </div>
                 </div>
 
                 <div className="w-1/2 mx-auto items-center">

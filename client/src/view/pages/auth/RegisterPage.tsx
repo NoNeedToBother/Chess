@@ -3,13 +3,13 @@ import { AuthMenu } from "../../components/other/AuthMenu";
 import { RegisterForm } from "../../components/form/RegisterForm";
 import { useDataContext } from "../../../context/DataContext";
 import { useAuthentication } from "../../../hooks/UseAuthentication";
-import {CircularProgress} from "@mui/material";
-import {ChessLogo} from "../../components/base/ChessLogo";
+import { CircularProgress } from "@mui/material";
+import { ChessLogo } from "../../components/base/ChessLogo";
 
 export function RegisterPage() {
     const { navigator } = useDataContext()
     const { register, success, registerError, registerProcessing } = useAuthentication()
-    const [error, setError ] = useState<string | null>(null)
+    const [ error, setError ] = useState<string | null>(null)
 
     useEffect(() => {
         if (success !== null && success) navigator.navigateToMain()

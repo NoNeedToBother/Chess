@@ -26,9 +26,10 @@ export function RatingStar({ value, onChosen, fill, onHover, onHoverEnd }: Ratin
             case Fill.HALF_FULL:
                 return HALF_FULL_SVG_PATH
             case Fill.FULL:
-                return FULL_SVG_PATH}
+                return FULL_SVG_PATH
+        }
     }
-    const ratingChangedHandler = () => onChosen(value);
+    const ratingChangedHandler = () => onChosen(value)
     const hoverHandler = () => onHover(value)
     const hoverEndHandler = () => onHoverEnd()
 

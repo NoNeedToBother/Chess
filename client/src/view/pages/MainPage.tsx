@@ -48,10 +48,10 @@ export function MainPage() {
         else return "white";
     }
 
-    return <div className="py-32">
+    return <div className="my-32 p-8">
         { fen !== null && color !== null &&
             <div>
-                <div className="block mx-auto lg:w-[800px] lg:h-[800px] md:w-[600px] md:h-[600px] xs:w-[300px] xs:h-[300px]">
+                <div className="block mx-auto lg:w-[800px] md:w-[600px] xs:w-[300px]">
                     { opponent !== null &&
                         <span className="flex justify-center border-4 border-gray-400 shadow-md rounded-r">
                             <CircleImage src={ opponent.profilePicture } className="h-20"/>
