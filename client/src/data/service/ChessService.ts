@@ -48,6 +48,7 @@ export class ChessService {
         this.socket = new SockJS(API_DOMAIN + "/chess-websocket")
         this.client = Stomp.over(this.socket)
         this.client.activate()
+        this.client.debug = () => {}
         this.client.onConnect = () => {
             this.subscribe(id)
         }

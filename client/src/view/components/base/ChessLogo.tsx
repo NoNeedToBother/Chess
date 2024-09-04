@@ -8,13 +8,13 @@ export interface LogoProps {
 }
 
 export function ChessLogo({ interactable, className, showPawn }: LogoProps) {
-    let rootClass = "flex w-[40%] font-logo text-5xl"
-    if (interactable) rootClass += " hover:text-6xl hover:text-blue-800"
-    if (className) rootClass += " " + className
+    const rootClass = `flex w-[40%] font-logo text-5xl
+        ${ interactable && " hover:text-6xl hover:text-blue-800" }
+        ${ className !== undefined && ` ${ className}` }`
 
-    let textClass = "md:block"
-    if (showPawn !== undefined && showPawn) textClass += " hidden"
-    if (interactable) textClass += " hover:gradient-text [--color-start:blue] [--color-end:red]"
+    const textClass = `md:block
+        ${ showPawn !== undefined && showPawn && " hidden" }
+        ${ interactable && " hover:gradient-text [--color-start:blue] [--color-end:red]" }`
 
     return <div className={ rootClass }>
         { interactable ?
@@ -24,7 +24,7 @@ export function ChessLogo({ interactable, className, showPawn }: LogoProps) {
             </Link>
             : <>
                 <LogoPawn showPawn={ showPawn !== undefined && showPawn }/>
-                <div className={textClass}>Chess</div>
+                <div className={ textClass }>Chess</div>
             </>
         }
     </div>
@@ -32,7 +32,7 @@ export function ChessLogo({ interactable, className, showPawn }: LogoProps) {
 
 function LogoPawn({ showPawn } : { showPawn: boolean }) {
     return <>
-        {showPawn &&
+        { showPawn &&
             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" className="fill-current"
                  viewBox="0 0 297 297">
                 <path

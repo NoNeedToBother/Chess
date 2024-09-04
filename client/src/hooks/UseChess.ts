@@ -7,7 +7,7 @@ import { BeginResponse, ConcedeResponse, EndResponse, MoveResponse, TimeResponse
 import { useUser } from "./UseUser";
 
 export function useChess() {
-    const { chessService, gameInfo, timeInfo, setSearch, clearChess } = useChessContext()
+    const { chessService, gameInfo, timeInfo, setSearch, clearChess, moveError, setMoveError } = useChessContext()
     const { user, setOpponent } = useUserContext()
     const { user: other, get } = useUser()
 
@@ -48,7 +48,10 @@ export function useChess() {
     }
 
     const onMove = (response: MoveResponse) => {
-        if (!response.valid) return;
+        if (!response.valid) {
+            if (response.error !== undefined) setMoveError(response.error)
+            else return
+        }
 
         if (response.fen !== undefined && response.turn !== undefined) {
             gameInfo.setFen(response.fen)
@@ -99,6 +102,8 @@ export function useChess() {
         }
     }
 
+    const clearMoveError = () => setMoveError(null)
+
     return { fen: gameInfo.fen, game, move, seek, color: gameInfo.color, result: gameInfo.result,
-        concede, time: timeInfo.time, opponentTime: timeInfo.opponentTime }
+        concede, time: timeInfo.time, opponentTime: timeInfo.opponentTime, moveError, clearMoveError }
 }

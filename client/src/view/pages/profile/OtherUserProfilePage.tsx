@@ -78,9 +78,6 @@ export function OtherUserProfilePage() {
         }
     }
 
-    const onBanInfoModalClose = () => setShowBanInfoModal(false)
-    const onBanModalClose = () => setShowBanModal(false)
-
     const onBanFormSubmit = (reason: string) => {
         if (id !== undefined) {
             setShowBanModal(false)
@@ -91,14 +88,14 @@ export function OtherUserProfilePage() {
     return <div>
         <section className="w-full overflow-hidden dark:bg-gray-900">
             { showBanInfoModal && ban !== null &&
-                <Modal title="Ban info" onClose={onBanInfoModalClose}>
-                    <h1 className="text-gray-700"> {"Given by " + ban.givenFromUsername}</h1>
-                    <h1 className="text-gray-700"> {"Given at " + ban.givenAt}</h1>
-                    <h1 className="text-xl">{"Reason: " + ban.reason}</h1>
+                <Modal title="Ban info" onClose={ () => setShowBanInfoModal(false) }>
+                    <h1 className="text-gray-700"> { `Given by ${ ban.givenFromUsername }` }</h1>
+                    <h1 className="text-gray-700"> { `Given at ${ ban.givenAt }` }</h1>
+                    <h1 className="text-xl">{ `Reason: ${ ban.reason }` }</h1>
                 </Modal>
             }
             { showBanModal &&
-                <Modal title="Ban user" onClose={onBanModalClose}>
+                <Modal title="Ban user" onClose={ () => setShowBanModal(false) }>
                     <BanForm onSubmit={ onBanFormSubmit }/>
                 </Modal>
             }
@@ -114,9 +111,10 @@ export function OtherUserProfilePage() {
                                     className="rounded-md mx-auto lg:w-[12rem] lg:h-[12rem] md:w-[10rem] md:h-[10rem] sm:w-[8rem] sm:h-[8rem] xs:w-[7rem] xs:h-[7rem] outline outline-2 outline-offset-2 outline-blue-500 lg:bottom-[5rem] sm:bottom-[4rem] xs:bottom-[3rem]"
                                 />
                                 <div className="lg:w-[6rem] md:w-[5rem] sm:w-[4rem] mx-auto">
-                                    <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{ other.likes + " likes" }</p>
-                                    <HandThumbUpIcon className={"h-10 hover:text-green-800 " + getLikeColor()} onClick={ likeHandler }/>
+                                    <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{ `${ other.likes } likes` }</p>
+                                    <HandThumbUpIcon className={ `h-10 hover:text-green-800 ${ getLikeColor() }` } onClick={ likeHandler }/>
                                 </div>
+
                                 { user !== null && checkAuthorityToBanAndUnban(other, user) && ban === null &&
                                     <button className="mx-[25%] w-1/2 border-2 border-red-600 hover:bg-red-100" onClick={ banHandler }>Ban</button>
                                 }
@@ -134,12 +132,12 @@ export function OtherUserProfilePage() {
 
                 <div className="xl:w-[80%] lg:w-[90%] md:w-[90%] sm:w-[92%] xs:w-[90%] mx-auto flex flex-col gap-4 items-center lg:-top-8 md:-top-6 sm:-top-4 xs:-top-4">
                     { ban !== null &&
-                        <span className="flex">
+                        <div className="flex">
                             <NoSymbolIcon className="md:h-12 sm:h-8 my-auto text-red-500"/>
                             <p className="w-fit text-red-600 pl-4 xl:text-6xl md:text-5xl sm:text-4xl">
                             This user is banned</p>
                             <InformationCircleIcon className="md:h-12 sm:h-8 my-auto" onClick={ infoHandler }/>
-                        </span>
+                        </div>
                     }
                     { other !== null &&
                         <p className="w-fit text-gray-700 dark:text-gray-400 text-md">{ other.bio }</p>
