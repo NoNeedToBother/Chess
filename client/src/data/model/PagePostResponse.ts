@@ -1,7 +1,7 @@
-import {PostDataResponse, PostResponse} from "./PostResponse";
-import {BaseResponse} from "./BaseResponse";
+import { PostDataResponse, PostResponse } from "./PostResponse";
+import { BaseResponse } from "./BaseResponse";
 
-export interface PagePostDataResponse extends BaseResponse{
+export interface PagePostDataResponse extends BaseResponse {
     content?: PostDataResponse[]
 }
 

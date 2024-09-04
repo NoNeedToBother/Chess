@@ -1,5 +1,6 @@
 package ru.kpfu.itis.paramonov.service;
 
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 
@@ -29,4 +30,8 @@ public interface UserService {
     List<PostDto> getLastPosts(Long userId, Integer max);
 
     boolean updateLike(Long userId, Long fromId);
+
+    String updateProfilePicture(Long userId, MultipartFile image);
+
+    UserDto updateUserInfo(Long userId, String name, String lastname, String bio);
 }

@@ -11,7 +11,6 @@ import { TrashIcon } from "@heroicons/react/16/solid";
 import { useDataContext } from "../../../context/DataContext";
 import { checkAuthorityToDeletePost } from "../../../utils/CheckAuthorities";
 
-
 export function PostPage() {
     const { id } = useParams()
     const { user } = useUserContext()

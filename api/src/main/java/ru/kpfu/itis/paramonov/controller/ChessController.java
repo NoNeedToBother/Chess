@@ -107,7 +107,6 @@ public class ChessController {
         if (concedeRequestDto.getFrom().equals(game.getWhite())) other = game.getBlack();
         else other = game.getWhite();
 
-
         sendMessageToUser(concedeRequestDto.getFrom(), new ChessConcedeResponseDto(
                 "CONCEDE", "concede", true
         ));

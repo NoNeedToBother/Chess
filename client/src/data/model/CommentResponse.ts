@@ -1,8 +1,8 @@
-import {UserModelResponse} from "./UserResponse";
-import {BaseResponse} from "./BaseResponse";
-import {Comment} from "../../models/Comment";
+import { UserModelResponse } from "./UserResponse";
+import { BaseResponse } from "./BaseResponse";
+import { Comment } from "../../models/Comment";
 
-export interface CommentResponse extends BaseResponse{
+export interface CommentResponse extends BaseResponse {
     comment?: Comment
 }
 

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { Square, Piece } from "react-chessboard/dist/chessboard/types";
 import { useChess } from "../../hooks/UseChess";
@@ -7,20 +7,30 @@ import { useUserContext } from "../../context/UserContext";
 import { Link } from "react-router-dom";
 import { CircleImage } from "../components/base/CircleImage";
 import { Timer } from "../components/other/Timer";
+import { SlidingInfo } from "../components/base/SlidingInfo";
+import { Searching } from "../components/other/Searching";
 
 
 export function MainPage() {
-    const {fen, move, seek, color, result, concede,
-        time, opponentTime} = useChess()
+    const { fen, move, seek, color, result, concede,
+        time, opponentTime, moveError, clearMoveError } = useChess()
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
-    const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+    const [ selectedPiece, setSelectedPiece ] = useState<Piece | null>(null)
+    const [ selectedSquare, setSelectedSquare ] = useState<Square | null>(null)
+
+    const getPromotion = (targetSquare: Square, piece: Piece): string | undefined => {
         let promotion: string | undefined = undefined
         if (piece.charAt(1) === "P") {
             if (piece.charAt(0) === "w" && targetSquare.charAt(1) === "8") promotion = "q"
             else if (piece.charAt(1) === "b" && targetSquare.charAt(1) === "1") promotion = "q"
         }
+        return promotion
+    }
+
+    const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+        const promotion = getPromotion(targetSquare, piece)
 
         move({
             from: sourceSquare,
@@ -31,6 +41,27 @@ export function MainPage() {
         return false;
     }
 
+    const onSquareClick = (square: Square, piece: Piece | undefined) => {
+        if (piece === undefined) {
+            if (selectedPiece === null) return
+        }
+        if (selectedPiece === null) {
+            if (piece !== undefined) setSelectedPiece(piece)
+            setSelectedSquare(square)
+        } else {
+            const promotion = getPromotion(square, selectedPiece)
+            if (selectedSquare !== null) {
+                move({
+                    from: selectedSquare,
+                    to: square,
+                    promotion: promotion
+                })
+                setSelectedPiece(null)
+                setSelectedSquare(null)
+            }
+        }
+    }
+
     const playHandler = () => {
         if (user !== null) {
             seek(user.id)
@@ -38,9 +69,7 @@ export function MainPage() {
         }
     }
 
-    const concedeHandler = () => {
-        concede()
-    }
+    const concedeHandler = () => concede()
 
     const getColor = (): "black" | "white" => {
         if (color === "white") return "white";
@@ -48,72 +77,73 @@ export function MainPage() {
         else return "white";
     }
 
-    return (
-        <>
-            <div className="py-32">
-                {fen !== null && color !== null &&
-                    <div>
-                        <div className="block mx-auto lg:w-[800px] lg:h-[800px] md:w-[600px] md:h-[600px] xs:w-[300px] xs:h-[300px]">
-                            { opponent !== null &&
-                                <span className="flex justify-center border-4 border-gray-400 shadow-md rounded-r">
-                                    <CircleImage src={ opponent.profilePicture } className="h-20"/>
-                                    <Link to={"/profile/" + opponent.id}>
-                                        <div className="w-full h-full">
-                                            <h2 className="ml-2 h-1/2 my-6">
-                                                {opponent.username}
-                                            </h2>
-                                        </div>
-                                    </Link>
-                                </span>
-                            }
-                            <div className="mt-6">
-                                <div className="lg:flex lg:flex-row gap-4">
-                                    <Chessboard position={ fen } autoPromoteToQueen={ true } boardOrientation={ getColor() }
-                                                    onPieceDrop={ onDrop } customBoardStyle={ {borderRadius: "5px"} }/>
-                                    { time !== null && opponentTime !== null &&
-                                        <div className="mx-auto md:my-auto w-[400px] h-[200px]">
-                                            <Timer time={ time } opponentTime={ opponentTime }></Timer>
-                                        </div>
-                                    }
+    return <div className="my-32 p-8">
+        { fen !== null && color !== null &&
+            <div>
+                <div className="block mx-auto lg:w-[800px] md:w-[600px] xs:w-[300px]">
+                    { opponent !== null &&
+                        <span className="flex justify-center border-4 border-gray-400 shadow-md rounded-r">
+                            <CircleImage src={ opponent.profilePicture } className="h-20"/>
+                            <Link to={ "/profile/" + opponent.id }>
+                                <div className="w-full h-full">
+                                    <h2 className="ml-2 h-1/2 my-6">
+                                        { opponent.username }
+                                    </h2>
                                 </div>
-                                { result === undefined &&
-                                    <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
-                                            onClick={ concedeHandler }
-                                    >Concede</button>
-                                }
-                                {result !== undefined &&
-                                    <>
-                                        <button className="w-[30%] mt-4 mx-[35%] border-2"
-                                              onClick={playHandler}
-                                        >Play again
-                                        </button>
-                                        <ResultFactory result={result}/>
-                                    </>
-                                }
-                            </div>
-                        </div>
-                    </div>
-                }
-                {fen === null &&
-                    <div className="lg:grid lg:grid-cols-3">
-                        <div className="col-span-2">
-                            <img alt="chessboard"
-                                 src="https://hichess.ru/wa-data/public/shop/products/40/35/3540/images/17699/17699.970.jpg"
-                                className="w-full"/>
-                        </div>
-                        <div>
-                            <button className="w-[20%] mx-[40%] my-20 border-2 border-blue-600 hover:bg-blue-100"
-                                    onClick={playHandler}>PLAY</button>
-                            { search &&
-                                <h1 className="mx-10">Searching...</h1>
+                            </Link>
+                        </span>
+                    }
+                    <div className="mt-6">
+                        <div className="lg:flex lg:flex-row gap-4">
+                            <Chessboard position = { fen } autoPromoteToQueen = { true }
+                                        boardOrientation = { getColor() }
+                                        onPieceDrop = { onDrop }
+                                        customBoardStyle = { { borderRadius: "5px" } }
+                                        onSquareClick = { onSquareClick }
+                            />
+                            { time !== null && opponentTime !== null &&
+                                <div className="mx-auto md:my-auto md:w-[400px] md:h-[200px] w-[300px] h-[150px]">
+                                    <Timer time={ time } opponentTime={ opponentTime }></Timer>
+                                </div>
                             }
                         </div>
-
+                        { result === undefined &&
+                            <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
+                                    onClick={ concedeHandler }
+                            >Concede</button>
+                        }
+                        { result !== undefined &&
+                            <>
+                                <button className="w-[30%] mt-4 mx-[35%] border-2"
+                                        onClick={ playHandler }
+                                >Play again
+                                </button>
+                                <ResultFactory result={ result }/>
+                            </>
+                        }
                     </div>
-                }
+                </div>
             </div>
-        </>
-    )
+        }
+
+        { fen === null &&
+            <div className="items-center border-2">
+                <div>
+                    <div className="text-center font-logo text-8xl hover:gradient-anim">Chess</div>
+                    <div className="italic text-center py-2">play and discuss at same time</div>
+                    <button className="w-[20%] mx-[40%] mt-20 border-2 border-blue-600 hover:bg-blue-100"
+                            onClick={ playHandler }>PLAY
+                    </button>
+                    { search &&
+                        <Searching/>
+                    }
+                </div>
+            </div>
+        }
+        <SlidingInfo show={ moveError !== null } onClose={ () => clearMoveError() }>
+            <div>{ moveError }</div>
+        </SlidingInfo>
+    </div>
 }
 
 interface ResultFactoryProps {

@@ -8,18 +8,14 @@ interface CircleImageProps {
 
 
 export function CircleImage( {src, className, onClick}: CircleImageProps) {
-    let resultClassName = "block mx-auto rounded-full sm:mx-0 sm:shrink-0"
-    if (className !== undefined) {
-        resultClassName += className
-    }
-    if (onClick !== undefined) {
-        resultClassName += " cursor-pointer"
-    }
+    const resultClassName =
+        `block mx-auto rounded-full sm:mx-0 sm:shrink-0
+        ${ className !== undefined && className }
+        ${ onClick !== undefined && " cursor-pointer"}`
+
     const clickHandler = () => {
         if (onClick !== undefined) { onClick() }
     }
-    return (
-        <img className= { className + " " + resultClassName }
-             src={ src } onClick={ clickHandler }  alt="Profile picture"/>
-    )
+    return <img className= { className + " " + resultClassName }
+             src={ src } onClick={ clickHandler } alt="Profile picture"/>
 }
