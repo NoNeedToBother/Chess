@@ -1,5 +1,5 @@
 import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Navigator } from "../../../utils/Navigator";
 import { ChevronDownIcon } from "@heroicons/react/16/solid";
 
@@ -9,6 +9,40 @@ interface UserMenuProps {
 }
 
 export function UserMenu({ navigator, onLogout }: UserMenuProps) {
+
+    const [ shouldExpand, setShouldExpand ] = useState<boolean | null>(null)
+    const menuButtonRef = useRef<HTMLButtonElement | null>(null)
+
+    const handleAttributeChange = () => {
+        if (menuButtonRef.current !== null) {
+            const active = menuButtonRef.current.dataset.active
+            if (active === undefined) {
+                if (shouldExpand !== false) setShouldExpand(false)
+            }
+            else if (active === "") {
+                if (shouldExpand !== true) setShouldExpand(true)
+            }
+        }
+    }
+
+    useEffect(() => {
+        const observer = new MutationObserver((mutationsList) => {
+            for (let mutation of mutationsList) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'data-active') {
+                    handleAttributeChange()
+                }
+            }
+        })
+
+        if (menuButtonRef.current !== null) {
+            observer.observe(menuButtonRef.current, {
+                attributes: true,
+            })
+        }
+
+        return () => observer.disconnect()
+    }, [])
+
     const profileClickedHandler = () => navigator.navigateToProfile()
     const logoutClickedHandler = () => onLogout?.()
     const postsClickedHandler = () => navigator.navigateToPosts()
@@ -16,8 +50,9 @@ export function UserMenu({ navigator, onLogout }: UserMenuProps) {
 
     return <Menu>
         <MenuButton
+            ref={ menuButtonRef }
             className="inline-flex items-center gap-2 rounded-md py-1.5 px-3 text-sm/6 font-semibold text-white shadow-white/10 focus:outline-none data-[focus]:outline-1 data-[focus]:outline-white">
-            <ChevronDownIcon className="size-4 fill-black/60"/>
+            <ChevronDownIcon className={ `size-4 fill-black/60 ${ shouldExpand !== null && (shouldExpand ? "rotate-up" : "rotate-down") }` }/>
         </MenuButton>
         <Transition
             enter="transition ease-out duration-200"

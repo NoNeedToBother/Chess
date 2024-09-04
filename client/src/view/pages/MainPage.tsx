@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import { CircleImage } from "../components/base/CircleImage";
 import { Timer } from "../components/other/Timer";
 import { SlidingInfo } from "../components/base/SlidingInfo";
+import { Searching } from "../components/other/Searching";
 
 
 export function MainPage() {
@@ -93,13 +94,15 @@ export function MainPage() {
         }
 
         { fen === null &&
-            <div className="justify-center">
+            <div className="items-center border-2">
                 <div>
-                    <div>HELLO</div>
-                    <button className="w-[20%] mx-[40%] my-20 border-2 border-blue-600 hover:bg-blue-100"
-                            onClick={ playHandler }>PLAY</button>
+                    <div className="text-center font-logo text-8xl hover:gradient-anim">Chess</div>
+                    <div className="italic text-center py-2">play and discuss at same time</div>
+                    <button className="w-[20%] mx-[40%] mt-20 border-2 border-blue-600 hover:bg-blue-100"
+                            onClick={ playHandler }>PLAY
+                    </button>
                     { search &&
-                        <h1 className="mx-10">Searching...</h1>
+                        <Searching/>
                     }
                 </div>
             </div>
