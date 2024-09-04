@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Chessboard } from "react-chessboard";
 import { Square, Piece } from "react-chessboard/dist/chessboard/types";
 import { useChess } from "../../hooks/UseChess";
@@ -17,12 +17,20 @@ export function MainPage() {
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
-    const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+    const [ selectedPiece, setSelectedPiece ] = useState<Piece | null>(null)
+    const [ selectedSquare, setSelectedSquare ] = useState<Square | null>(null)
+
+    const getPromotion = (targetSquare: Square, piece: Piece): string | undefined => {
         let promotion: string | undefined = undefined
         if (piece.charAt(1) === "P") {
             if (piece.charAt(0) === "w" && targetSquare.charAt(1) === "8") promotion = "q"
             else if (piece.charAt(1) === "b" && targetSquare.charAt(1) === "1") promotion = "q"
         }
+        return promotion
+    }
+
+    const onDrop = (sourceSquare: Square, targetSquare: Square, piece: Piece) => {
+        const promotion = getPromotion(targetSquare, piece)
 
         move({
             from: sourceSquare,
@@ -31,6 +39,27 @@ export function MainPage() {
         });
 
         return false;
+    }
+
+    const onSquareClick = (square: Square, piece: Piece | undefined) => {
+        if (piece === undefined) {
+            if (selectedPiece === null) return
+        }
+        if (selectedPiece === null) {
+            if (piece !== undefined) setSelectedPiece(piece)
+            setSelectedSquare(square)
+        } else {
+            const promotion = getPromotion(square, selectedPiece)
+            if (selectedSquare !== null) {
+                move({
+                    from: selectedSquare,
+                    to: square,
+                    promotion: promotion
+                })
+                setSelectedPiece(null)
+                setSelectedSquare(null)
+            }
+        }
     }
 
     const playHandler = () => {
@@ -66,10 +95,14 @@ export function MainPage() {
                     }
                     <div className="mt-6">
                         <div className="lg:flex lg:flex-row gap-4">
-                            <Chessboard position={ fen } autoPromoteToQueen={ true } boardOrientation={ getColor() }
-                                        onPieceDrop={ onDrop } customBoardStyle={ {borderRadius: "5px"} }/>
+                            <Chessboard position = { fen } autoPromoteToQueen = { true }
+                                        boardOrientation = { getColor() }
+                                        onPieceDrop = { onDrop }
+                                        customBoardStyle = { { borderRadius: "5px" } }
+                                        onSquareClick = { onSquareClick }
+                            />
                             { time !== null && opponentTime !== null &&
-                                <div className="mx-auto md:my-auto w-[400px] h-[200px]">
+                                <div className="mx-auto md:my-auto md:w-[400px] md:h-[200px] w-[300px] h-[150px]">
                                     <Timer time={ time } opponentTime={ opponentTime }></Timer>
                                 </div>
                             }
