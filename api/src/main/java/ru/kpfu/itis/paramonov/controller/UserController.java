@@ -1,7 +1,6 @@
 package ru.kpfu.itis.paramonov.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +13,6 @@ import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.dto.request.BanUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.request.PromoteUserRequestDto;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
-import ru.kpfu.itis.paramonov.exceptions.NotFoundException;
 import ru.kpfu.itis.paramonov.filter.jwt.JwtAuthentication;
 import ru.kpfu.itis.paramonov.service.BanService;
 import ru.kpfu.itis.paramonov.service.UserService;
@@ -23,9 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.NO_USER_FOUND_ERROR;
-
-@Slf4j
 @RestController
 @RequestMapping("/api/users")
 @AllArgsConstructor
@@ -39,8 +34,9 @@ public class UserController {
     public ResponseEntity<BanUserResponseDto> ban(@RequestBody BanUserRequestDto banUserRequestDto, JwtAuthentication authentication) {
         Long fromId = authentication.getId();
         userService.ban(banUserRequestDto.getBannedId(), banUserRequestDto.getReason(), fromId);
+        Optional<UserDto> banned = userService.getById(banUserRequestDto.getBannedId());
         return new ResponseEntity<>(
-                new BanUserResponseDto(get(banUserRequestDto.getBannedId(), authentication).getBody()),
+                new BanUserResponseDto(get(banned.get(), authentication).getBody()),
                 HttpStatus.OK
         );
     }
@@ -74,46 +70,38 @@ public class UserController {
 
     @GetMapping("/get")
     public ResponseEntity<UserResponseDto> get(
-            @RequestParam("id") Long userId,
+            @RequestParam("id") UserDto user,
             JwtAuthentication authentication
     ) {
         Long fromId = authentication.getId();
-        Optional<UserDto> user = userService.getById(userId);
-        if (user.isPresent()) {
-            boolean liked = userService.checkLike(userId, fromId);
-            boolean banned = userService.isBanned(userId);
-            if (banned) {
-                BanDto ban = banService.getLatestBan(userId);
-                return new ResponseEntity<>(new UserResponseDto(user.get(), liked, ban), HttpStatus.OK);
-            }
-            else return new ResponseEntity<>(new UserResponseDto(user.get(), liked), HttpStatus.OK);
-        } else throw new NotFoundException(NO_USER_FOUND_ERROR);
+        boolean liked = userService.checkLike(user.getId(), fromId);
+        boolean banned = userService.isBanned(user.getId());
+        if (banned) {
+            BanDto ban = banService.getLatestBan(user.getId());
+            return new ResponseEntity<>(new UserResponseDto(user, liked, ban), HttpStatus.OK);
+        }
+        else return new ResponseEntity<>(new UserResponseDto(user, liked), HttpStatus.OK);
     }
 
     @GetMapping("/get/posts")
     public ResponseEntity<PostsResponseDto> getPosts(
-            @RequestParam("id") Long userId, @RequestParam("amount") Integer maxAmount
+            @RequestParam("id") UserDto user, @RequestParam("amount") Integer maxAmount
     ) {
-        Optional<UserDto> user = userService.getById(userId);
-        if (user.isPresent()) {
-            List<PostDto> posts = userService.getLastPosts(userId, maxAmount);
-            List<PostResponseDto> responses = posts.stream()
-                    .map(postDto -> new PostResponseDto(user.get(), postDto)
-                    ).collect(Collectors.toList());
-            return new ResponseEntity<>(new PostsResponseDto(responses), HttpStatus.OK);
-        } else throw new NotFoundException(NO_USER_FOUND_ERROR);
+        List<PostDto> posts = userService.getLastPosts(user.getId(), maxAmount);
+        List<PostResponseDto> responses = posts.stream()
+                .map(postDto -> new PostResponseDto(user, postDto)
+                ).collect(Collectors.toList());
+        return new ResponseEntity<>(new PostsResponseDto(responses), HttpStatus.OK);
     }
 
     @GetMapping("/update/like")
     public ResponseEntity<UserResponseDto> updateLike(
-            @RequestParam("id") Long userId, JwtAuthentication authentication
+            @RequestParam("id") UserDto user, JwtAuthentication authentication
     ) {
         Long fromId = authentication.getId();
-        Optional<UserDto> user = userService.getById(userId);
-        if (user.isPresent()) {
-            userService.updateLike(userId, fromId);
-            return get(userId, authentication);
-        } else throw new NotFoundException(NO_USER_FOUND_ERROR);
+        userService.updateLike(user.getId(), fromId);
+        user = userService.getById(user.getId()).get();
+        return get(user, authentication);
     }
 
     @PostMapping(value = "/update/profile/picture", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

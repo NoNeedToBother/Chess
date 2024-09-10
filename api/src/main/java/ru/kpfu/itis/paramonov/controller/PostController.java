@@ -49,19 +49,16 @@ public class PostController {
                 uploadPostRequestDto.getDescription(),
                 uploadPostRequestDto.getContent(),
                 image, authorId);
-        return get(postDto.getId());
+        return get(postDto);
     }
 
     @GetMapping("/get")
-    public ResponseEntity<PostResponseDto> get(@RequestParam Long id) {
-        Optional<PostDto> post = postService.getById(id);
-        if (post.isPresent()) {
-            UserDto author = userService.getById(post.get().getAuthorId()).orElseThrow(
-                    () -> new NotFoundException(NO_USER_FOUND_ERROR)
-            );
-            PostResponseDto postResponseDto = new PostResponseDto(author, post.get());
-            return ResponseEntity.ok(postResponseDto);
-        } else throw new NotFoundException(NO_POST_FOUND_ERROR);
+    public ResponseEntity<PostResponseDto> get(@RequestParam("id") PostDto post) {
+        UserDto author = userService.getById(post.getAuthorId()).orElseThrow(
+                () -> new NotFoundException(NO_USER_FOUND_ERROR)
+        );
+        PostResponseDto postResponseDto = new PostResponseDto(author, post);
+        return ResponseEntity.ok(postResponseDto);
     }
 
     @GetMapping("/get/all")
