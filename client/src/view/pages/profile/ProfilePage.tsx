@@ -1,13 +1,18 @@
 import { useUser } from "../../../hooks/UseUser";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useUserContext } from "../../../context/UserContext";
 import { PostSection } from "../../components/profile/PostSection";
 import { InfoSection } from "../../components/profile/InfoSection";
 import { ProfileMainSection } from "../../components/profile/ProfileMainSection";
+import { UpdateProfileInfoForm } from "../../components/form/UpdateProfileInfoForm";
+import { Modal } from "../../components/base/Modal";
 
 export function ProfilePage() {
     const userContext = useUserContext()
-    const { user, get, userPosts, getPosts } = useUser()
+    const { user, get, userPosts, getPosts, updateProfilePicture, updateProfileInfo } = useUser()
+
+    const [ image, setImage ] = useState<File | null>(null)
+    const [ showModal, setShowModal ] = useState(false)
 
     useEffect(() => {
         if (userContext.user !== null) {
@@ -16,8 +21,13 @@ export function ProfilePage() {
         }
     }, []);
 
-    return <div>
+    return
         <section className="w-full overflow-hidden dark:bg-gray-900">
+            { showModal &&
+                <Modal title="Input info to update" onClose={ () => setShowModal(false) }>
+                    <UpdateProfileInfoForm onSubmit={ onUpdateProfileInfoFormSubmit }/>
+                 </Modal>
+            }
             <div className="flex flex-col">
                 <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
                 <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
@@ -34,7 +44,6 @@ export function ProfilePage() {
                     <InfoSection user={ user }/>
                 </div>
                 <PostSection posts={ userPosts }/>
-            </div>
-        </section>
-    </div>
+             </div>
+    </section>
 }

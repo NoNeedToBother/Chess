@@ -1,7 +1,10 @@
 package ru.kpfu.itis.paramonov.service.impl;
 
+import com.cloudinary.Cloudinary;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import ru.kpfu.itis.paramonov.converters.posts.PostConverter;
 import ru.kpfu.itis.paramonov.dto.social.PostDto;
 import ru.kpfu.itis.paramonov.exceptions.InvalidParameterException;
@@ -15,17 +18,24 @@ import ru.kpfu.itis.paramonov.dto.users.UserDto;
 import ru.kpfu.itis.paramonov.model.User;
 import ru.kpfu.itis.paramonov.repository.UserRepository;
 import ru.kpfu.itis.paramonov.repository.UserRoleRepository;
+import ru.kpfu.itis.paramonov.utils.FileUtil;
 
 import javax.transaction.Transactional;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static ru.kpfu.itis.paramonov.utils.ExceptionMessages.*;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
+
+    private Cloudinary cloudinary;
 
     private UserRepository userRepository;
 
@@ -167,6 +177,36 @@ public class UserServiceImpl implements UserService {
             userRepository.like(userId, fromId);
             return true;
         }
+    }
+
+    @Override
+    @Transactional
+    public String updateProfilePicture(Long userId, MultipartFile image) {
+        try {
+            File file = FileUtil.uploadPartImage(image);
+            String url = cloudinary.uploader().upload(file, new HashMap<>()).get("secure_url").toString();
+            userRepository.updateUserProfilePictureUrl(userId, url);
+            return url;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public UserDto updateUserInfo(Long userId, String name, String lastname, String bio) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (!userOptional.isPresent()) throw new NotFoundException(NO_USER_FOUND_ERROR);
+
+        User user = userOptional.get();
+        if (name != null) user.setName(name);
+        if (lastname != null) user.setLastname(lastname);
+        if (bio != null) user.setBio(bio);
+        User resultUser = userRepository.save(user);
+
+        UserDto userDto = userConverter.convert(resultUser);
+        int likeAmount = userRepository.getLikeAmount(userId);
+        userDto.setLikes(likeAmount);
+        return userDto;
     }
 
     public void checkAuthoritiesAndPromoteIfSatisfy(Long promotedId, Long fromId, Role role) {
