@@ -1,4 +1,4 @@
-import { PostCard } from "../../components/post/PostCard";
+import { PostCard } from "../post/PostCard";
 import { Post } from "../../../models/Post";
 
 export interface PostSectionProps {
