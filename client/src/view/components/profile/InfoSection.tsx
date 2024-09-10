@@ -1,4 +1,4 @@
-import { ProfileInfo } from "../../components/other/ProfileInfo";
+import { ProfileInfo } from "../other/ProfileInfo";
 import React from "react";
 import { User } from "../../../models/User";
 
