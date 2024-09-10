@@ -1,4 +1,4 @@
-import { ProfileInfo } from "../other/ProfileInfo";
+import { ProfileInfo } from "./ProfileInfo";
 import React from "react";
 import { User } from "../../../models/User";
 

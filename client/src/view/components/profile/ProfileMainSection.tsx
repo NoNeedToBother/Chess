@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { User } from "../../../models/User";
-import {ArrowUpTrayIcon, HandThumbUpIcon} from "@heroicons/react/16/solid";
+import { ArrowUpTrayIcon, HandThumbUpIcon } from "@heroicons/react/16/solid";
 import { RoleLabel } from "./RoleLabel";
 import { checkAuthorityToBanAndUnban } from "../../../utils/CheckAuthorities";
 
@@ -70,21 +70,19 @@ export function ProfileMainSection({ own, user, otherUserProfileProps, ownUserPr
                 )
             }
             <div className="lg:w-[6rem] md:w-[5rem] sm:w-[4rem] mx-auto">
-                <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem]">{user.likes + " likes"}</p>
+                <p className="lg:w-[4rem] md:w-[3rem] sm:w-[2rem] text-center mx-auto">{ user.likes + " likes" }</p>
                 <HandThumbUpIcon
-                    className={`h-10 ${own ? "" : (otherUserProfileProps?.isLiked ? "" : "hover:text-green-800")} ${getLikeColor()}`}
-                    onClick={otherUserProfileProps?.onLikeClick}/>
+                    className={ `h-10 mx-auto ${own ? "" : (otherUserProfileProps?.isLiked ? "" : "hover:text-green-800")} ${getLikeColor()}` }
+                    onClick={ otherUserProfileProps?.onLikeClick }/>
             </div>
 
             {!own && otherUserProfileProps !== undefined && checkAuthorityToBanAndUnban(user, otherUserProfileProps.from) &&
                 (
                     otherUserProfileProps.isBanned
-                        ? <button className="mx-[25%] w-1/2 border-2 border-red-600 hover:bg-red-100"
-                                  onClick={() => otherUserProfileProps.onBan()}>Ban</button>
-
-                        : <button className="mx-[25%] w-1/2 border-2 border-green-600 hover:bg-green-100"
+                        ? <button className="mx-[25%] w-1/2 border-2 border-green-600 hover:bg-green-100"
                                   onClick={ () => otherUserProfileProps.onUnban() }>Unban</button>
-
+                        : <button className="mx-[25%] w-1/2 border-2 border-red-600 hover:bg-red-100"
+                                  onClick={ () => otherUserProfileProps.onBan() }>Ban</button>
                 )
             }
         </div>
