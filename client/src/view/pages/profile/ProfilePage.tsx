@@ -34,7 +34,7 @@ export function ProfilePage() {
             </Modal>
         }
         <div className="flex flex-col">
-            <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
+            <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200 opacity-50"/>
             <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
                 { user !== null &&
                     <ProfileMainSection user={ user } own={ true }

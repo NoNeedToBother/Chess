@@ -14,6 +14,7 @@ import { ProfilePage } from "./view/pages/profile/ProfilePage";
 import { OtherUserProfilePage } from "./view/pages/profile/OtherUserProfilePage";
 import { useChessContext } from "./context/ChessContext";
 import { Modal } from "./view/components/base/Modal";
+import { ChessBackground } from "./view/components/base/ChessBackground";
 
 function App() {
     const { user, clearUser, justBannedInfo, setJustBannedInfo } = useUserContext()
@@ -74,9 +75,9 @@ function App() {
                 <Route path="/profile" element={ <ProfilePage/> }/>
                 <Route path="/profile/:id" element={ <OtherUserProfilePage/> }/>
             </Routes>
+            <ChessBackground/>
         </>
-
-    );
+    )
 }
 
 export default App;

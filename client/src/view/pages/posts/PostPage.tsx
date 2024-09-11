@@ -42,8 +42,8 @@ export function PostPage() {
     return (
         <>
             { post !== null &&
-                <div className="w-full h-full bg-white dark:bg-gray-800">
-                    <div className="w-full mx-auto py-32 bg-white dark:bg-gray-800">
+                <div className="w-full h-full dark:bg-gray-800">
+                    <div className="w-full mx-auto py-32 dark:bg-gray-800">
                         <h1 className="w-[92%] mx-auto lg:text-4xl md:text-3xl xs:text-2xl text-center font-serif font-semibold pb-4 pt-8 dark:text-white">
                             { post.title }</h1>
 

@@ -38,9 +38,9 @@ export function UploadPostPage() {
         }
     }
 
-    return <div className="w-full h-full bg-white dark:bg-gray-800">
+    return <div className="w-full h-full dark:bg-gray-800">
         <form onSubmit={ formSubmitHandler }>
-            <div className="w-full mx-auto py-32 bg-white dark:bg-gray-800">
+            <div className="w-full mx-auto py-32 dark:bg-gray-800">
                 { image === null &&
                     <img src="https://parpol.ru/wp-content/uploads/2019/09/placeholder.png"
                          alt="Post image"
