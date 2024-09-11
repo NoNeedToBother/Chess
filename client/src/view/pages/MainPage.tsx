@@ -12,8 +12,7 @@ import { Searching } from "../components/other/Searching";
 
 
 export function MainPage() {
-    const { fen, move, seek, color, result, concede,
-        time, opponentTime, moveError, clearMoveError } = useChess()
+    const { game, move, seek, concede, cancelSeek, time, moveError, clearMoveError } = useChess()
     const { search, setSearch } = useChessContext()
     const { user, opponent } = useUserContext()
 
@@ -68,20 +67,20 @@ export function MainPage() {
             setSearch(true)
         }
     }
-    const cancelHandler = () => {
-
+    const cancelSeekHandler = () => {
+        if (user !== null) cancelSeek(user.id)
     }
 
     const concedeHandler = () => concede()
 
     const getColor = (): "black" | "white" => {
-        if (color === "white") return "white";
-        if (color === "black") return "black";
+        if (game.color === "white") return "white";
+        if (game.color === "black") return "black";
         else return "white";
     }
 
     return <div className="my-32 p-8">
-        { fen !== null && color !== null &&
+        { game.fen !== null && game.color !== null &&
             <div>
                 <div className="block mx-auto lg:w-[800px] md:w-[600px] xs:w-[300px]">
                     { opponent !== null &&
@@ -98,30 +97,30 @@ export function MainPage() {
                     }
                     <div className="mt-6">
                         <div className="lg:flex lg:flex-row gap-4">
-                            <Chessboard position = { fen } autoPromoteToQueen = { true }
+                            <Chessboard position = { game.fen } autoPromoteToQueen = { true }
                                         boardOrientation = { getColor() }
                                         onPieceDrop = { onDrop }
                                         customBoardStyle = { { borderRadius: "5px" } }
                                         onSquareClick = { onSquareClick }
                             />
-                            { time !== null && opponentTime !== null &&
+                            { time.time !== null && time.opponentTime !== null &&
                                 <div className="mx-auto md:my-auto md:w-[400px] md:h-[200px] w-[300px] h-[150px]">
-                                    <Timer time={ time } opponentTime={ opponentTime }></Timer>
+                                    <Timer time={ time.time } opponentTime={ time.opponentTime }></Timer>
                                 </div>
                             }
                         </div>
-                        { result === undefined &&
+                        { game.result === undefined &&
                             <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"
                                     onClick={ concedeHandler }
                             >Concede</button>
                         }
-                        { result !== undefined &&
+                        { game.result !== undefined &&
                             <>
                                 <button className="w-[30%] mt-4 mx-[35%] border-2"
                                         onClick={ playHandler }
                                 >Play again
                                 </button>
-                                <ResultFactory result={ result }/>
+                                <ResultFactory result={ game.result }/>
                             </>
                         }
                     </div>
@@ -129,7 +128,7 @@ export function MainPage() {
             </div>
         }
 
-        { fen === null &&
+        { game.fen === null &&
             <div className="items-center border-2">
                 <div>
                     <div className="text-center font-logo text-8xl hover:gradient-anim">Chess</div>
@@ -140,7 +139,7 @@ export function MainPage() {
                     { search &&
                         <div className="mt-10">
                             <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl border-2 border-red-600 hover:bg-red-100"
-                                    onClick={ cancelHandler }>Cancel searching
+                                    onClick={ cancelSeekHandler }>Cancel searching
                             </button>
                             <Searching/>
                         </div>
@@ -148,7 +147,7 @@ export function MainPage() {
                 </div>
             </div>
         }
-        <SlidingInfo show={moveError !== null} onClose={() => clearMoveError()}>
+        <SlidingInfo show={ moveError !== null } onClose={ () => clearMoveError() }>
             <div>{ moveError }</div>
         </SlidingInfo>
     </div>
@@ -166,26 +165,26 @@ function ResultFactory({ result }: ResultFactoryProps) {
 
     switch (result) {
         case "win":
-            return <div className={ baseStyle + " " + winColor }>Checkmate, you won!</div>
+            return <div className={ `${ baseStyle } ${ winColor }` }>Checkmate, you won!</div>
         case "lose":
-            return <div className={ baseStyle + " " + loseColor }>Checkmate, you lost!</div>
+            return <div className={ `${ baseStyle } ${ loseColor }` }>Checkmate, you lost!</div>
         case "draw":
-            return <div className={ baseStyle + " " + drawColor }>A draw!</div>
+            return <div className={ `${ baseStyle } ${ drawColor }` }>A draw!</div>
         case "stalemate":
-            return <div className={ baseStyle + " " + drawColor }>Draw, a stalemate!</div>
+            return <div className={ `${ baseStyle } ${ drawColor }` }>Draw, a stalemate!</div>
         case "insufficient":
-            return <div className={ baseStyle + " " + drawColor }>Draw, insufficient material!</div>
+            return <div className={ `${ baseStyle } ${ drawColor }` }>Draw, insufficient material!</div>
         case "win_disconnect":
-            return <div className={ baseStyle + " " + winColor }>Opponent disconnected, you won!</div>
+            return <div className={ `${ baseStyle } ${ winColor }` }>Opponent disconnected, you won!</div>
         case "win_concede":
-            return <div className={ baseStyle + " " + winColor }>Opponent conceded, you won!</div>
+            return <div className={ `${ baseStyle } ${ winColor }` }>Opponent conceded, you won!</div>
         case "lose_concede":
-            return <div className={ baseStyle + " " + loseColor }>You conceded!</div>
+            return <div className={ `${ baseStyle } ${ loseColor }` }>You conceded!</div>
         case "win_time":
-            return <div className={ baseStyle + " " + winColor }>Opponent's time ran out, you won!</div>
+            return <div className={ `${ baseStyle } ${ winColor }` }>Opponent's time ran out, you won!</div>
         case "lose_time":
-            return <div className={ baseStyle + " " + loseColor }>Your time ran out!</div>
+            return <div className={ `${ baseStyle } ${ loseColor }` }>Your time ran out!</div>
         default:
-            throw new Error(`Unknown result: ${result}`)
+            throw new Error(`Unknown result: ${ result }`)
     }
 }

@@ -22,6 +22,8 @@ public class ChessController {
 
     private final List<Integer> queue = new ArrayList<>();
 
+    private final Map<Integer, Thread> seekGameThreads = new HashMap<>();
+
     private final Random rand = new Random();
 
     private final ChessApiService chessApiService;
@@ -33,6 +35,13 @@ public class ChessController {
         headerAccessor.getSessionAttributes().put("id", id);
         queue.add(id);
         seekGame(id);
+    }
+
+    @MessageMapping("/game/seek/cancel")
+    public void processCancelSeekRequest(CancelSeekGameRequestDto cancelSeekGameRequestDto) {
+        Integer id = cancelSeekGameRequestDto.getFrom();
+        Thread seekThread = seekGameThreads.get(id);
+        if (seekThread != null) seekThread.interrupt();
     }
 
     @MessageMapping("/game/move")
@@ -148,31 +157,35 @@ public class ChessController {
 
     private void seekGame(Integer id) {
         Runnable seekTask = () -> {
-            long time = 0;
-            while(true) {
-                if (time > MAX_WAIT_TIME_MILLIS) {
-                    sendCancelGame(id);
-                    break;
-                }
-                synchronized (queue) {
-                    if (!queue.isEmpty() && queue.contains(id)) {
-                        int random = rand.nextInt(queue.size());
-                        Integer other = queue.get(random);
-                        if (!other.equals(id)) {
-                            queue.remove(other);
-                            queue.remove(id);
-                            sendGameBegin(id, other);
-                            break;
-                        }
-                    } else if (!queue.contains(id)) break;
-                }
-                try {
+            try {
+                long time = 0;
+                while(true) {
+                    if (time > MAX_WAIT_TIME_MILLIS) {
+                        sendCancelGameSeek(id);
+                        break;
+                    }
+                    synchronized (queue) {
+                        if (!queue.isEmpty() && queue.contains(id)) {
+                            int random = rand.nextInt(queue.size());
+                            Integer other = queue.get(random);
+                            if (!other.equals(id)) {
+                                queue.remove(other);
+                                queue.remove(id);
+                                sendGameBegin(id, other);
+                                break;
+                            }
+                        } else if (!queue.contains(id)) break;
+                    }
                     Thread.sleep(200L);
                     time += 200L;
-                } catch (InterruptedException ignored) {}
+                }
+            } catch (InterruptedException e) {
+                queue.remove(id);
+                sendCancelGameSeek(id);
             }
         };
         Thread thread = new Thread(seekTask);
+        seekGameThreads.put(id, thread);
         thread.start();
     }
     private void sendGameBegin(Integer player1, Integer player2) {
@@ -255,8 +268,8 @@ public class ChessController {
         sendMessageToUser(playerId, new ChessCancelGameResponseDto("OMIT", "The game does not exist"));
     }
 
-    private void sendCancelGame(Integer playerId) {
-        sendMessageToUser(playerId, new ChessCancelGameSearchResponseDto("CANCEL_SEARCH"));
+    private void sendCancelGameSeek(Integer playerId) {
+        sendMessageToUser(playerId, new ChessCancelGameSeekResponseDto("CANCEL_SEARCH"));
     }
 
     private void sendMessageToUser(Integer playerId, Object payload) {

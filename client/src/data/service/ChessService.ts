@@ -22,7 +22,7 @@ export interface ConcedeRequest {
 
 export interface GameHandler {
     onSeekEnd?: (response: BeginResponse) => void
-    onSearchCancelled?: () => void
+    onSeekCancel?: () => void
     onOmit?: (error: string) => void
     onMove?: (response: MoveResponse) => void
     onEnd?: (response: EndResponse) => void
@@ -60,7 +60,7 @@ export class ChessService {
                 this.gameHandler?.onSeekEnd?.(json)
                 break
             case "CANCEL_SEARCH":
-                this.gameHandler?.onSearchCancelled?.()
+                this.gameHandler?.onSeekCancel?.()
                 this.onGameEnd()
                 break
             case "MOVE":
@@ -91,6 +91,19 @@ export class ChessService {
                     {
                         from: id
                     })
+            })
+        }
+    }
+
+    cancelSeek(id: number) {
+        if (this.client !== undefined) {
+            this.client.publish({
+                destination: "/chess/game/seek/cancel",
+                body: JSON.stringify(
+                    {
+                        from: id
+                    }
+                )
             })
         }
     }
