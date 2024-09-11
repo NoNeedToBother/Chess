@@ -68,6 +68,9 @@ export function MainPage() {
             setSearch(true)
         }
     }
+    const cancelHandler = () => {
+
+    }
 
     const concedeHandler = () => concede()
 
@@ -131,16 +134,21 @@ export function MainPage() {
                 <div>
                     <div className="text-center font-logo text-8xl hover:gradient-anim">Chess</div>
                     <div className="italic text-center py-2">play and discuss at same time</div>
-                    <button className="w-[20%] mx-[40%] mt-20 border-2 border-blue-600 hover:bg-blue-100"
+                    <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl mt-20 border-2 border-blue-600 hover:bg-blue-100"
                             onClick={ playHandler }>PLAY
                     </button>
                     { search &&
-                        <Searching/>
+                        <div className="mt-10">
+                            <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl border-2 border-red-600 hover:bg-red-100"
+                                    onClick={ cancelHandler }>Cancel searching
+                            </button>
+                            <Searching/>
+                        </div>
                     }
                 </div>
             </div>
         }
-        <SlidingInfo show={ moveError !== null } onClose={ () => clearMoveError() }>
+        <SlidingInfo show={moveError !== null} onClose={() => clearMoveError()}>
             <div>{ moveError }</div>
         </SlidingInfo>
     </div>

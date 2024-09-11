@@ -6,7 +6,7 @@ export interface InfoSectionProps {
     user: User | null
 }
 
-export function InfoSection({ user }: InfoSectionProps): JSX.Element {
+export function InfoSection({ user }: InfoSectionProps) {
     return <div className="w-full my-auto py-6 flex flex-col justify-center gap-2">
         <div className="w-full flex sm:flex-row xs:flex-col gap-2 justify-center">
             <div className="w-full">

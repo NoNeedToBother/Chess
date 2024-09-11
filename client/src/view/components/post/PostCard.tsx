@@ -1,4 +1,5 @@
-import { Post} from "../../../models/Post";
+import React from "react";
+import { Post } from "../../../models/Post";
 import { CircleImage } from "../base/CircleImage";
 import { ArrowRightCircleIcon, TrashIcon } from '@heroicons/react/16/solid'
 

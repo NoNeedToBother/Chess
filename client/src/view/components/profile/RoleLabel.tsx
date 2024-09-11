@@ -1,3 +1,4 @@
+import React from "react";
 import { Role } from "../../../models/Role";
 
 export interface RoleLabelProps {

@@ -1,5 +1,5 @@
-import React, { useEffect }  from 'react';
-import { Route, Routes } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { Route, Routes, useLocation } from "react-router-dom";
 import { LoginPage } from "./view/pages/auth/LoginPage";
 import { RegisterPage } from "./view/pages/auth/RegisterPage";
 import { MainPage } from "./view/pages/MainPage";
@@ -20,6 +20,16 @@ function App() {
     const { navigator } = useDataContext()
 
     const { chessService, clearChess, gameInfo } = useChessContext()
+
+    const location = useLocation()
+    const [ activeNavItem, setActiveNavItem ] = useState("")
+
+    useEffect(() => {
+        if (location.pathname === "/") setActiveNavItem("play")
+        else if (location.pathname === "/post/upload") setActiveNavItem("upload")
+        else if (location.pathname === "/posts") setActiveNavItem("posts")
+        else setActiveNavItem("")
+    }, [location]);
 
     const onBanModalClose = () => setJustBannedInfo(undefined)
 
@@ -46,8 +56,9 @@ function App() {
         <>
             { user !== null &&
                 <NavBar user={ user } onLogout={ onLogout } navigator={ navigator }>
-                    <NavItem href="/posts" name="POSTS"/>
-                    <NavItem href="/post/upload" name="UPLOAD POST"/>
+                    <NavItem href="/" name="PLAY" active={ activeNavItem === "play" }/>
+                    <NavItem href="/posts" name="POSTS" active={ activeNavItem === "posts" }/>
+                    <NavItem href="/post/upload" name="UPLOAD POST" active={ activeNavItem === "upload" }/>
                 </NavBar>
             }
             { justBannedInfo &&
