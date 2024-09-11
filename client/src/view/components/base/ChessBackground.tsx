@@ -24,8 +24,8 @@ export function ChessBackground() {
         return () => window.removeEventListener("scroll", onScroll)
     }, [])
 
-    return <div className="fixed inset-0 w-full h-full -z-50" ref={ imgRef }>
+    return <div className="fixed inset-0 w-full h-full -z-40" ref={ imgRef }>
         <img src={ mobile ? "/bg_mobile.png" : "/bg_desktop.png" }
-             className="opacity-30"/>
+             className="opacity-30 dark:opacity-60"/>
     </div>
 }

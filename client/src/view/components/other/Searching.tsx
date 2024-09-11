@@ -17,7 +17,7 @@ export function Searching() {
         return () => clearInterval(interval)
     }, []);
 
-    return <div className="flex flex-row justify-center my-4">
+    return <div className="flex flex-row justify-center my-4 dark:text-gray-100">
         <MagnifyingGlassIcon className="h-8 w-8"/>
         <h1 className="text-center mt-2">{ `Searching${ dots }` }</h1>
     </div>

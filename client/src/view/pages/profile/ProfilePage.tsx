@@ -27,14 +27,14 @@ export function ProfilePage() {
         setShowModal(false)
     }
 
-    return <section className="w-full overflow-hidden dark:bg-gray-900">
+    return <section className="w-full overflow-hidden">
         { showModal &&
             <Modal title="Input info to update" onClose={ () => setShowModal(false) }>
                 <UpdateProfileInfoForm onSubmit={ onUpdateProfileInfoFormSubmit }/>
             </Modal>
         }
         <div className="flex flex-col">
-            <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200 opacity-50"/>
+            <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200 dark:bg-gray-700 opacity-50 -z-10"/>
             <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
                 { user !== null &&
                     <ProfileMainSection user={ user } own={ true }

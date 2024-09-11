@@ -8,7 +8,7 @@ export interface CommentCardProps {
 export function CommentCard({ comment, onUserClick }: CommentCardProps) {
     const userClickHandler = () => onUserClick?.(comment.author.id);
 
-    return <article className="p-6 text-base bg-white rounded-lg dark:bg-gray-900 shadow-md lift [--lift-value:-2px]">
+    return <article className="p-6 text-base bg-white rounded-lg dark:bg-gray-800 shadow-md lift [--lift-value:-2px]">
         <footer className="flex justify-between items-center mb-2">
             <div className="flex items-center">
                 <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white font-semibold hover:cursor-pointer"
