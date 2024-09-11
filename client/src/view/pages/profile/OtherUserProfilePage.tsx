@@ -78,7 +78,7 @@ export function OtherUserProfilePage() {
     }
 
     return <div>
-        <section className="w-full overflow-hidden dark:bg-gray-900">
+        <section className="w-full overflow-hidden">
             { showBanInfoModal && ban !== null &&
                 <Modal title="Ban info" onClose={ () => setShowBanInfoModal(false) }>
                     <h1 className="text-gray-700"> { `Given by ${ ban.givenFromUsername }` }</h1>
@@ -92,7 +92,7 @@ export function OtherUserProfilePage() {
                 </Modal>
             }
             <div className="flex flex-col">
-                <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200"/>
+                <div className="w-full xl:h-[20rem] lg:h-[18rem] md:h-[16rem] sm:h-[14rem] xs:h-[11rem] h-[10rem] bg-gray-200 dark:bg-gray-700 opacity-50 -z-10"/>
                 <div className="sm:w-[80%] xs:w-[90%] mx-auto flex">
                     { other !== null && user !== null &&
                         <ProfileMainSection user={ other } own={ false }
@@ -109,7 +109,7 @@ export function OtherUserProfilePage() {
                             <NoSymbolIcon className="md:h-12 sm:h-8 my-auto text-red-500"/>
                             <p className="w-fit text-red-600 pl-4 xl:text-6xl md:text-5xl sm:text-4xl">
                             This user is banned</p>
-                            <InformationCircleIcon className="md:h-12 sm:h-8 my-auto" onClick={ infoHandler }/>
+                            <InformationCircleIcon className="md:h-12 sm:h-8 my-auto dark:text-gray-100" onClick={ infoHandler }/>
                         </div>
                     }
                     { other !== null &&

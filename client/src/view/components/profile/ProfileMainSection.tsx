@@ -42,12 +42,12 @@ export function ProfileMainSection({ own, user, otherUserProfileProps, ownUserPr
     const getLikeColor = () => {
         if (!own) {
             if (otherUserProfileProps !== undefined && otherUserProfileProps.isLiked) return "text-green-800"
-            else return "text-black"
-        } else return "text-black"
+            else return "text-black dark:text-gray-100"
+        } else return "text-black dark:text-gray-100"
     }
 
     return <>
-        <div className="block w-full items-center">
+        <div className="block w-full items-center dark:text-gray-100">
             <img
                 src={ user.profilePicture }
                 alt="User Profile"
@@ -79,9 +79,9 @@ export function ProfileMainSection({ own, user, otherUserProfileProps, ownUserPr
             {!own && otherUserProfileProps !== undefined && checkAuthorityToBanAndUnban(user, otherUserProfileProps.from) &&
                 (
                     otherUserProfileProps.isBanned
-                        ? <button className="mx-[25%] w-1/2 border-2 border-green-600 hover:bg-green-100"
+                        ? <button className="mx-[25%] w-1/2 border-2 border-green-600 dark:border-green-900 dark:hover:bg-green-700 hover:bg-green-100"
                                   onClick={ () => otherUserProfileProps.onUnban() }>Unban</button>
-                        : <button className="mx-[25%] w-1/2 border-2 border-red-600 hover:bg-red-100"
+                        : <button className="mx-[25%] w-1/2 border-2 border-red-600 dark:border-red-900 dark:hover:bg-red-700 hover:bg-red-100"
                                   onClick={ () => otherUserProfileProps.onBan() }>Ban</button>
                 )
             }

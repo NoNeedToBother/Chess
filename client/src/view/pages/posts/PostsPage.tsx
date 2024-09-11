@@ -58,7 +58,7 @@ export function PostsPage() {
 
     return <>
         { posts !== null &&
-            <section className="bg-white dark:bg-gray-900">
+            <section>
                 <div className="py-24 px-8 mx-auto max-w-screen-xl lg:py-32 lg:px-6">
                     <div className="grid gap-8 lg:grid-cols-2">
                         { evenPosts(posts).map((post, _) => getPost(post)) }

@@ -131,14 +131,14 @@ export function MainPage() {
         { game.fen === null &&
             <div className="items-center border-2">
                 <div>
-                    <div className="text-center font-logo text-8xl hover:gradient-anim">Chess</div>
-                    <div className="italic text-center py-2">play and discuss at same time</div>
-                    <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl mt-20 border-2 border-blue-600 hover:bg-blue-100"
+                    <div className="text-center font-logo text-8xl dark:text-gray-100">Chess</div>
+                    <div className="italic text-center py-2 dark:text-gray-100">play and discuss at same time</div>
+                    <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl mt-20 border-2 border-blue-600 hover:bg-blue-100 dark:border-blue-900 dark:bg-blue-700 dark:hover:bg-blue-900"
                             onClick={ playHandler }>PLAY
                     </button>
                     { search &&
                         <div className="mt-10">
-                            <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl border-2 border-red-600 hover:bg-red-100"
+                            <button className="w-[20%] mx-[40%] rounded-bl-2xl rounded-tr-2xl border-2 border-red-600 hover:bg-red-100 dark:border-red-900 dark:bg-red-700 dark:hover:bg-red-900"
                                     onClick={ cancelSeekHandler }>Cancel searching
                             </button>
                             <Searching/>

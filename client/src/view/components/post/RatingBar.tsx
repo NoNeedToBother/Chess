@@ -43,6 +43,6 @@ export function RatingBar({ rating, onRatingChosen }: RatingBarProps) {
                             key={ index } onHover={ onStarHover } onHoverEnd={ onStarHoverEnd }/>
             )}
         </div>
-        <div className="text-slate-400 font-medium">{ getRating() }</div>
+        <div className="dark:text-gray-100 text-sla font-medium">{ getRating() }</div>
     </div>
 }

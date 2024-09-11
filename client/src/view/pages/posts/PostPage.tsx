@@ -42,8 +42,8 @@ export function PostPage() {
     return (
         <>
             { post !== null &&
-                <div className="w-full h-full bg-white dark:bg-gray-800">
-                    <div className="w-full mx-auto py-32 bg-white dark:bg-gray-800">
+                <div className="w-full h-full">
+                    <div className="w-full mx-auto py-32">
                         <h1 className="w-[92%] mx-auto lg:text-4xl md:text-3xl xs:text-2xl text-center font-serif font-semibold pb-4 pt-8 dark:text-white">
                             { post.title }</h1>
 
@@ -66,9 +66,9 @@ export function PostPage() {
                             <RatingBar rating={ post.rating } onRatingChosen={ onRatingChosen }/>
                         </div>
                         { user !== null && checkAuthorityToDeletePost(user, post) &&
-                            <div className="md:w-[10%] sm:w-[20%] w-[30%] items-center mx-auto mt-4">
+                            <div className="md:w-[10%] sm:w-[20%] w-[30%] items-center mx-auto mt-4 dark:text-gray-100">
                                 <button
-                                    className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 justify-center"
+                                    className="w-full flex border-red-500 border-2 rounded-2xl hover:bg-red-300 dark:hover:bg-red-700 dark:bg-red-900 justify-center"
                                     onClick={ deleteHandler }>
                                     Delete
                                     <TrashIcon className="h-4 pt-0.5"/>
@@ -76,7 +76,7 @@ export function PostPage() {
                             </div>
                         }
 
-                        <div className="py-6 bg-white dark:bg-gray-800">
+                        <div className="py-6">
                             <div className="md:w-[80%] w-[90%] mx-auto pt-4">
                                 <p className="mt-2 text-2xl dark:text-gray-300">
                                     { post.content }
