@@ -8,13 +8,13 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import ru.kpfu.itis.paramonov.dto.chess.ValidationRequestDto;
 import ru.kpfu.itis.paramonov.dto.chess.ValidationResultDto;
-import ru.kpfu.itis.paramonov.service.ChessService;
+import ru.kpfu.itis.paramonov.service.ChessApiService;
 import ru.kpfu.itis.paramonov.utils.YamlPropertySourceFactory;
 
 @Service
 @RequiredArgsConstructor
 @PropertySource(value = "classpath:apis.yaml", factory = YamlPropertySourceFactory.class)
-public class ChessServiceImpl implements ChessService {
+public class ChessApiServiceImpl implements ChessApiService {
 
     private final WebClient webClient;
 

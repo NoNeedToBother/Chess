@@ -1,4 +1,5 @@
-import { PostCard } from "../../components/post/PostCard";
+import React from "react";
+import { PostCard } from "../post/PostCard";
 import { Post } from "../../../models/Post";
 
 export interface PostSectionProps {

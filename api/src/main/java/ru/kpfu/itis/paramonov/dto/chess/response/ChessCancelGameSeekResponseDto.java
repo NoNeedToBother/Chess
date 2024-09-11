@@ -7,7 +7,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ChessCancelGameSearchResponseDto {
+public class ChessCancelGameSeekResponseDto {
 
     private String action;
 

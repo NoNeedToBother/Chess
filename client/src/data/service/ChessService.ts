@@ -8,20 +8,10 @@ const API_DOMAIN = "http://localhost:8080"
 export interface MoveRequest {
     gameId: string
     color: string
-    turn: string
     fromUser: number
-    fen: string
     from: string
     to: string
     promotion?: string
-}
-
-export interface EndRequest {
-    gameId: string
-    color: string
-    from: number
-    result: string
-    fen: string
 }
 
 export interface ConcedeRequest {
@@ -32,7 +22,7 @@ export interface ConcedeRequest {
 
 export interface GameHandler {
     onSeekEnd?: (response: BeginResponse) => void
-    onSearchCancelled?: () => void
+    onSeekCancel?: () => void
     onOmit?: (error: string) => void
     onMove?: (response: MoveResponse) => void
     onEnd?: (response: EndResponse) => void
@@ -70,7 +60,7 @@ export class ChessService {
                 this.gameHandler?.onSeekEnd?.(json)
                 break
             case "CANCEL_SEARCH":
-                this.gameHandler?.onSearchCancelled?.()
+                this.gameHandler?.onSeekCancel?.()
                 this.onGameEnd()
                 break
             case "MOVE":
@@ -105,30 +95,29 @@ export class ChessService {
         }
     }
 
+    cancelSeek(id: number) {
+        if (this.client !== undefined) {
+            this.client.publish({
+                destination: "/chess/game/seek/cancel",
+                body: JSON.stringify(
+                    {
+                        from: id
+                    }
+                )
+            })
+        }
+    }
+
     move(request: MoveRequest) {
         this.client?.publish({
             destination: "/chess/game/move",
             body: JSON.stringify({
                 gameId: request.gameId,
                 color: request.color,
-                turn: request.turn,
                 fromUser: request.fromUser,
-                fen: request.fen,
                 from: request.from,
                 to: request.to,
                 promotion: request.promotion,
-            })
-        })
-    }
-
-    claimEnd(request: EndRequest) {
-        this.client?.publish({
-            destination: "/chess/game/end",
-            body: JSON.stringify({
-                gameId: request.gameId,
-                from: request.from,
-                fen: request.fen,
-                result: request.result
             })
         })
     }

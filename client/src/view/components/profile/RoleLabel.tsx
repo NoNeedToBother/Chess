@@ -1,3 +1,4 @@
+import React from "react";
 import { Role } from "../../../models/Role";
 
 export interface RoleLabelProps {
@@ -19,7 +20,7 @@ export function RoleLabel({ roles }: RoleLabelProps) {
     }
     return <h1
         className={
-            `w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 dark:text-white lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif ${ getUserRoleText() }`
+            `w-full text-left my-4 sm:mx-4 xs:pl-4 text-gray-800 lg:text-4xl md:text-3xl sm:text-3xl xs:text-xl font-serif ${ getUserRoleText() }`
         }>
         { getUserRole() }</h1>
 }

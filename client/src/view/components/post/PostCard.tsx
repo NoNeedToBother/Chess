@@ -1,4 +1,5 @@
-import { Post} from "../../../models/Post";
+import React from "react";
+import { Post } from "../../../models/Post";
 import { CircleImage } from "../base/CircleImage";
 import { ArrowRightCircleIcon, TrashIcon } from '@heroicons/react/16/solid'
 
@@ -26,7 +27,7 @@ export function PostCard({ post, onUserClick, onReadMoreClick, onDelete, showDel
         className="p-6 bg-gray-50 lift [--lift-value:-4px] rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
         <div className="flex mb-5 text-gray-500 justify-between items-center">
             { showDelete !== undefined &&
-                <TrashIcon className="h-8 text-gray-200 hover:text-red-400" onClick={ deleteHandler }/>
+                <TrashIcon className="h-8 text-gray-200 dark:text-gray-900 hover:text-red-400" onClick={ deleteHandler }/>
             }
             <div className="text-sm"> { post.datePosted }</div>
         </div>
@@ -38,15 +39,15 @@ export function PostCard({ post, onUserClick, onReadMoreClick, onDelete, showDel
         <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
                 <CircleImage src={ post.author.profilePicture } className="h-8" onClick={ profilePictureClickHandler }/>
-                <div className="font-medium dark:text-white hover:text-blue-500 hover:underline hover:cursor-pointer"
+                <div className="font-medium dark:text-white hover:text-blue-500 dark:hover:text-blue-800 hover:underline hover:cursor-pointer"
                      onClick={ profilePictureClickHandler }
                 >
                     { post.author.username }
                 </div>
             </div>
-            <div className="inline-flex items-center font-medium text-primary-600 dark:text-primary-500 hover:underline hover:cursor-pointer">
+            <div className="inline-flex items-center font-medium dark:text-gray-100 hover:underline hover:cursor-pointer">
                 <div onClick={ readMoreClickHandler }>Read more</div>
-                <ArrowRightCircleIcon className="hover:text-blue-500 hover-slide [--slide-x:6px]" onClick={ readMoreClickHandler }/>
+                <ArrowRightCircleIcon className="hover:text-blue-500 dark:hover:text-blue-800 hover-slide [--slide-x:6px]" onClick={ readMoreClickHandler }/>
             </div>
         </div>
     </article>

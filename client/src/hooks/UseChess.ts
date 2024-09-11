@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { Chess } from "chess.js";
+import { useEffect } from "react";
 import { Square } from "react-chessboard/dist/chessboard/types";
 import { useChessContext } from "../context/ChessContext";
 import { useUserContext } from "../context/UserContext";
@@ -11,19 +10,10 @@ export function useChess() {
     const { user, setOpponent } = useUserContext()
     const { user: other, get } = useUser()
 
-    const [ game, setGame ] = useState<Chess>(new Chess())
-
-    useEffect(() => {
-        if (gameInfo.fen !== null) setGame(new Chess(gameInfo.fen))
-        else setGame(new Chess())
-    }, [gameInfo.fen])
-
     function move(move: { from: Square, to: Square, promotion?: string }) {
         if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null && gameInfo.fen !== null) {
             chessService.move({
                 color: gameInfo.color,
-                turn: gameInfo.turn,
-                fen: gameInfo.fen,
                 fromUser: user.id,
                 gameId: gameInfo.gameId,
                 from: move.from,
@@ -50,7 +40,7 @@ export function useChess() {
     const onMove = (response: MoveResponse) => {
         if (!response.valid) {
             if (response.error !== undefined) setMoveError(response.error)
-            else return
+            else setMoveError("Error when processing move, try again")
         }
 
         if (response.fen !== undefined && response.turn !== undefined) {
@@ -75,6 +65,8 @@ export function useChess() {
         }
     }
 
+    const onSeekCancel = () => setSearch(false)
+
     const updateTime = (response: TimeResponse) => {
         timeInfo.updateTime(response.time)
         timeInfo.updateOpponentTime(response.opponentTime)
@@ -86,11 +78,14 @@ export function useChess() {
                 onMove: onMove,
                 onEnd: onEnd,
                 onConcede: onConcede,
+                onSeekCancel: onSeekCancel,
                 updateTime: updateTime
             })
         gameInfo.setResult(undefined)
         clearChess()
     }
+
+    const cancelSeek = (id: number) => chessService.cancelSeek(id)
 
     const concede = () => {
         if (gameInfo.gameId !== null && user !== null) {
@@ -104,6 +99,8 @@ export function useChess() {
 
     const clearMoveError = () => setMoveError(null)
 
-    return { fen: gameInfo.fen, game, move, seek, color: gameInfo.color, result: gameInfo.result,
-        concede, time: timeInfo.time, opponentTime: timeInfo.opponentTime, moveError, clearMoveError }
+    return { game: { fen: gameInfo.fen, color: gameInfo.color, result: gameInfo.result },
+        move, seek, concede, cancelSeek, moveError, clearMoveError,
+        time: { time: timeInfo.time, opponentTime: timeInfo.opponentTime }
+    }
 }

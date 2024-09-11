@@ -47,7 +47,7 @@ public class AuthController {
         return ResponseEntity.ok(authService.refresh(jwtRequest.getToken()));
     }
 
-    @PostMapping(value = "/register", produces = "application/json")
+    @PostMapping("/register")
     public ResponseEntity<AuthenticateResponseDto> register(
             @RequestBody RegisterUserRequestDto registerUserRequestDto
     ) {
