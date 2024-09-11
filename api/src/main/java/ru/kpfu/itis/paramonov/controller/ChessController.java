@@ -7,7 +7,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import ru.kpfu.itis.paramonov.dto.chess.request.*;
 import ru.kpfu.itis.paramonov.dto.chess.response.*;
-import ru.kpfu.itis.paramonov.service.ChessService;
+import ru.kpfu.itis.paramonov.service.ChessApiService;
 import ru.kpfu.itis.paramonov.utils.chess.ChessGameStore;
 import ru.kpfu.itis.paramonov.utils.chess.ChessTimer;
 
@@ -24,7 +24,7 @@ public class ChessController {
 
     private final Random rand = new Random();
 
-    private final ChessService chessService;
+    private final ChessApiService chessApiService;
 
     @MessageMapping("/game/seek")
     public void processSeekRequest(SeekGameRequestDto seekGameRequestDto, StompHeaderAccessor headerAccessor) {
@@ -38,13 +38,16 @@ public class ChessController {
     @MessageMapping("/game/move")
     public void processMoveRequest(MoveRequestDto moveRequestDto) {
         ChessGameStore.ChessGame game = chessGameStore.get(moveRequestDto.getGameId());
-        if (game == null) cancelGame(moveRequestDto.getFromUser());
+        if (game == null) {
+            cancelGame(moveRequestDto.getFromUser());
+            return;
+        }
 
-        chessService.validateMove(
+        chessApiService.validateMove(
                 moveRequestDto.getFrom(), moveRequestDto.getTo(), moveRequestDto.getColor(),
-                moveRequestDto.getTurn(), moveRequestDto.getFen(), moveRequestDto.getPromotion()
+                game.getTurn(), game.getFen(), moveRequestDto.getPromotion()
         ).doOnNext(response -> {
-            if (response.isValid() && game != null) {
+            if (response.isValid()) {
                 game.setFen(response.getFen());
                 game.setTurn(response.getTurn());
                 if ("white".equals(moveRequestDto.getColor())) {
@@ -76,12 +79,10 @@ public class ChessController {
                 }
 
             } else {
-                 if (!response.isValid()) {
-                     sendMessageToUser(
-                             moveRequestDto.getFromUser(),
-                             new ChessMoveResponseDto("MOVE", false, null, null, response.getError())
-                     );
-                 }
+                sendMessageToUser(
+                        moveRequestDto.getFromUser(),
+                        new ChessMoveResponseDto("MOVE", false, null, null, response.getError())
+                );
             }
         }).subscribe();
     }
@@ -196,14 +197,18 @@ public class ChessController {
         String gameId = player1 + "-" + player2;
         ChessGameStore.ChessGame game = new ChessGameStore.ChessGame(gameId, white, black);
         chessGameStore.add(game);
-        chessGameStore.addPlayerDisconnectedListener(white, blackId ->
-                sendMessageToUser(blackId, new ChessConcedeResponseDto(
-                "CONCEDE", "disconnect", false
-        )));
-        chessGameStore.addPlayerDisconnectedListener(black, whiteId ->
-                sendMessageToUser(whiteId, new ChessConcedeResponseDto(
-                        "CONCEDE", "disconnect", false
-                )));
+        chessGameStore.addPlayerDisconnectedListener(white, blackId -> {
+            chessGameStore.endGame(game.getId());
+            sendMessageToUser(blackId, new ChessConcedeResponseDto(
+                    "CONCEDE", "disconnect", false
+            ));
+        });
+        chessGameStore.addPlayerDisconnectedListener(black, whiteId -> {
+            chessGameStore.endGame(game.getId());
+            sendMessageToUser(whiteId, new ChessConcedeResponseDto(
+                    "CONCEDE", "disconnect", false
+            ));
+        });
 
         sendMessageToUser(player1, new ChessBeginResponseDto(
                 "BEGIN", player1Color, player2, gameId, ChessGameStore.ChessGame.INITIAL_FEN

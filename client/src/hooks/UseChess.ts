@@ -22,8 +22,6 @@ export function useChess() {
         if (gameInfo.gameId !== null && gameInfo.color !== null && user !== null && gameInfo.fen !== null) {
             chessService.move({
                 color: gameInfo.color,
-                turn: gameInfo.turn,
-                fen: gameInfo.fen,
                 fromUser: user.id,
                 gameId: gameInfo.gameId,
                 from: move.from,
@@ -50,7 +48,7 @@ export function useChess() {
     const onMove = (response: MoveResponse) => {
         if (!response.valid) {
             if (response.error !== undefined) setMoveError(response.error)
-            else return
+            else setMoveError("Error when processing move, try again")
         }
 
         if (response.fen !== undefined && response.turn !== undefined) {

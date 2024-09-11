@@ -13,10 +13,6 @@ public class MoveRequestDto {
 
     private String color;
 
-    private String turn;
-
-    private String fen;
-
     private String from;
 
     private String to;
