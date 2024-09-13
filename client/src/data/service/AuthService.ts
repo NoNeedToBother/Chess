@@ -2,9 +2,9 @@ import { LOGIN_ENDPOINT, REGISTER_ENDPOINT } from "../../utils/Endpoints";
 import axios from 'axios';
 import { AuthDataResponse, AuthResponse } from "../model/AuthResponse";
 import { UserMapper } from "../mapper/UserMapper";
-import { AbstractService } from "./AbstractService";
+import { BaseService } from "./BaseService";
 
-export class AuthService extends AbstractService {
+export class AuthService extends BaseService {
 
     private userMapper: UserMapper
 
@@ -45,6 +45,6 @@ export class AuthService extends AbstractService {
             }
         }
         else if (!resp.error) return { error: resp.error }
-        else return {error: "Something went wrong, try again later"}
+        else return { error: "Something went wrong, try again later" }
     }
 }

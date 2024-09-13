@@ -4,6 +4,7 @@ const AUTH = "/auth"
 const POSTS = "/posts"
 const COMMENTS = "/comments"
 const USERS = "/users"
+const PUZZLES = "/puzzle"
 
 export const LOGIN_ENDPOINT = DOMAIN_NAME + AUTH + "/login"
 export const REGISTER_ENDPOINT = DOMAIN_NAME + AUTH + "/register"
@@ -28,3 +29,5 @@ export const BAN_USER_MODERATOR_ENDPOINT = DOMAIN_NAME + USERS + "/moderator/ban
 export const BAN_USER_ADMIN_ENDPOINT = DOMAIN_NAME + USERS + "/admin/ban"
 export const UNBAN_USER_MODERATOR_ENDPOINT = DOMAIN_NAME + USERS + "/moderator/unban"
 export const UNBAN_USER_ADMIN_ENDPOINT = DOMAIN_NAME + USERS + "/admin/unban"
+
+export const GET_DAILY_PUZZLE_ENDPOINT = DOMAIN_NAME + PUZZLES + "/get/daily"

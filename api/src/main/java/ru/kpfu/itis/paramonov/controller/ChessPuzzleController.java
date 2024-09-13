@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import ru.kpfu.itis.paramonov.dto.chess.PuzzleDto;
 import ru.kpfu.itis.paramonov.dto.response.DailyPuzzleResponseDto;
 import ru.kpfu.itis.paramonov.service.ChessApiService;
 
@@ -35,7 +36,9 @@ public class ChessPuzzleController {
                     return chessApiService.convertPgnToFen(pgn);
                 })
                 .map(response -> ResponseEntity.ok(
-                        new DailyPuzzleResponseDto(response.getFen(), rating.get(), solution, themes)
+                        new DailyPuzzleResponseDto(
+                                new PuzzleDto(response.getFen(), rating.get(), solution, themes)
+                        )
                 ));
     }
 }

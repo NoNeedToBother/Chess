@@ -11,13 +11,15 @@ import { CommentMapper } from "../data/mapper/CommentMapper";
 import { UserService } from "../data/service/UserService";
 import { JwtInfo } from "../models/JwtInfo";
 import { useUserContext } from "./UserContext";
+import { ChessApiService } from "../data/service/ChessApiService";
 
 interface IDataContext {
-    authService: AuthService;
-    postService: PostService;
-    userService: UserService;
-    commentService: CommentService;
-    navigator: Navigator;
+    authService: AuthService
+    postService: PostService
+    userService: UserService
+    commentService: CommentService
+    chessApiService: ChessApiService
+    navigator: Navigator
 }
 
 const DataContext = createContext<IDataContext | null>(null)
@@ -32,7 +34,7 @@ export const useDataContext = () => {
     return data
 }
 
-export const Data = ({ children }: {children: React.ReactNode}) => {
+export const Data = ({ children }: { children: React.ReactNode }) => {
     const roleMapper = new RoleMapper()
     const userMapper = new UserMapper(roleMapper)
     const postMapper = new PostMapper(userMapper)
@@ -43,6 +45,7 @@ export const Data = ({ children }: {children: React.ReactNode}) => {
     const postService = new PostService(urlFormatter, postMapper, commentMapper)
     const commentService = new CommentService(commentMapper)
     const userService = new UserService(urlFormatter, postMapper, userMapper)
+    const chessApiService = new ChessApiService()
 
     const navigate = useNavigate()
     const navigator = new Navigator(navigate)
@@ -57,13 +60,15 @@ export const Data = ({ children }: {children: React.ReactNode}) => {
     postService.setOnTokenRefreshedListener(onTokenRefreshed)
     commentService.setOnTokenRefreshedListener(onTokenRefreshed)
     userService.setOnTokenRefreshedListener(onTokenRefreshed)
+    chessApiService.setOnTokenRefreshedListener(onTokenRefreshed)
 
     postService.setOnUserBannedListener(onUserBanned)
     commentService.setOnUserBannedListener(onUserBanned)
     userService.setOnUserBannedListener(onUserBanned)
+    chessApiService.setOnTokenRefreshedListener(onUserBanned)
 
     return(
-        <DataContextProvider value={ {authService, postService, userService, commentService, navigator} }>
+        <DataContextProvider value={ {authService, postService, userService, commentService, chessApiService, navigator} }>
             { children }
         </DataContextProvider>
     )

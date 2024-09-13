@@ -10,7 +10,7 @@ import { useDataContext } from "../../../context/DataContext";
 export function PostsPage() {
     const { user } = useUserContext()
     const { posts, loadPage, pageAmount, getPageAmount, deleteFromPosts } = usePostPage()
-    const [ currentPage, setCurrentPage ] = useState<number>(0)
+    const [ currentPage, setCurrentPage ] = useState(0)
     const { navigator } = useDataContext()
 
     useEffect(() => {

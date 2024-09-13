@@ -11,7 +11,7 @@ import {
 import { UrlFormatter } from "../../utils/UrlFormatter";
 import { PageAmountResponse, PagePostDataResponse, PagePostResponse } from "../model/PagePostResponse";
 import { PostDataResponse, PostResponse } from "../model/PostResponse";
-import { AbstractService } from "./AbstractService";
+import { BaseService } from "./BaseService";
 import { CommentsDataResponse, CommentsResponse } from "../model/CommentResponse";
 import { Comment } from "../../models/Comment";
 import { PostMapper } from "../mapper/PostMapper";
@@ -27,7 +27,7 @@ export interface UploadPostRequest {
     image: File
 }
 
-export class PostService extends AbstractService{
+export class PostService extends BaseService {
     private urlFormatter: UrlFormatter
     private postMapper: PostMapper
     private commentMapper: CommentMapper
@@ -45,11 +45,9 @@ export class PostService extends AbstractService{
             params.set("page", page.toString())
                 .set("size", pageSize.toString())
             const resp = await axios.get<PagePostDataResponse>(
-                this.urlFormatter.format(
-                    GET_POSTS_ENDPOINT, params),
-                {
-                    headers: { Authorization: "Bearer " + localToken }
-                })
+                this.urlFormatter.format(GET_POSTS_ENDPOINT, params),
+                { headers: { Authorization: "Bearer " + localToken } }
+            )
             const posts: PostResponse[] = []
 
             if (resp.data.content !== undefined) {
@@ -60,7 +58,7 @@ export class PostService extends AbstractService{
                         })
                 })
             }
-            return {posts: posts} as PagePostResponse
+            return { posts: posts } as PagePostResponse
         }, jwt)
     }
 
@@ -70,11 +68,11 @@ export class PostService extends AbstractService{
             params.set("id", id.toString())
             const resp = await axios.get<PostDataResponse>(
                 this.urlFormatter.format(GET_POST_ENDPOINT, params),
-                { headers: {Authorization: "Bearer " + localToken}}
+                { headers: { Authorization: "Bearer " + localToken } }
             )
             if (resp.data.post !== undefined && resp.data.author !== undefined)
-                return {post: this.postMapper.map(resp.data.author, resp.data.post)}
-            else return { error: "Something went wrong, try again later"}
+                return { post: this.postMapper.map(resp.data.author, resp.data.post) }
+            else return { error: "Something went wrong, try again later" }
         }, jwt)
     }
 
@@ -84,7 +82,7 @@ export class PostService extends AbstractService{
             params.set("size", pageSize.toString())
             const resp = await axios.get<PageAmountResponse>(
                 this.urlFormatter.format(GET_POST_PAGE_AMOUNT_ENDPOINT, params),
-                { headers: {Authorization: "Bearer " + localToken}}
+                { headers: {Authorization: "Bearer " + localToken } }
             )
             return resp.data
         }, jwt)
@@ -94,12 +92,12 @@ export class PostService extends AbstractService{
         return this.handleAxios(async (localToken = jwt.accessToken) => {
             const resp = await axios.post<PostDataResponse>(
                 UPDATE_POST_RATING_ENDPOINT,
-                {postId: postId, rating: rating},
-                { headers: {Authorization: "Bearer " + localToken}}
+                { postId: postId, rating: rating },
+                { headers: { Authorization: "Bearer " + localToken } }
             )
             if (resp.data.post !== undefined && resp.data.author !== undefined)
-                return {post: this.postMapper.map(resp.data.author, resp.data.post)}
-            else return { error: "Something went wrong, try again later"}
+                return { post: this.postMapper.map(resp.data.author, resp.data.post) }
+            else return { error: "Something went wrong, try again later" }
         }, jwt)
     }
 
@@ -109,7 +107,7 @@ export class PostService extends AbstractService{
         return this.handleAxios(async () => {
             const resp = await axios.get<CommentsDataResponse>(
                 this.urlFormatter.format(GET_COMMENTS_ENDPOINT, params),
-                { headers: {Authorization: "Bearer " + jwt.accessToken}}
+                { headers: { Authorization: "Bearer " + jwt.accessToken } }
             )
             if (resp.data.comments !== undefined) {
                 const comments: Comment[] = []
@@ -118,8 +116,8 @@ export class PostService extends AbstractService{
                         comments.push(this.commentMapper.map(obj.author, obj.comment))
                     }
                 })
-                return {comments: comments}
-            } else return { error: "Something went wrong, try again later"}
+                return { comments: comments }
+            } else return { error: "Something went wrong, try again later" }
         }, jwt)
     }
 
@@ -133,10 +131,10 @@ export class PostService extends AbstractService{
             const resp = await axios.post<PostDataResponse>(
                 UPLOAD_POST_ENDPOINT,
                 formData,
-                { "headers": {"Authorization": "Bearer " + localToken}}
+                { "headers": {"Authorization": "Bearer " + localToken } }
             )
             if (resp.data.post !== undefined && resp.data.author !== undefined) {
-                return {post: this.postMapper.map(resp.data.author, resp.data.post)}
+                return { post: this.postMapper.map(resp.data.author, resp.data.post) }
             } else return { error: "Something went wrong, try again later"}
         }, jwt)
     }
@@ -148,7 +146,7 @@ export class PostService extends AbstractService{
             const resp = await axios.post<BaseResponse>(
                 this.urlFormatter.format(DELETE_POST_ENDPOINT, params),
                 {},
-                { "headers": {"Authorization": "Bearer " + jwt.accessToken}}
+                { "headers": { "Authorization": "Bearer " + jwt.accessToken } }
             )
             return resp.data
         }, jwt)

@@ -4,7 +4,7 @@ import { JwtInfo } from "../../models/JwtInfo";
 import { REFRESH_TOKEN_ENDPOINT } from "../../utils/Endpoints";
 import { JwtInfoDataResponse } from "../model/AuthResponse";
 
-export abstract class AbstractService {
+export abstract class BaseService {
 
     private onTokenRefreshed: ((jwt: JwtInfo) => void) | undefined = undefined
 
