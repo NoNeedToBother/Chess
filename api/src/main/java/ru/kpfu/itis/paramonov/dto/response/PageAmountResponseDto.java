@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class PageAmountResponseDto extends BaseResponseDto{
+public class PageAmountResponseDto extends BaseResponseDto {
     @JsonProperty("pageAmount")
     private Integer pageAmount;
 

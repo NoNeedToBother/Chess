@@ -3,7 +3,7 @@ const { body, validationResult } = require('express-validator');
 const ChessService = require("../service/ChessService");
 const router = express.Router();
 
-router.post('/',
+router.post('/pgn/fen',
     [
         body('pgn').isString().notEmpty()
     ],
