@@ -1,3 +1,10 @@
 api:
-  chess-validation:
-    url: http://localhost:5000/validate
+  chess:
+    validation:
+      url: http://localhost:3333/validate
+    conversion:
+      url: http://localhost:3333/convert/pgn/fen
+
+  lichess:
+    daily-puzzle:
+      url: https://lichess.org/api/puzzle/daily

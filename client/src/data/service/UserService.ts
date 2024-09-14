@@ -1,4 +1,4 @@
-import { AbstractService } from "./AbstractService";
+import { BaseService } from "./BaseService";
 import { UrlFormatter } from "../../utils/UrlFormatter";
 import { PostMapper } from "../mapper/PostMapper";
 import { UserMapper } from "../mapper/UserMapper";
@@ -24,7 +24,7 @@ export interface BanRequest {
     reason: String
 }
 
-export class UserService extends AbstractService{
+export class UserService extends BaseService{
     private urlFormatter: UrlFormatter
     private postMapper: PostMapper
     private userMapper: UserMapper

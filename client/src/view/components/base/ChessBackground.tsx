@@ -15,7 +15,6 @@ export function ChessBackground() {
     useEffect(() => {
         const onScroll = () => {
             if (imgRef.current !== null) {
-                console.log(window.scrollY)
                 imgRef.current.style.marginTop = `${ -window.scrollY * 0.05 }px`
             }
         }

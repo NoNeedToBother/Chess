@@ -1,4 +1,4 @@
-package ru.kpfu.itis.paramonov.dto.chess;
+package ru.kpfu.itis.paramonov.dto.chess.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
