@@ -93,11 +93,10 @@ export function ChessPage() {
                                     customBoardStyle = { { borderRadius: "5px" } }
                                     onSquareClick = { onSquareClick }
                         />
-                        { time.time !== null && time.opponentTime !== null &&
-                            <div className="mx-auto md:my-auto md:w-[400px] md:h-[200px] w-[300px] h-[150px]">
-                                <Timer time={ time.time } opponentTime={ time.opponentTime }></Timer>
-                            </div>
-                        }
+                        <div className={ "mx-auto md:my-auto md:w-[400px] md:h-[200px] w-[300px] h-[150px] flex-grow" }>
+                            <Timer time={ time.time !== null ? time.time : 600 }
+                                   opponentTime={ time.opponentTime !== null ? time.opponentTime : 600 }></Timer>
+                        </div>
                     </div>
                     { game.result === undefined
                         ? <button className="w-[30%] mt-4 mx-[35%] border-2 border-red-500 hover:bg-red-100"

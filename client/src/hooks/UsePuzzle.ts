@@ -1,13 +1,13 @@
 import { useDataContext } from "../context/DataContext";
 import { useState } from "react";
-import { PuzzleResponse } from "../data/model/PuzzleResponse";
 import { useUserContext } from "../context/UserContext";
+import { Puzzle } from "../models/Puzzle";
 
 export function usePuzzle() {
     const { chessApiService } = useDataContext()
     const { jwt } = useUserContext()
 
-    const [ dailyPuzzle, setDailyPuzzle ] = useState<PuzzleResponse | undefined>(undefined)
+    const [ dailyPuzzle, setDailyPuzzle ] = useState<Puzzle | undefined>(undefined)
     const [ dailyPuzzleError, setDailyPuzzleError ] = useState<string | undefined>(undefined)
 
     const getDailyPuzzle = () => {
