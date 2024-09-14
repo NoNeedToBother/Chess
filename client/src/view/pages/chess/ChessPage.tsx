@@ -36,6 +36,8 @@ export function ChessPage() {
             to: targetSquare,
             promotion: promotion
         });
+        setSelectedPiece(null)
+        setSelectedSquare(null)
 
         return false;
     }
