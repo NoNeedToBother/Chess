@@ -1,4 +1,4 @@
-import { AbstractService } from "./AbstractService";
+import { BaseService } from "./BaseService";
 import axios from "axios";
 import { CommentDataResponse, CommentResponse } from "../model/CommentResponse";
 import { UPLOAD_COMMENT_ENDPOINT } from "../../utils/Endpoints";
@@ -11,7 +11,7 @@ export interface UploadCommentRequest {
     jwt: JwtInfo
 }
 
-export class CommentService extends AbstractService{
+export class CommentService extends BaseService {
     private commentMapper: CommentMapper
 
     constructor(commentMapper: CommentMapper) {
@@ -19,16 +19,16 @@ export class CommentService extends AbstractService{
         this.commentMapper = commentMapper
     }
 
-    async upload({postId, content, jwt}: UploadCommentRequest): Promise<CommentResponse> {
+    async upload({ postId, content, jwt }: UploadCommentRequest): Promise<CommentResponse> {
         return this.handleAxios( async (localToken = jwt.accessToken) => {
             const resp = await axios.post<CommentDataResponse>(
                 UPLOAD_COMMENT_ENDPOINT,
-                {postId: postId, content: content},
-                {headers: { Authorization: "Bearer " + localToken }}
+                { postId: postId, content: content },
+                { headers: { Authorization: "Bearer " + localToken } }
             )
             if (resp.data.comment !== undefined && resp.data.author !== undefined) {
-                return {comment: this.commentMapper.map(resp.data.author, resp.data.comment)}
-            } else return {error: "Something went wrong, try again later"}
+                return { comment: this.commentMapper.map(resp.data.author, resp.data.comment) }
+            } else return { error: "Something went wrong, try again later" }
         }, jwt)
     }
 }

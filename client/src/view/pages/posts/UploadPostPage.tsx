@@ -41,23 +41,17 @@ export function UploadPostPage() {
     return <div className="w-full h-full">
         <form onSubmit={ formSubmitHandler }>
             <div className="w-full mx-auto py-32">
-                { image === null &&
-                    <img src="https://parpol.ru/wp-content/uploads/2019/09/placeholder.png"
-                         alt="Post image"
-                         className="xl:w-[60%] xs:w-[76%] mx-auto lg:h-[480px] md:h-[360px] rounded-lg"/>
-                }
-                { image &&
-                    <img src={ URL.createObjectURL(image) }
-                         alt="Post image"
-                         className="xl:w-[60%] xs:w-[76%] mx-auto lg:h-[480px] md:h-[360px] rounded-lg"/>
-                }
+                <img src={ image === null ? "https://parpol.ru/wp-content/uploads/2019/09/placeholder.png" : URL.createObjectURL(image) }
+                     alt="Post image"
+                     className="xl:w-[60%] xs:w-[76%] mx-auto lg:h-[480px] md:h-[360px] rounded-lg"/>
 
                 <div className="relative flex mx-auto w-[20%] mt-4">
                     <input type="file" accept="image/*"
                            className="absolute flex w-full justify-center opacity-0 cursor-pointer"
                            onChange={ imageChangeHandler }
                     />
-                    <div className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                    <div
+                        className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
                         Browse images
                     </div>
                 </div>
@@ -73,7 +67,7 @@ export function UploadPostPage() {
                 </div>
                 <div className="flex mx-auto md:w-[30%] w-1/2 mt-4">
                     <button type="submit"
-                           className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                     >Upload
                         <ArrowUpTrayIcon className="h-6"/>
                     </button>

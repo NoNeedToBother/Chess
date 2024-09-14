@@ -1,11 +1,11 @@
 const { Chess } = require("chess.js");
 
-class MoveValidationService {
+class ChessService {
 
-    validateMove(req) {
-        if (req.turn !== req.color) return { valid: false, error: "Not your turn" }
-        const chess = new Chess(req.fen)
-        const move = { from: req.from, to: req.to, promotion: req.promotion }
+    validateMove(body) {
+        if (body.turn !== body.color) return { valid: false, error: "Not your turn" }
+        const chess = new Chess(body.fen)
+        const move = { from: body.from, to: body.to, promotion: body.promotion }
         try {
             const moveResult = chess.move(move)
             if (moveResult === null) return { valid: false, error: "Invalid move" }
@@ -25,6 +25,17 @@ class MoveValidationService {
 
         return { valid: true, fen: chess.fen(), turn: turn, result: result }
     }
+
+    convertPgnToFen(body) {
+        const pgn = body.pgn
+        const chess = new Chess()
+        try {
+            chess.loadPgn(pgn)
+            return { fen: chess.fen() }
+        } catch (e) {
+            return { error: "Invalid pgn" }
+        }
+    }
 }
 
-module.exports = MoveValidationService
+module.exports = ChessService
